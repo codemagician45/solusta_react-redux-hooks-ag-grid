@@ -9,11 +9,12 @@ export function getProducts()
     let config = {
         headers: {'Authorization': "bearer " + token}
     };
-    
     let bodyParameters = {
        key: "value"
-    }
+    };
+    
     const request = axios.get('https://stage01.solusta.me/api/attendee-sas',bodyParameters,config);
+
     return (dispatch) =>
         request.then((response) =>
             dispatch({

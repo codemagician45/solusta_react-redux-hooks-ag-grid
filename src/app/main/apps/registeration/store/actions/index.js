@@ -1,1 +1,1 @@
-export * from './registeration-form.actions';
+export * from './registration-form.actions';

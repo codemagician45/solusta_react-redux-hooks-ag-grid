@@ -1,11 +1,11 @@
 import React from 'react';
 import {FusePageCarded} from '@fuse';
-import RegisterationTable from './RegisterationTable';
+
+import RegistrationTable from './RegistrationTable';
 import withReducer from 'app/store/withReducer';
 import reducer from '../store/reducers';
-// import reducer from '../../app-solusta/store/reducers';
 
-function Registeration()
+function Registration()
 {
     return (
         <FusePageCarded
@@ -17,10 +17,11 @@ function Registeration()
             //     <ProductsHeader/>
             // }
             content={
-                <RegisterationTable/>
+                <RegistrationTable/>
             }
             innerScroll
         />
     );
 }
-export default withReducer('registerApp', reducer)(Registeration);
+
+export default withReducer('registerApp', reducer)(Registration);

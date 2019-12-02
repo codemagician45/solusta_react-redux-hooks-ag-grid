@@ -7,6 +7,7 @@ const iconb = require("tui-image-editor/dist/svg/icon-b.svg");
 const iconc = require("tui-image-editor/dist/svg/icon-c.svg");
 const icond = require("tui-image-editor/dist/svg/icon-d.svg");
 // const download = require("downloadjs");
+
 const myTheme = {
   "menu.backgroundColor": "white",
   "common.backgroundColor": "#151515",
@@ -18,8 +19,8 @@ const myTheme = {
   "menu.disabledIcon.path": icona,
   "menu.hoverIcon.path": iconc,
 };
+
 function HomePage(props) {
-    
     let image_url = props.image;
     // const [imageSrc, setImageSrc] = useState("");
     // const imageEditor = React.createRef();
@@ -32,6 +33,7 @@ function HomePage(props) {
     //     download(data, `image.${extension}`, mimeType);
     //   }
     // };
+
     return (
       <div className="home-page">
         <ImageEditor
@@ -62,4 +64,6 @@ function HomePage(props) {
       </div>
     );
   }
+
   export default HomePage;
+  
