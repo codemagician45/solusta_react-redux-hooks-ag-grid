@@ -6,13 +6,8 @@ const navigationConfig = [
         'icon'    : 'apps',
         'children': [
             {
-                // 'id'   : 'example-component',
-                // 'title': 'dowkdwodkwo',
-                // 'type' : 'item',
-                // 'icon' : 'whatshot',
-                // 'url'  : '/example'
-                'id'      : 'registeration',
-                'title'   : 'Registeration',
+                'id'      : 'registration',
+                'title'   : 'Registration',
                 'type'    : 'collapse',
                 'icon'    : 'how_to_reg',
                 'children': [
@@ -20,19 +15,19 @@ const navigationConfig = [
                         'id'   : 'registration-forms',
                         'title': 'Registration Forms',
                         'type' : 'item',
-                        'url'  : '/app/registeration/registeration-forms'
+                        'url'  : '/app/registration/registration-forms'
                     },
                     {
                         'id'   : 'badges',
                         'title': 'Badges',
                         'type' : 'item',
-                        'url'  : '/app/registeration/badges'
+                        'url'  : '/app/registration/badges'
                     },
                     {
                         'id'   : 'accreditation',
                         'title': 'Accreditation',
                         'type' : 'item',
-                        'url'  : '/app/registeration/accreditation'
+                        'url'  : '/app/registration/accreditation'
                     },
                     
                 ]
