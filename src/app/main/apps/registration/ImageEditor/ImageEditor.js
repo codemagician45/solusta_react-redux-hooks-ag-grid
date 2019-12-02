@@ -26,12 +26,20 @@ function HomePage(props) {
     const [imageInst, setImageInst] = useState(null);
     const [image, setImage] = useState(props.image);
     const imageEditor = React.createRef();
+
     useEffect(() => {
       setImageInst(imageEditor.current.imageEditorInst || null);
     }, [imageEditor.current]);
 
+    const saveImageToDisk = () => {
+      const { imageEditorInst } = imageEditor.current;
+      const data = imageEditorInst.toDataURL();
+      props.onCrop(data);
+    };
+
     return (
       <React.Fragment>
+        <Button className='button' onClick={saveImageToDisk}>Save Image to Disk</Button>
         <ImageEditor
           includeUI={{
             loadImage: {

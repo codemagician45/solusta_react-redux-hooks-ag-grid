@@ -55,6 +55,7 @@ function Image(props) {
     const images = useSelector(({registerApp}) => registerApp.products.data);
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
+    const [modalImg, setModalImg] = React.useState(null);
     
     const classes = useStyles();
     
@@ -73,7 +74,11 @@ function Image(props) {
     const name = image && image[0] && (image[0].firstName + ' ' + image[0].middleName + ' ' + image[0].lastName);
     const imgSrc = image && image[0] && (`data:${image[0].mainPhotoContentType};base64, ${image[0].mainPhoto}`);
 
-    function getModalStyle() {
+    const setModalImage = (data) => {
+        setModalImg(data);
+    }
+
+    const getModalStyle = () => {
         const top = 50;
         const left = 50;
         
@@ -84,7 +89,6 @@ function Image(props) {
         };
     }
       
-
     const handleOpen = () => {
         setOpen(true);
     };
@@ -118,7 +122,7 @@ function Image(props) {
                 content={
                      (
                          <React.Fragment>
-                            <HomePage image = {imgSrc} />
+                            <HomePage image = {imgSrc} onCrop={setModalImage}/>
                             <Modal
                                 aria-labelledby="print-modal-title"
                                 aria-describedby="print-modal-description"
@@ -132,11 +136,10 @@ function Image(props) {
                                             <h2 className={classes.companyNameStyle} >{image[0].companyName}</h2>
                                             <img src ='assets/images/background/background.png' className={classes.backGround} alt={'port-0'}/>
                                             <div className={classes.photo}>
-                                                <img src = {imgSrc} className={classes.photoImg} delay={100} alt={'port-1'}/>
+                                                <img src = {modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
                                             </div>
                                         </React.Fragment>
                                     )}
-                                    
                                 </div>
                             </Modal>
                         </React.Fragment>
