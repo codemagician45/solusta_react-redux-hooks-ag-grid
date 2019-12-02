@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
 import "tui-image-editor/dist/tui-image-editor.css";
 import ImageEditor from "@toast-ui/react-image-editor";
 
@@ -21,26 +22,20 @@ const myTheme = {
 };
 
 function HomePage(props) {
-    let image_url = props.image;
-    // const [imageSrc, setImageSrc] = useState("");
-    // const imageEditor = React.createRef();
-    // const saveImageToDisk = () => {
-    //   const imageEditorInst = imageEditor.current.imageEditorInst;
-    //   const data = imageEditorInst.toDataURL();
-    //   if (data) {
-    //     const mimeType = data.split(";")[0];
-    //     const extension = data.split(";")[0].split("/")[1];
-    //     download(data, `image.${extension}`, mimeType);
-    //   }
-    // };
+    const [image, setImage] = useState(props.image);
+
+    useEffect(() => {
+      setImage(props.image);
+    }, [props.image]);
+
+    console.log('here in Image Editor hook: ', props.image);
 
     return (
-      <div className="home-page">
+      <React.Fragment>
         <ImageEditor
           includeUI={{
             loadImage: {
-              // path: '/assets/images/demo-content/morain-lake.jpg',
-              path: image_url,
+              path: image,
               name: 'SampleImage'
             },
             theme: myTheme,
@@ -61,7 +56,7 @@ function HomePage(props) {
           usageStatistics={true}
         //   ref={imageEditor}
         />
-      </div>
+      </React.Fragment>
     );
   }
 

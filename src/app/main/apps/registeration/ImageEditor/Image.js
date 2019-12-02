@@ -12,17 +12,18 @@ import HomePage from './ImageEditor';
 function Image(props)
 {
     const dispatch = useDispatch();
-    const images = useSelector(({registerApp}) => registerApp.products.data);
+    const products = useSelector(({registerApp}) => registerApp.products.data);
 
     useEffect(() => {
         dispatch(Actions.getProducts());
     }, [dispatch]);
 
-    let id = props.match.params.id;
-    // console.log(images)
-    let image_url = images.filter((image) => {return image.id = id })[0].mainPhoto;
-    let image_type = images.filter((product) => {return product.id = id })[0].mainPhotoContentType;
-    const image = `data:${image_type};base64,${image_url}`;
+    const { id } = props.match.params;
+    const [product] = products && products.filter((product) => {
+        return product.id === parseInt(id);
+    });
+    const image = product && `data:${product.mainPhotoContentType};base64, ${product.mainPhoto}`;
+    // console.log('here in hook: ', product, image);
 
     return (
         <React.Fragment>
@@ -36,7 +37,7 @@ function Image(props)
                     </FuseAnimate>
                 }
                 content={
-                     (<HomePage image = {image} />)
+                     (<HomePage image={image} />)
                 }
                 innerScroll
             />

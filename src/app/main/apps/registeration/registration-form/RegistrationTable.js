@@ -12,7 +12,7 @@ import ImageRender from './ImageRender';
 function RegistrationTable(props) {
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
-    console.log(products);
+    console.log('here in Registration table: ', products);
 
     useEffect(() => {
         dispatch(Actions.getProducts());
