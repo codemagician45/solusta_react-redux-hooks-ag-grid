@@ -17,6 +17,5 @@ export const RegistrationConfig = {
             path     : '/app/registration/registration-forms',
             component: Registration
         }        
-        
     ]
 };
