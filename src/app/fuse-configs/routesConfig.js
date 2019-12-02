@@ -1,12 +1,12 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 import {FuseUtils} from '@fuse';
-import { RegisterationConfig } from 'app/main/apps/registeration/RegisterationConfig';
+import { RegistrationConfig } from 'app/main/apps/registeration/RegistrationConfig';
 import {LoginConfig} from 'app/main/login/LoginConfig';
 import {LogoutConfig} from 'app/main/logout/LogoutConfig';
 
 const routeConfigs = [
-    RegisterationConfig,
+    RegistrationConfig,
     LoginConfig,
     LogoutConfig,
 ];
@@ -17,7 +17,7 @@ const routes = [
         {
             path     : '/',
             exact    : true,
-            component: () => (localStorage.getItem('jwt_access_token'))? <Redirect to="/app/registeration/registeration-forms"/> : <Redirect to="/login"/>
+            component: () => (localStorage.getItem('jwt_access_token'))? <Redirect to="/app/registration/registration-forms"/> : <Redirect to="/login"/>
         },
         {
             component: () => <Redirect to="/pages/errors/error-404"/>

@@ -4,16 +4,20 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import {withRouter} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
+
 import * as Actions from '../store/actions';
 import ImageRender from './ImageRender';
-// import CubeRenderer from './ImageRender'
-function RegisterationTable(props) {
+// import CubeRenderer from './ImageRender';
+
+function RegistrationTable(props) {
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
-    console.log(products)
+    console.log(products);
+
     useEffect(() => {
         dispatch(Actions.getProducts());
-    }, [dispatch]);  
+    }, [dispatch]);
+
     const columnDefs= [
         {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'45px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender"},
@@ -47,11 +51,13 @@ function RegisterationTable(props) {
         };
         return temp;
     });
+    
     const frameworkComponents = {
         imageRender:ImageRender
-    }
-    const getRowHeight = () => {return 120;}
-    // const headerHeight = () => {return 40;}
+    };
+    const getRowHeight = () => {return 120;};
+    // const headerHeight = () => {return 40;};
+
     return (
         <div
           className="table-responsive ag-theme-balham"
@@ -73,4 +79,4 @@ function RegisterationTable(props) {
     );
 }
 
-export default withRouter(RegisterationTable);
+export default withRouter(RegistrationTable);

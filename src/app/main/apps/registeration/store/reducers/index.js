@@ -1,5 +1,5 @@
-import {combineReducers} from 'redux';
-import products from './registeration-form.reducer';
+import { combineReducers } from 'redux';
+import products from './registration-form.reducer';
 
 const reducer = combineReducers({
     products
