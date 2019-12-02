@@ -4,18 +4,30 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import {withRouter} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
+
 import * as Actions from '../store/actions';
 import ImageRender from './ImageRender';
+<<<<<<< HEAD:src/app/main/apps/registeration/registeration-form/RegisterationTable.js
 
 function RegisterationTable(props) {
+=======
+// import CubeRenderer from './ImageRender';
+
+function RegistrationTable(props) {
+>>>>>>> 475d4d6816f48de08949304eb18ef2a80a893fbd:src/app/main/apps/registeration/registration-form/RegistrationTable.js
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
-    console.log(products)
+    console.log(products);
+
     useEffect(() => {
         dispatch(Actions.getProducts());
     }, [dispatch]);
+<<<<<<< HEAD:src/app/main/apps/registeration/registeration-form/RegisterationTable.js
     
     
+=======
+
+>>>>>>> 475d4d6816f48de08949304eb18ef2a80a893fbd:src/app/main/apps/registeration/registration-form/RegistrationTable.js
     const columnDefs= [
         {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'45px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender"},
@@ -49,11 +61,13 @@ function RegisterationTable(props) {
         };
         return temp;
     });
+    
     const frameworkComponents = {
         imageRender:ImageRender
-    }
-    const getRowHeight = () => {return 120;}
-    // const headerHeight = () => {return 40;}
+    };
+    const getRowHeight = () => {return 120;};
+    // const headerHeight = () => {return 40;};
+
     return (
         <div
           className="table-responsive ag-theme-balham"
@@ -75,4 +89,4 @@ function RegisterationTable(props) {
     );
 }
 
-export default withRouter(RegisterationTable);
+export default withRouter(RegistrationTable);

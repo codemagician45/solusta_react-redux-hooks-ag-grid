@@ -18,6 +18,7 @@ const myTheme = {
   "menu.disabledIcon.path": icona,
   "menu.hoverIcon.path": iconc,
 };
+
 function HomePage(props) {
     const [imageSrc, setImageSrc] = useState("");
     const [imageInst, setImageInst] = useState(null);
@@ -48,6 +49,7 @@ function HomePage(props) {
     //   //   download(data, `image.${extension}`, mimeType);
     //   // }
     // };
+
     return (
       <div className="home-page">
         <div className="center">
@@ -79,4 +81,6 @@ function HomePage(props) {
       </div>
     );
   }
+
   export default HomePage;
+  
