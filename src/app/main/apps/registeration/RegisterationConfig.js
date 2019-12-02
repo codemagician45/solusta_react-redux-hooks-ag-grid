@@ -1,4 +1,5 @@
 import Registeration from './registeration-form/Registeration'
+import PrintModal from './ImageEditor/ImagePrintModal'
 import React from 'react';
 export const RegisterationConfig = {
     settings: {
@@ -14,7 +15,11 @@ export const RegisterationConfig = {
         {
             path     : '/app/registeration/registeration-forms',
             component: Registeration
-        }        
+        },
+        {
+            path     : '/app/registeration/badges',
+            component: PrintModal
+        }         
         
     ]
 };

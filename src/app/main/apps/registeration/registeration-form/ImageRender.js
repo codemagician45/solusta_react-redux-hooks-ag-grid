@@ -2,13 +2,10 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import * as Actions from '../store/actions';
 import { Link} from 'react-router-dom';
-function ImageRender(props){
-    const dispatch = useDispatch();
-    const products = useSelector(({registerApp}) => registerApp.products.data);
-    useEffect(() => {
-        dispatch(Actions.getProducts());
-    }, [dispatch]);
 
+function ImageRender(props){
+
+    const products = useSelector(({registerApp}) => registerApp.products.data);
     let id = props.data.id;
     let image_url = products.filter((product) => {return product.id = id })[0].mainPhoto;
     let image_type = products.filter((product) => {return product.id = id })[0].mainPhotoContentType;

@@ -4,11 +4,11 @@ const initialState = {
     data      : []
 };
 
-const productsReducer = function (state = initialState, action) {
+const badgeReducer = function (state = initialState, action) {
 
     switch ( action.type )
     {
-        case Actions.GET_PRODUCTS:
+        case Actions.GET_BADGE:
         {
             return {
                 ...state,
@@ -22,4 +22,4 @@ const productsReducer = function (state = initialState, action) {
     }
 };
 
-export default productsReducer;
+export default badgeReducer;

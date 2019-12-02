@@ -6,14 +6,16 @@ import {withRouter} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import * as Actions from '../store/actions';
 import ImageRender from './ImageRender';
-// import CubeRenderer from './ImageRender'
+
 function RegisterationTable(props) {
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
     console.log(products)
     useEffect(() => {
         dispatch(Actions.getProducts());
-    }, [dispatch]);  
+    }, [dispatch]);
+    
+    
     const columnDefs= [
         {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'45px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender"},
