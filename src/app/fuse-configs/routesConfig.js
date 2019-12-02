@@ -2,7 +2,7 @@ import React from 'react';
 import {Redirect} from 'react-router-dom';
 import {FuseUtils} from '@fuse';
 
-import { RegistrationConfig } from 'app/main/apps/registeration/RegistrationConfig';
+import { RegistrationConfig } from 'app/main/apps/registration/RegistrationConfig';
 import { LoginConfig } from 'app/main/login/LoginConfig';
 import { LogoutConfig } from 'app/main/logout/LogoutConfig';
 
