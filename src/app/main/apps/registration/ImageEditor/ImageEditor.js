@@ -25,35 +25,27 @@ function HomePage(props) {
     const [image, setImage] = useState(props.image);
     const imageEditor = React.createRef();
     
-    // const imageEditor = React.createRef();
-    
-    // console.log("ImageEditor",imageEditor);
-    // const imageEditorInst = imageEditor && imageEditor.current && imageEditor.current.imageEditorInst;
-    // const data = imageEditorInst && imageEditorInst.toDataURL();
-    // console.log("data",data)
-
     useEffect(() => {
       setImageInst(imageEditor.current.imageEditorInst || null);
     }, [imageEditor.current]);
 
     console.log('here crop data: ', imageInst && imageInst.toDataURL());
 
-    // const saveImageToDisk = () => {
-    //   const imageEditorInst = imageEditor.current.imageEditorInst;
-    //   console.log("imageEditorInst",imageEditorInst)
-    //   const data = imageEditorInst.toDataURL();
-    //   console.log("data",data)
-    //   // if (data) {
-    //   //   const mimeType = data.split(";")[0];
-    //   //   const extension = data.split(";")[0].split("/")[1];
-    //   //   download(data, `image.${extension}`, mimeType);
-    //   // }
-    // };
+    const saveImageToDisk = () => {
+      const imageEditorInst = imageEditor.current.imageEditorInst;
+      const data = imageEditorInst.toDataURL();
+      console.log("data",data)
+      // if (data) {
+      //   const mimeType = data.split(";")[0];
+      //   const extension = data.split(";")[0].split("/")[1];
+      //   download(data, `image.${extension}`, mimeType);
+      // }
+    };
 
     return (
       <div className="home-page">
         <div className="center">
-          {/* <Button className='button' onClick={saveImageToDisk}>Save Image to Disk</Button> */}
+          <Button className='button' onClick={saveImageToDisk}>Save Image to Disk</Button>
         </div>
         <ImageEditor
           includeUI={{
