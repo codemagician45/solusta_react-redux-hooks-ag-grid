@@ -7,7 +7,6 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import * as Actions from '../store/actions';
 import ImageRender from './ImageRender';
-// import CubeRenderer from './ImageRender';
 
 function RegistrationTable(props) {
     const dispatch = useDispatch();
