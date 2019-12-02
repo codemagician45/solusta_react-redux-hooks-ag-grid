@@ -125,9 +125,9 @@ function Image(props)
                                 <div style={modalStyle}  className={classes.paper}>
                                     <h1 style={name_style}>{name}</h1>
                                     <h2 style={companyName_style}>{companyName}</h2>
-                                    <img src ='assets/images/background/background.png' style={background}/>
+                                    <img src ='assets/images/background/background.png' style={background} alt={'port-0'}/>
                                     <div style={photo}>
-                                        <img src = {image} style={photo_img} delay={100}/>
+                                        <img src = {image} style={photo_img} delay={100} alt={'port-1'}/>
                                     </div>
                                     
                                 </div>
