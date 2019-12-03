@@ -22,12 +22,8 @@ const myTheme = {
 };
 
 function HomePage(props) {
-    // const [imageSrc, setImageSrc] = useState("");
-    // const [imageInst, setImageInst] = useState(null);
     const [image, setImage] = useState(props.image);
     const imageEditor = React.createRef();
-    const imageEditorInst = (imageEditor.current) ? (imageEditor.current) : "None";
-    const data = (!imageEditorInst == 'None') ? (imageEditorInst.toDataURL()) : "No Data";
 
     useEffect(() => {
       setImage(props.image);
