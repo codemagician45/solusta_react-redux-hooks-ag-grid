@@ -62,10 +62,6 @@ function Image(props) {
     useEffect(() => {
         dispatch(Actions.getProducts());
     }, [dispatch]);
-
-    useEffect(() => {
-        dispatch(Actions.setImage(images));
-    }, [dispatch]);
     
     const { id } = props.match.params;
     const image = images && images.filter((image) => {
