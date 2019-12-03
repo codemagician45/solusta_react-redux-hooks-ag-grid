@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import withReducer from 'app/store/withReducer';
 import {useDispatch, useSelector} from 'react-redux';
 import "tui-image-editor/dist/tui-image-editor.css";
 import ImageEditor from "@toast-ui/react-image-editor";
 import {Button} from '@material-ui/core';
+
+import * as Actions from '../store/actions';
+import reducer from '../store/reducers';
 
 const icona = require("tui-image-editor/dist/svg/icon-a.svg");
 const iconb = require("tui-image-editor/dist/svg/icon-b.svg");
@@ -23,21 +27,38 @@ const myTheme = {
 };
 
 function HomePage(props) {
-    const dispatch = useDispatch();
-    const [imageSrc, setImageSrc] = useState("");
-    const [imageInst, setImageInst] = useState(null);
-    const [image, setImage] = useState(props.image);
-    const imageEditor = React.createRef();
-    
-    useEffect(() => {
-      setImageInst(imageEditor.current.imageEditorInst || null);
-    }, [imageEditor.current]);
+  const dispatch = useDispatch();
+  const [image, setImage] = useState(props.image);
+  const [rect, setRect] = useState(null);
+  const imageEditor = React.createRef();
 
-    const saveImageToDisk = () => {
-      const { imageEditorInst } = imageEditor.current;
-      const data = imageEditorInst.toDataURL();
-      props.onCrop(data);
+  useEffect(() => {
+    setImage(props.image);
+  }, [props.image]);
+
+  useEffect(() => {
+    props.onCrop(image);
+  }, [props, image]);
+
+  const saveImageToDisk = () => {
+    const { imageEditorInst } = imageEditor.current;
+    const data = imageEditorInst.toDataURL();
+    setImage(data);
+    dispatch(Actions.setImage(data));
+  };
+
+  const setCropImage = (e) => {
+    const cropRect = {
+      left: e.left,
+      top: e.top,
+      width: e.width,
+      height: e.height,
     };
+    setRect(cropRect);
+    // console.log('current image: ', cropRect);
+  }
+
+    // console.log('here inside the image editor hook: ', image);
 
     return (
       <React.Fragment>
@@ -69,5 +90,5 @@ function HomePage(props) {
     );
   }
 
-  export default HomePage;
+  export default withReducer('registerApp', reducer)(HomePage);
   

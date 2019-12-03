@@ -46,7 +46,7 @@ function ToolbarLayout1(props)
 
                         <div className={classes.separator}/>
 
-                        <FuseSearch/>
+                        {/* <FuseSearch/> */}
 
                         <Hidden lgUp>
 
@@ -56,7 +56,7 @@ function ToolbarLayout1(props)
 
                         <div className={classes.separator}/>
 
-                        <QuickPanelToggleButton/>
+                        {/* <QuickPanelToggleButton/> */}
                     </div>
 
                     {config.navbar.display && config.navbar.position === 'right' && (
