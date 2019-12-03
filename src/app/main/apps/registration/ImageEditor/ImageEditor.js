@@ -22,20 +22,26 @@ const myTheme = {
 };
 
 function HomePage(props) {
-    const [imageSrc, setImageSrc] = useState("");
-    const [imageInst, setImageInst] = useState(null);
+    // const [imageSrc, setImageSrc] = useState("");
+    // const [imageInst, setImageInst] = useState(null);
     const [image, setImage] = useState(props.image);
     const imageEditor = React.createRef();
 
     useEffect(() => {
-      setImageInst(imageEditor.current.imageEditorInst || null);
-    }, [imageEditor.current]);
+      setImage(props.image);
+    }, [props]);
+
+    useEffect(() => {
+      props.onCrop(image);
+    }, [props, image]);
 
     const saveImageToDisk = () => {
       const { imageEditorInst } = imageEditor.current;
       const data = imageEditorInst.toDataURL();
-      props.onCrop(data);
+      setImage(data);
     };
+
+    console.log('here inside the image editor hook: ', image);
 
     return (
       <React.Fragment>
