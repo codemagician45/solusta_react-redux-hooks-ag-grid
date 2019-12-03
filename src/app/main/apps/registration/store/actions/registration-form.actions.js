@@ -13,7 +13,7 @@ export function getProducts()
        key: "value"
     };
     
-    const request = axios.get('https://stage01.solusta.me/api/attendee-sas', bodyParameters, config);
+    const request = axios.get('https://stage02.solusta.me/api/attendee-sas', bodyParameters, config);
 
     return (dispatch) =>
         request.then((response) =>

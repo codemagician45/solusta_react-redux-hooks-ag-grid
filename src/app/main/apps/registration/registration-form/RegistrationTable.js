@@ -18,7 +18,7 @@ function RegistrationTable(props) {
     }, [dispatch]);
 
     const columnDefs= [
-        {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'45px' };}},
+        {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'45px' };}, headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: true,checkboxSelection: true},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender"},
         {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'45px' };}},
         {headerName: 'Middle Name', field: 'middleName',cellStyle:() => { return { padding:'45px' };}},
@@ -60,7 +60,7 @@ function RegistrationTable(props) {
     return (
         <div
           className="table-responsive ag-theme-balham"
-          style={{height:'600px', width: '100%', fontSize: '16px' }}
+          style={{height:'670px', width: '100%', fontSize: '16px' }}
         >
             <AgGridReact
                 columnDefs={columnDefs}
