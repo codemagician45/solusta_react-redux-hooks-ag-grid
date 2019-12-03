@@ -9,6 +9,7 @@ import reducer from '../store/reducers';
 import HomePage from './ImageEditor';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
+import printJS from 'print-js';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -96,6 +97,9 @@ function Image(props) {
     const handleClose = () => {
         setOpen(false);
     };
+    const print = () => {
+        printJS({printable: 'modal-print',type: 'html',scanStyles:true});
+    }
 
     return (
         <div>
@@ -115,8 +119,9 @@ function Image(props) {
                         <FuseAnimate animation="transition.slideRightIn" delay={300}>
                             <Button onClick={handleOpen} className="whitespace-no-wrap" variant="contained">
                                 <span className="hidden sm:flex">Print Badge</span>
-                            </Button>
+                            </Button>   
                         </FuseAnimate>
+                        
                     </div>
                 }
                 content={
@@ -129,15 +134,21 @@ function Image(props) {
                                 open={open}
                                 onClose={handleClose}
                             >
-                                <div style={modalStyle}  className={classes.paper}>
+                                <div style={modalStyle}  className={classes.paper} >
                                     {image && image[0] && (
                                         <React.Fragment>
-                                            <h1 className={classes.nameStyle}>{name}</h1>
-                                            <h2 className={classes.companyNameStyle} >{image[0].companyName}</h2>
-                                            <img src ='assets/images/background/background.png' className={classes.backGround} alt={'port-0'}/>
-                                            <div className={classes.photo}>
-                                                <img src = {modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
+                                            <div id="modal-print">
+                                                <h1 className={classes.nameStyle}>{name}</h1>
+                                                <h2 className={classes.companyNameStyle}>{image[0].companyName}</h2>
+                                                <img src ='assets/images/background/background.png' className={classes.backGround} alt={'port-0'}   />
+                                                <div className={classes.photo}>
+                                                    <img src={modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
+                                                </div>
                                             </div>
+                                            
+                                            <Button onClick={print} className="whitespace-no-wrap" variant="contained">
+                                                <span className="hidden sm:flex">Print Test</span>
+                                            </Button>
                                         </React.Fragment>
                                     )}
                                 </div>

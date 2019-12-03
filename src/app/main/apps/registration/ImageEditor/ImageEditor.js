@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {useDispatch, useSelector} from 'react-redux';
 import "tui-image-editor/dist/tui-image-editor.css";
 import ImageEditor from "@toast-ui/react-image-editor";
 import {Button} from '@material-ui/core';
@@ -22,13 +23,12 @@ const myTheme = {
 };
 
 function HomePage(props) {
+    const dispatch = useDispatch();
     const [imageSrc, setImageSrc] = useState("");
     const [imageInst, setImageInst] = useState(null);
     const [image, setImage] = useState(props.image);
     const imageEditor = React.createRef();
-    const imageEditorInst = (imageEditor.current) ? (imageEditor.current) : "None";
-    const data = (!imageEditorInst == 'None') ? (imageEditorInst.toDataURL()) : "No Data";
-
+    
     useEffect(() => {
       setImageInst(imageEditor.current.imageEditorInst || null);
     }, [imageEditor.current]);
