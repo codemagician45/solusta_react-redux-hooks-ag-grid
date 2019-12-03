@@ -29,7 +29,12 @@ const navigationConfig = [
                         'type' : 'item',
                         'url'  : '/app/registration/accreditation'
                     },
-                    
+                    {
+                        'id'   : 'category',
+                        'title': 'Add New',
+                        'type' : 'item',
+                        'url'  : '/app/registration/category'
+                    }
                 ]
             },
             {
@@ -51,7 +56,7 @@ const navigationConfig = [
                         'url'  : '/app/workshop/workshop-accreditations'
                     },    
                 ]
-            }
+            },
         ]
     },
 ];

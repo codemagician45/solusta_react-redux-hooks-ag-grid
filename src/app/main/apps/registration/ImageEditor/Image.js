@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {Button,Icon, Typography } from '@material-ui/core';
 import {FuseAnimate,FusePageCarded} from '@fuse';
 import {useDispatch, useSelector} from 'react-redux';
@@ -50,13 +50,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Image(props) {
-    
     const dispatch = useDispatch();
     const images = useSelector(({registerApp}) => registerApp.products.data);
+    const img = useSelector(({registerApp}) => registerApp.image.data);
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
-    const [modalImg, setModalImg] = React.useState(null);
-    
+    const [modalImg, setModalImg] = React.useState(null);    
     const classes = useStyles();
     
     useEffect(() => {
@@ -93,6 +92,8 @@ function Image(props) {
         setOpen(false);
     };
 
+    console.log('here in parent component: ', img);
+
     return (
         <div>
             <FusePageCarded
@@ -118,7 +119,7 @@ function Image(props) {
                 content={
                      (
                          <React.Fragment>
-                            <HomePage image = {imgSrc} onCrop={setModalImage}/>
+                            <HomePage image={imgSrc} onCrop={setModalImage}/>
                             <Modal
                                 aria-labelledby="print-modal-title"
                                 aria-describedby="print-modal-description"

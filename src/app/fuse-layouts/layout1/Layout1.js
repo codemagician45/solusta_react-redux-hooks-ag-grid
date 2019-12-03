@@ -138,7 +138,7 @@ function Layout1(props)
                                         <FooterLayout1/>
                                     )}
 
-                                    <SettingsPanel/>
+                                    {/* <SettingsPanel/> */}
 
                                 </div>
 
@@ -216,7 +216,7 @@ function Layout1(props)
                                     <FooterLayout1/>
                                 )}
 
-                                <SettingsPanel/>
+                                {/* <SettingsPanel/> */}
 
                             </div>
 
