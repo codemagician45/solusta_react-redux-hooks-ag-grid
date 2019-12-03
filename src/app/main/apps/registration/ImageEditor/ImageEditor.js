@@ -26,6 +26,8 @@ function HomePage(props) {
     const [imageInst, setImageInst] = useState(null);
     const [image, setImage] = useState(props.image);
     const imageEditor = React.createRef();
+    const imageEditorInst = (imageEditor.current) ? (imageEditor.current) : "None";
+    const data = (!imageEditorInst == 'None') ? (imageEditorInst.toDataURL()) : "No Data";
 
     useEffect(() => {
       setImageInst(imageEditor.current.imageEditorInst || null);

@@ -78,7 +78,7 @@ function Image(props) {
         setModalImg(data);
     }
 
-    const getModalStyle = () => {
+    function getModalStyle() {
         const top = 50;
         const left = 50;
         
