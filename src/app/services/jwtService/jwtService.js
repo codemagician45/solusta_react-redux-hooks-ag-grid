@@ -13,6 +13,7 @@ class jwtService extends FuseUtils.EventEmitter {
         axios.interceptors.response.use(response => {
             return response;
         }, err => {
+            console.log(err)
             return new Promise((resolve, reject) => {
                 if ( err.response.status === 401 && err.config && !err.config.__isRetryRequest )
                 {
@@ -52,7 +53,7 @@ class jwtService extends FuseUtils.EventEmitter {
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
-                url: 'https://stage01.solusta.me/api/authenticate',
+                url: 'https://stage02.solusta.me/api/authenticate',
                 headers: {}, 
                 data: {
                   username: email,
@@ -71,7 +72,7 @@ class jwtService extends FuseUtils.EventEmitter {
                     }
                     
                     axios.get( 
-                        'https://stage01.solusta.me/api/account',
+                        'https://stage02.solusta.me/api/account',
                         bodyParameters,
                         config).then((response) => {
                             let user = {data:{}};
@@ -106,7 +107,7 @@ class jwtService extends FuseUtils.EventEmitter {
             let bodyParameters = {
                 key: "value"
             }
-            axios.get('https://stage01.solusta.me/api/account',bodyParameters,config)
+            axios.get('https://stage02.solusta.me/api/account',bodyParameters,config)
                 .then(response => {
                     // console.log(response)
                     let user = {data:{}};

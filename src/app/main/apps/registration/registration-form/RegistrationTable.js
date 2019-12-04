@@ -1,12 +1,17 @@
 import React, {useEffect} from 'react';
 import { AgGridReact } from 'ag-grid-react';
+import { AllModules } from '@ag-grid-enterprise/all-modules';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+
 import {withRouter} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 
 import * as Actions from '../store/actions';
 import ImageRender from './ImageRender';
+
 
 function RegistrationTable(props) {
     const dispatch = useDispatch();
@@ -18,64 +23,71 @@ function RegistrationTable(props) {
     }, [dispatch]);
 
     const columnDefs= [
-        {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender"},
-        {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Middle Name', field: 'middleName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Arabic First Name', field: 'arabicFirstName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Arabic Middle Name', field: 'arabicMiddleName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Arabic Last Name', field: 'arabicLastName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Gender', field: 'gender',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Phone', field: 'phone',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'45px' };}},
-        {headerName: 'Age', field: 'age',cellStyle:() => { return { padding:'45px' };}},
+        {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: true,checkboxSelection: true},
+        {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender", filter: false},
+        {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
+        {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'15px' };}},
+        {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'15px' };}},
+        {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
     ];
-        
+
+    let defs = {
+        defaultColDef: {
+            resizable: true,
+            sortable: true,
+            filter: true,
+        },
+        sideBar: "columns",
+        rowData: [],
+        modules: AllModules,
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+        overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
+    };
+
     const rowData = products.map((item)=>{
         const temp ={
             id: item.id,
             firstName: item.firstName,
-            middleName: item.middleName,
             lastName: item.lastName,
-            arabicFirstName: item.arabicFirstName,
-            arabicMiddleName: item.arabicMiddleName,
-            arabicLastName: item.arabicLastName,
-            gender: item.gender,
             email: item.email,
-            phone: item.phone,
-            companyName:item.companyName,
-            age:item.age
+            companyName:item.companyName
         };
         return temp;
     });
-    
+
     const frameworkComponents = {
         imageRender:ImageRender
     };
-    const getRowHeight = () => {return 120;};
-    // const headerHeight = () => {return 40;};
+    const getRowHeight = () => {return 48;};
+    const headerHeight = () => {return 32;};
 
     return (
         <div
           className="table-responsive ag-theme-balham"
-          style={{height:'600px', width: '100%', fontSize: '16px' }}
+          style={{height:'100%', width: '100%', fontSize: '16px' }}
         >
             <AgGridReact
                 columnDefs={columnDefs}
+                defaultColDef={defs.defaultColDef}
+                // rowModelType={'serverSide'}
                 rowData={rowData}
                 frameworkComponents = {frameworkComponents}
                 // onGridReady={onGridReady}
                 pagination={true}
-                enableSorting={true}
-                enableFilter={true}
                 getRowHeight = {getRowHeight}
-                // headerHeight = {headerHeight} 
+                headerHeight = {headerHeight}
+                floatingFilter = {true}
+                overlayLoadingTemplate={defs.overlayLoadingTemplate}
+                overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
+                // modules={defs.modules}
+                // sideBar={defs.sideBar}
                 >
             </AgGridReact>
         </div>
     );
 }
+
+
+
 
 export default withRouter(RegistrationTable);

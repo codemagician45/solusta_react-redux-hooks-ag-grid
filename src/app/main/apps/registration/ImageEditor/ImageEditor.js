@@ -62,7 +62,7 @@ function HomePage(props) {
 
     return (
       <React.Fragment>
-        <Button className='button' onClick={saveImageToDisk}>Save Image to Disk</Button>
+        <Button className="whitespace-no-wrap" variant="contained" onClick={saveImageToDisk}>Save Cropped Image Result</Button>
         <ImageEditor
           includeUI={{
             loadImage: {

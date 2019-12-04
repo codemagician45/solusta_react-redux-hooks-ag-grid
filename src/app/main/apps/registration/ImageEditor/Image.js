@@ -47,6 +47,9 @@ const useStyles = makeStyles(theme => ({
 
     photoImg: {
         width:'100%'
+    },
+    modal_print: {
+        position:'relative'
     }
 }));
 
@@ -93,11 +96,11 @@ function Image(props) {
         setOpen(false);
     };
     const print = () => {
-        printJS({printable: 'modal-print',type: 'html',scanStyles:true});
+        // printJS({printable:'modal-print',type:'html', scanStyles:true});
+        document.getElementById('print_btn').style = 'display:none';
+        window.print();
+        document.getElementById('print_btn').style = 'display:block';
     }
-
-    console.log('here in parent component: ', img);
-
     return (
         <div>
             <FusePageCarded
@@ -105,7 +108,7 @@ function Image(props) {
                     <div className="flex flex-1 w-full items-center justify-between">
                         <div className="flex items-center">
                             <FuseAnimate animation="transition.expandIn" delay={300}>
-                                <Typography className="normal-case flex items-center sm:mb-12" component={Link} role="button" to="/app/registration/registration-forms" color="inherit">
+                                <Typography className="normal-case flex items-center" component={Link} role="button" to="/app/registration/registration-forms" color="inherit">
                                     <Icon className="text-32 mr-0 sm:mr-12">arrow_back</Icon>
                                 </Typography>
                             </FuseAnimate>
@@ -134,7 +137,7 @@ function Image(props) {
                                 <div style={modalStyle}  className={classes.paper} >
                                     {image && image[0] && (
                                         <React.Fragment>
-                                            <div id="modal-print">
+                                            <div id="modal-print" className={classes.modal_print}>
                                                 <h1 className={classes.nameStyle}>{name}</h1>
                                                 <h2 className={classes.companyNameStyle}>{image[0].companyName}</h2>
                                                 <img src ='assets/images/background/background.png' className={classes.backGround} alt={'port-0'}   />
@@ -143,7 +146,7 @@ function Image(props) {
                                                 </div>
                                             </div>
                                             
-                                            <Button onClick={print} className="whitespace-no-wrap" variant="contained">
+                                            <Button onClick={print} className="whitespace-no-wrap" variant="contained" id="print_btn">
                                                 <span className="hidden sm:flex">Print Test</span>
                                             </Button>
                                         </React.Fragment>
