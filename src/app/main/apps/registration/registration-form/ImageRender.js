@@ -15,11 +15,18 @@ function ImageRender(props){
         padding:'5px'
     };
 
-    return(
-        <Link to={`/app/registration/registration-forms/${id}`}>
-            <img src={`data:${image_type};base64, ${image_url}`} style={style} alt={'profile'}/>
-        </Link>
-    );
+    if(image_url === '' )
+        return (
+          <img src={'assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{padding:'5px'}}/>
+        );
+    else {
+        return(
+          <Link to={`/app/registration/registration-forms/${id}`}>
+              <img src={`data:${image_type};base64, ${image_url}`} style={style} alt={'profile'}/>
+          </Link>
+        );
+
+    }
 }
 
 export default ImageRender;

@@ -35,11 +35,13 @@ function RegistrationTable(props) {
         defaultColDef: {
             resizable: true,
             sortable: true,
-            filter: true
+            filter: true,
         },
         sideBar: "columns",
         rowData: [],
-        modules: AllModules
+        modules: AllModules,
+        overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+        overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
 
     const rowData = products.map((item)=>{
@@ -75,7 +77,8 @@ function RegistrationTable(props) {
                 getRowHeight = {getRowHeight}
                 headerHeight = {headerHeight}
                 floatingFilter = {true}
-
+                overlayLoadingTemplate={defs.overlayLoadingTemplate}
+                overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
                 // modules={defs.modules}
                 // sideBar={defs.sideBar}
                 >
