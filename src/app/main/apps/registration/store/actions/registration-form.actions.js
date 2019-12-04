@@ -4,16 +4,15 @@ export const GET_PRODUCTS = '[REGISTER APP] GET PRODUCTS';
 
 export function getProducts()
 {
-    // const request = axios.get('/api/e-commerce-app/products');
-    let token = localStorage.getItem('jwt_access_token');
-    let config = {
-        headers: {'Authorization': "bearer " + token}
+    const header = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`
+        }
     };
-    let bodyParameters = {
+    const body = {
        key: "value"
     };
-    
-    const request = axios.get('https://stage02.solusta.me/api/attendee-sas', bodyParameters, config);
+    const request = axios.get('https://stage02.solusta.me/api/attendee-sas', body, header);
 
     return (dispatch) =>
         request.then((response) =>

@@ -96,10 +96,10 @@ function Image(props) {
         setOpen(false);
     };
     const print = () => {
-        // printJS({printable:'modal-print',type:'html', scanStyles:true});
-        document.getElementById('print_btn').style = 'display:none';
-        window.print();
-        document.getElementById('print_btn').style = 'display:block';
+        printJS({printable:'modal-print',type:'html', scanStyles:true});
+        // document.getElementById('print_btn').style = 'display:none';
+        // window.print();
+        // document.getElementById('print_btn').style = 'display:block';
     }
     return (
         <div>
@@ -144,6 +144,9 @@ function Image(props) {
                                                 <div className={classes.photo}>
                                                     <img src={modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
                                                 </div>
+                                            </div>
+                                            <div className={classes.photo}>
+                                                <img src={modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
                                             </div>
                                             
                                             <Button onClick={print} className="whitespace-no-wrap" variant="contained" id="print_btn">

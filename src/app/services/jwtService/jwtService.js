@@ -13,11 +13,9 @@ class jwtService extends FuseUtils.EventEmitter {
         axios.interceptors.response.use(response => {
             return response;
         }, err => {
-            console.log(err)
             return new Promise((resolve, reject) => {
                 if ( err.response.status === 401 && err.config && !err.config.__isRetryRequest )
                 {
-                    
                     // if you ever get an unauthorized response, logout the user
                     this.emit('onAutoLogout', 'Invalid Account ');
                     this.setSession(null);
@@ -61,20 +59,15 @@ class jwtService extends FuseUtils.EventEmitter {
                 }
               }).then(response => {
                 if ( response.data.id_token )
-                {
+                {             
                     this.setSession(response.data.id_token);
-                    let config = {
-                        headers: {'Authorization': "bearer " + response.data.id_token}
-                    };
                     
-                    let bodyParameters = {
+                    const body = {
                        key: "value"
                     }
                     
-                    axios.get( 
-                        'https://stage02.solusta.me/api/account',
-                        bodyParameters,
-                        config).then((response) => {
+                    axios.get('https://stage02.solusta.me/api/account', body)
+                        .then((response) => {
                             let user = {data:{}};
                             user.data = response.data;
                             user.data.password = password;
@@ -83,12 +76,11 @@ class jwtService extends FuseUtils.EventEmitter {
                             user.data.settings = {};
                             user.data.shortcuts = [];
                             user.role = response.data.login
-                            console.log(user);
                             resolve(user);
-                    }).catch(
-                        (error) => {
-                        console.log(error)
-                    });
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        });
                 }
                 else
                 {
@@ -100,16 +92,12 @@ class jwtService extends FuseUtils.EventEmitter {
 
     signInWithToken = () => {
         return new Promise((resolve, reject) => {
-            let token = localStorage.getItem('jwt_access_token');
-            let config = {
-                headers: {'Authorization': "bearer " + token}
-            };
-            let bodyParameters = {
+            let body = {
                 key: "value"
-            }
-            axios.get('https://stage02.solusta.me/api/account',bodyParameters,config)
+            };
+
+            axios.get('https://stage02.solusta.me/api/account',body)
                 .then(response => {
-                    // console.log(response)
                     let user = {data:{}};
                     user.data = response.data;
                     user.data.displayName = response.data.firstName +' '+ response.data.lastName;
@@ -119,7 +107,6 @@ class jwtService extends FuseUtils.EventEmitter {
                     user.role = response.data.login
                     if ( user.role )
                     {
-                        this.setSession(token);
                         resolve(user);
                     }
                     else
@@ -136,7 +123,6 @@ class jwtService extends FuseUtils.EventEmitter {
     };
 
     setSession = access_token => {
-        // console.log(access_token)
         if ( access_token )
         {
             localStorage.setItem('jwt_access_token', access_token);
