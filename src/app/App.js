@@ -13,6 +13,9 @@ import {StylesProvider, jssPreset, createGenerateClassName} from '@material-ui/s
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
+import {LicenseManager} from "@ag-grid-enterprise/core";
+LicenseManager.setLicenseKey("Evaluation_License_Not_For_Production_29_December_2019__MTU3NzU3NzYwMDAwMA==a3a7a7e770dea1c09a39018caf2c839c");
+
 const jss = create({
     ...jssPreset(),
     plugins       : [...jssPreset().plugins, jssExtend()],

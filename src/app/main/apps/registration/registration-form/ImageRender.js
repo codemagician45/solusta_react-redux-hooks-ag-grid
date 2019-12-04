@@ -10,13 +10,15 @@ function ImageRender(props){
     let image_type = products.filter((product) => {return product.id === parseInt(id) })[0].mainPhotoContentType;
 
     const style = {
-        height:'120px'
+        height:'48px',
+        width: '48',
+        padding:'5px'
     };
 
     return(
         <Link to={`/app/registration/registration-forms/${id}`}>
             <img src={`data:${image_type};base64, ${image_url}`} style={style} alt={'profile'}/>
-        </Link>        
+        </Link>
     );
 }
 
