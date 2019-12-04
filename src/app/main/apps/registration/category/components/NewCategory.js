@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import {useDispatch, useSelector} from 'react-redux';
 
 // import @material-ui
 import { 
     Button, Grid, TextField,
     AppBar, Tabs, Tab,
-    Typography, Box 
+    Typography, Box, FormControl,
+    InputLabel, Select, MenuItem,
 } from '@material-ui/core';
 import {
     MuiPickersUtilsProvider,
@@ -14,6 +16,11 @@ import {
 } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/core/styles';
 import DateFnsUtils from '@date-io/date-fns';
+
+// import redux
+import withReducer from 'app/store/withReducer';
+import * as Actions from '../../store/actions';
+import reducer from '../../store/reducers';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -29,10 +36,19 @@ const useStyles = makeStyles(theme => ({
         textAlign: 'center',
     },
 
-    tabItem: {
+    selectItem: {
+        marginTop: theme.spacing(2),
+        textAlign: 'center',
+    },
+
+    categoryGrid: {
         textAlign: "center",
-        paddingLeft: theme.spacing(7),
-        paddingRight: theme.spacing(7),
+        margin: theme.spacing(6),
+        boxShadow: theme.shadows[1],
+    },
+
+    submitGrid: {
+        textAlign: "center",
         marginTop: theme.spacing(4),
     },
 
@@ -40,6 +56,30 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: '400px',
+    },
+
+    select: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        textAlign: 'left',
+        width: '400px'
+    },
+
+    button: {
+        width: '400px',
+    },
+
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    paper: {
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
     },
 }));
 
@@ -82,21 +122,63 @@ function LinkTab(props) {
     );
 }
 
+const validateEmail = (email) => {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
 function NewCategory(props) {
-    const [value, setValue] = React.useState(0);
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const [tabIndex, setTabIndex] = useState(0);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNum, setPhoneNum] = useState('');
+    const [companyName, setCompanyName] = useState('');
+    const [gender, setGender] = useState(1);
+    const [qId, setQId] = useState('');
+    const [passportNum, setPassportNum] = useState('');
+    const [nationality, setNationality] = useState('');
+    const [expiryDate, setExpiryDate] = useState(new Date());
+    const [birthDate, setBirthDate] = useState(new Date());
+    const [error, setError] = useState(false);
 
     const classes = useStyles();
-    const category = (props.match.path).split('/')[4];
+    const dispatch = useDispatch();
+    const categories = useSelector(({registration}) => registration.category.categories);
+    let category = (props.match.path).split('/')[4];
     
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-    
-    const handleDateChange = date => {
-      setSelectedDate(date);
-    };
 
+    useEffect(() => {
+        dispatch(Actions.getCategory());
+    }, [dispatch]);
+
+    const categoryInFo = categories && categories.filter((item) => {
+        if (category === 'event-crew') {
+            category = 'Event Crew';
+        }
+        return (item.categoryName).toUpperCase() === category.toUpperCase();
+    });
+
+    const saveAttendee = () => {
+        console.log('here in save attendee submit');
+        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && qId && passportNum && nationality) {
+            setError(false);
+            const data = {
+                firstName: firstName,
+                lastName: lastName,
+                gender: (gender === 1) ? 'MALE' : 'FEMALE',
+                phone: phoneNum,
+                email: email,
+                companyName: companyName,
+                attendeeCategorySAS: categoryInFo
+            };
+            
+            dispatch(Actions.saveAttendee(data));
+        } else {
+            setError(true);
+        }
+    };
+    // console.log('here inside the New Category: ', categories, categoryInFo);
     return(
         <React.Fragment>
             <div className={classes.root}>
@@ -105,90 +187,111 @@ function NewCategory(props) {
                         <TextField
                             id="outlined-basic"
                             className={classes.textField}
-                            label="First Name"
+                            label="First Name *"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            error={error && !firstName}
                             margin="normal"
-                            variant="outlined"
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6} className={classes.item}>
+                        <TextField
+                            id="outlined-basic *"
+                            className={classes.textField}
+                            label="Last Name *"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            error={error && !lastName}
+                            margin="normal"
                         />
                     </Grid>
                     <Grid item xs={12} md={6} className={classes.item}>
                         <TextField
                             id="outlined-basic"
                             className={classes.textField}
-                            label="Last Name"
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic"
-                            className={classes.textField}
-                            label="Email"
+                            label="Email *"
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={error && (!email || !validateEmail(email))}
                             margin="normal"
-                            variant="outlined"
                         />
                     </Grid>
                     <Grid item xs={12} md={6} className={classes.item}>
                         <TextField
                             id="outlined-basic"
                             className={classes.textField}
-                            label="Phone No"
+                            label="Phone No *"
+                            value={phoneNum}
+                            onChange={(e) => setPhoneNum(e.target.value)}
+                            error={error && !phoneNum}
                             margin="normal"
-                            variant="outlined"
                         />
                     </Grid>
                     <Grid item xs={12} md={6} className={classes.item}>
                         <TextField
                             id="outlined-basic"
                             className={classes.textField}
-                            label="Company Name"
+                            label="Company Name *"
+                            value={companyName}
+                            onChange={e => setCompanyName(e.target.value)}
+                            error={error && !companyName}
                             margin="normal"
-                            variant="outlined"
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic"
-                            className={classes.textField}
-                            label="Gender"
-                            margin="normal"
-                            variant="outlined"
-                        />
+                    <Grid item xs={12} md={6} className={classes.selectItem}>
+                        <FormControl className={classes.select}>
+                            <InputLabel id="demo-simple-select-label">Gender *</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={gender}
+                                onChange={e => setGender(e.target.value)}
+                                error={error && !gender}
+                            >
+                                <MenuItem value={1}>Male</MenuItem>
+                                <MenuItem value={2}>Female</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
-                    <Grid item xs={12} md={12} className={classes.tabItem}>
+                    <Grid item xs={12} md={12} className={classes.categoryGrid}>
                         <AppBar position="static">
                             <Tabs
                                 variant="fullWidth"
-                                value={value}
-                                onChange={handleChange}
+                                value={tabIndex}
+                                onChange={(e, newValue) => setTabIndex(newValue)}
                                 aria-label="nav tabs example"
                             >
                                 <LinkTab label="Qatar National ID" {...a11yProps(0)} />
                                 <LinkTab label="Passport" {...a11yProps(1)} />
                             </Tabs>
                         </AppBar>
-                        <TabPanel value={value} index={0}>
+                        <TabPanel value={tabIndex} index={0}>
                             <Grid container spacing={0} className={classes.container}>
                                 <Grid item xs={12} md={12} className={classes.item}>
                                     <TextField
                                         id="standard-basic"
                                         className={classes.textField}
-                                        label="QID"
+                                        label="QID *"
+                                        value={qId}
+                                        onChange={e => setQId(e.target.value)}
+                                        error={error && !qId}
                                         margin="normal"
                                     />
                                 </Grid>
                             </Grid>
                         </TabPanel>
-                        <TabPanel value={value} index={1}>
+                        <TabPanel value={tabIndex} index={1}>
                             <Grid container spacing={0} className={classes.container}>
                                 <Grid item xs={12} md={6} className={classes.item}>
                                     <TextField
-                                        id="outlined-basic"
+                                        id="standard-basic"
                                         className={classes.textField}
-                                        label="Passport No"
+                                        label="Passport No *"
+                                        value={passportNum}
+                                        onChange={(e) => setPassportNum(e.target.value)}
+                                        error={error && !passportNum}
                                         margin="normal"
-                                        variant="outlined"
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6} className={classes.item}>
@@ -198,9 +301,9 @@ function NewCategory(props) {
                                         format="MM-DD-YYYY"
                                         margin="normal"
                                         id="date-picker-inline"
-                                        label="Expiry Date"
-                                        value={selectedDate}
-                                        onChange={handleDateChange}
+                                        label="Expiry Date *"
+                                        value={expiryDate}
+                                        onChange={(date) => setExpiryDate(date)}
                                         KeyboardButtonProps={{
                                             'aria-label': 'change date',
                                         }}
@@ -208,11 +311,13 @@ function NewCategory(props) {
                                 </Grid>
                                 <Grid item xs={12} md={6} className={classes.item}>
                                     <TextField
-                                        id="outlined-basic"
+                                        id="standard-basic"
                                         className={classes.textField}
-                                        label="Nationality"
+                                        label="Nationality *"
+                                        value={nationality}
+                                        onChange={e => setNationality(e.target.value)}
+                                        error={error && !nationality}
                                         margin="normal"
-                                        variant="outlined"
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6} className={classes.item}>
@@ -222,9 +327,9 @@ function NewCategory(props) {
                                         format="MM-DD-YYYY"
                                         margin="normal"
                                         id="date-picker-inline"
-                                        label="Date of Birth"
-                                        value={selectedDate}
-                                        onChange={handleDateChange}
+                                        label="Date of Birth *"
+                                        value={birthDate}
+                                        onChange={(date) => setBirthDate(date)}
                                         KeyboardButtonProps={{
                                             'aria-label': 'change date',
                                         }}
@@ -232,6 +337,11 @@ function NewCategory(props) {
                                 </Grid>
                             </Grid>
                         </TabPanel>
+                    </Grid>
+                    <Grid item xs={12} md={12} className={classes.submitGrid}>
+                        <Button variant="contained" color="secondary" onClick={saveAttendee} className={classes.button}>
+                            Save
+                        </Button>
                     </Grid>
                 </Grid>
             </div>
@@ -239,4 +349,4 @@ function NewCategory(props) {
     );
 }
 
-export default NewCategory;
+export default withReducer('registration', reducer)(NewCategory);
