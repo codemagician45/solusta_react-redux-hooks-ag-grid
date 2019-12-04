@@ -8,6 +8,7 @@ import {
     AppBar, Tabs, Tab,
     Typography, Box, FormControl,
     InputLabel, Select, MenuItem,
+    Icon, IconButton,
 } from '@material-ui/core';
 import {
     MuiPickersUtilsProvider,
@@ -22,6 +23,7 @@ import withReducer from 'app/store/withReducer';
 import * as Actions from '../../store/actions';
 import reducer from '../../store/reducers';
 
+
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -34,6 +36,17 @@ const useStyles = makeStyles(theme => ({
 
     item: {
         textAlign: 'center',
+    },
+
+    profileItem: {
+        position: 'absolute',
+        bottom: 0,
+    },
+
+    imageItem: {
+        marginLeft: theme.spacing(6),
+        textAlign: 'center',
+        height: '100%',
     },
 
     selectItem: {
@@ -55,14 +68,14 @@ const useStyles = makeStyles(theme => ({
     textField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-        width: '400px',
+        width: '300px',
     },
 
     select: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         textAlign: 'left',
-        width: '400px'
+        width: '300px'
     },
 
     button: {
@@ -81,6 +94,16 @@ const useStyles = makeStyles(theme => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
     },
+
+    imagePicker: {
+        backgroundColor: '#55c39e',
+    },
+
+    img: {
+        display: 'block',
+        width: '100%',
+        height: '220px',
+    }
 }));
 
 function TabPanel(props) {
@@ -122,10 +145,19 @@ function LinkTab(props) {
     );
 }
 
+// validate Email
 const validateEmail = (email) => {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+
+// Convert image file content to base64
+const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
 
 function NewCategory(props) {
     const [tabIndex, setTabIndex] = useState(0);
@@ -140,17 +172,25 @@ function NewCategory(props) {
     const [nationality, setNationality] = useState('');
     const [expiryDate, setExpiryDate] = useState(new Date());
     const [birthDate, setBirthDate] = useState(new Date());
-    const [error, setError] = useState(false);
-
+    const [profile, setProfile] = useState(null);
+    const [error, setError] = useState(null);
+    
     const classes = useStyles();
     const dispatch = useDispatch();
     const categories = useSelector(({registration}) => registration.category.categories);
+    const attendee = useSelector(({registration}) => registration.category.attendee);
+    const savingSuccess = useSelector(({registration}) => registration.category.savingSuccess);    
     let category = (props.match.path).split('/')[4];
-    
 
     useEffect(() => {
         dispatch(Actions.getCategory());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (savingSuccess) {
+            props.history.push('/app/registration/category');
+        }
+    });
 
     const categoryInFo = categories && categories.filter((item) => {
         if (category === 'event-crew') {
@@ -159,10 +199,16 @@ function NewCategory(props) {
         return (item.categoryName).toUpperCase() === category.toUpperCase();
     });
 
-    const saveAttendee = () => {
-        console.log('here in save attendee submit');
+    const selectImg = (e) => {
+        if (e.target.files[0]) {
+            setProfile(e.target.files[0]);
+        }
+    };
+
+    const saveAttendee = async () => {
         if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && qId && passportNum && nationality) {
             setError(false);
+            const mainPhoto = profile && await toBase64(profile);
             const data = {
                 firstName: firstName,
                 lastName: lastName,
@@ -170,89 +216,133 @@ function NewCategory(props) {
                 phone: phoneNum,
                 email: email,
                 companyName: companyName,
-                attendeeCategorySAS: categoryInFo
+                attendeeCategorySAS: categoryInFo,
+                mainPhoto: mainPhoto.split(',')[1],
+                mainPhotoContentType: profile ? profile.type : null, 
             };
-            
+            // console.log('here in save attendee submit: ', mainPhoto.split(',')[1]);
             dispatch(Actions.saveAttendee(data));
         } else {
             setError(true);
         }
     };
-    // console.log('here inside the New Category: ', categories, categoryInFo);
+
+    console.log('here inside the New Category: ', categories, categoryInFo, attendee);
+
     return(
         <React.Fragment>
             <div className={classes.root}>
                 <Grid container spacing={0} className={classes.container}>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic"
-                            className={classes.textField}
-                            label="First Name *"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            error={error && !firstName}
-                            margin="normal"
-                        />
+                    <Grid item xs={3} md={3} className="relative">
+                        <Grid container spacing={0} className={classes.profileItem}>
+                            <Grid item xs={12} md={12} className={classes.imageItem}>
+                                <div className="relative">
+                                    <img src={(profile && URL.createObjectURL(profile)) || 'assets/images/avatars/profile.jpg'} className={classes.img} alt="note"/>
+                                    {/* <Fab
+                                        className="absolute right-0 bottom-0 m-8"
+                                        variant="extended"
+                                        size="small"
+                                        color="secondary"
+                                        aria-label="Delete Image"
+                                        onClick={removeImage}
+                                    >
+                                        <Icon fontSize="small">delete</Icon>
+                                    </Fab> */}
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} md={12} className={classes.imageItem}>
+                                <div className={classes.imagePicker}>
+                                    <input
+                                        accept="image/*"
+                                        className="hidden"
+                                        id="button-file"
+                                        type="file"
+                                        onChange={selectImg}
+                                    />
+                                    <label htmlFor="button-file">
+                                        <IconButton className="w-32 h-32 mx-4 p-0" component="span">
+                                            <Icon fontSize="small">image</Icon>
+                                        </IconButton>
+                                        Choose Image
+                                    </label>
+                                </div>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic *"
-                            className={classes.textField}
-                            label="Last Name *"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            error={error && !lastName}
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic"
-                            className={classes.textField}
-                            label="Email *"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            error={error && (!email || !validateEmail(email))}
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic"
-                            className={classes.textField}
-                            label="Phone No *"
-                            value={phoneNum}
-                            onChange={(e) => setPhoneNum(e.target.value)}
-                            error={error && !phoneNum}
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6} className={classes.item}>
-                        <TextField
-                            id="outlined-basic"
-                            className={classes.textField}
-                            label="Company Name *"
-                            value={companyName}
-                            onChange={e => setCompanyName(e.target.value)}
-                            error={error && !companyName}
-                            margin="normal"
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6} className={classes.selectItem}>
-                        <FormControl className={classes.select}>
-                            <InputLabel id="demo-simple-select-label">Gender *</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={gender}
-                                onChange={e => setGender(e.target.value)}
-                                error={error && !gender}
-                            >
-                                <MenuItem value={1}>Male</MenuItem>
-                                <MenuItem value={2}>Female</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <Grid item xs={9} md={9}>
+                        <Grid container spacing={0} className={classes.container}>
+                            <Grid item xs={12} md={6} className={classes.item}>
+                                <TextField
+                                    id="outlined-basic"
+                                    className={classes.textField}
+                                    label="First Name *"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    error={error && !firstName}
+                                    margin="normal"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6} className={classes.item}>
+                                <TextField
+                                    id="outlined-basic *"
+                                    className={classes.textField}
+                                    label="Last Name *"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    error={error && !lastName}
+                                    margin="normal"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6} className={classes.item}>
+                                <TextField
+                                    id="outlined-basic"
+                                    className={classes.textField}
+                                    label="Email *"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    error={error && (!email || !validateEmail(email))}
+                                    margin="normal"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6} className={classes.item}>
+                                <TextField
+                                    id="outlined-basic"
+                                    className={classes.textField}
+                                    label="Phone No *"
+                                    value={phoneNum}
+                                    onChange={(e) => setPhoneNum(e.target.value)}
+                                    error={error && !phoneNum}
+                                    margin="normal"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6} className={classes.item}>
+                                <TextField
+                                    id="outlined-basic"
+                                    className={classes.textField}
+                                    label="Company Name *"
+                                    value={companyName}
+                                    onChange={e => setCompanyName(e.target.value)}
+                                    error={error && !companyName}
+                                    margin="normal"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6} className={classes.selectItem}>
+                                <FormControl className={classes.select}>
+                                    <InputLabel id="demo-simple-select-label">Gender *</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={gender}
+                                        onChange={e => setGender(e.target.value)}
+                                        error={error && !gender}
+                                    >
+                                        <MenuItem value={1}>Male</MenuItem>
+                                        <MenuItem value={2}>Female</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12} md={12} className={classes.categoryGrid}>
                         <AppBar position="static">

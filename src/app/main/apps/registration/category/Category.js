@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 // import @material-ui
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, Snackbar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+// import redux
+import withReducer from 'app/store/withReducer';
+import * as Actions from '../store/actions';
+import reducer from '../store/reducers';
+
+// import components
+import Notification from './components/Notification';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -25,10 +34,20 @@ const useStyles = makeStyles(theme => ({
         width: '400px',
         textDecoration: 'uppercase'
     },
+
+    snackBar: {
+        marginTop: '50px',
+    }
 }));
 
 function Category(props) {
     const classes = useStyles();
+    const savingSuccess = useSelector(({registration}) => registration.category.savingSuccess);
+    const [openSnack, setOpenSnack] = useState(savingSuccess);
+
+    useEffect(() => {
+        setOpenSnack(savingSuccess);
+    }, [savingSuccess]);
 
     const addSpeaker = () => {
         props.history.push('/app/registration/category/speaker');
@@ -57,6 +76,10 @@ function Category(props) {
     const addContractor = () => {
         props.history.push('/app/registration/category/contractor');
     }
+
+    const closeSnack = () => {
+        setOpenSnack(false);
+    };
 
     return(
         <React.Fragment>
@@ -99,8 +122,24 @@ function Category(props) {
                     </Grid>
                 </Grid>
             </div>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                open={openSnack}
+                autoHideDuration={4000}
+                onClose={closeSnack}
+                className={classes.snackBar}
+            >
+                <Notification
+                    onClose={closeSnack}
+                    variant="success"
+                    message="Saving Attendee Success"
+                />
+            </Snackbar>
         </React.Fragment>
     );
 }
 
-export default withRouter(Category);
+export default withRouter(withReducer('registration', reducer)(Category));
