@@ -188,9 +188,27 @@ function NewCategory(props) {
 
     useEffect(() => {
         if (savingSuccess) {
+            setDefault();
             props.history.push('/app/registration/category');
         }
     });
+
+    const setDefault = () => {
+        setTabIndex(0);
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPhoneNum('');
+        setCompanyName('');
+        setGender(1);
+        setQId('');
+        setPassportNum('');
+        setNationality('');
+        setExpiryDate(new Date());
+        setBirthDate(new Date());
+        setProfile(null);
+        setError(null);
+    }
 
     const categoryInFo = categories && categories.filter((item) => {
         if (category === 'event-crew') {
@@ -206,28 +224,53 @@ function NewCategory(props) {
     };
 
     const saveAttendee = async () => {
-        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && qId && passportNum && nationality) {
-            setError(false);
-            const mainPhoto = profile && await toBase64(profile);
-            const data = {
-                firstName: firstName,
-                lastName: lastName,
-                gender: (gender === 1) ? 'MALE' : 'FEMALE',
-                phone: phoneNum,
-                email: email,
-                companyName: companyName,
-                attendeeCategorySAS: categoryInFo,
-                mainPhoto: mainPhoto.split(',')[1],
-                mainPhotoContentType: profile ? profile.type : null, 
-            };
-            // console.log('here in save attendee submit: ', mainPhoto.split(',')[1]);
-            dispatch(Actions.saveAttendee(data));
+        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && (qId || (passportNum && nationality))) {
+            if (tabIndex === 0) {
+                if (qId) {
+                    setError(false);
+
+                    const mainPhoto = profile && await toBase64(profile);
+                    const data = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        gender: (gender === 1) ? 'MALE' : 'FEMALE',
+                        phone: phoneNum,
+                        email: email,
+                        companyName: companyName,
+                        attendeeCategorySAS: categoryInFo,
+                        mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
+                        mainPhotoContentType: profile ? profile.type : null, 
+                    };
+                    dispatch(Actions.saveAttendee(data));
+                } else {
+                    setError(true);
+                }
+            } else {
+                if (passportNum && nationality) {
+                    setError(false);
+
+                    const mainPhoto = profile && await toBase64(profile);
+                    const data = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        gender: (gender === 1) ? 'MALE' : 'FEMALE',
+                        phone: phoneNum,
+                        email: email,
+                        companyName: companyName,
+                        attendeeCategorySAS: categoryInFo,
+                        mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
+                        mainPhotoContentType: profile ? profile.type : null, 
+                    };
+                    dispatch(Actions.saveAttendee(data));
+                } else {
+                    setError(true);
+                }
+            }
         } else {
             setError(true);
         }
     };
-
-    console.log('here inside the New Category: ', categories, categoryInFo, attendee);
+    // console.log('here inside the New Category: ', categories, categoryInFo, attendee);
 
     return(
         <React.Fragment>
@@ -357,7 +400,7 @@ function NewCategory(props) {
                             </Tabs>
                         </AppBar>
                         <TabPanel value={tabIndex} index={0}>
-                            <Grid container spacing={0} className={classes.container}>
+                            <Grid container spacing={0}>
                                 <Grid item xs={12} md={12} className={classes.item}>
                                     <TextField
                                         id="standard-basic"
@@ -372,7 +415,7 @@ function NewCategory(props) {
                             </Grid>
                         </TabPanel>
                         <TabPanel value={tabIndex} index={1}>
-                            <Grid container spacing={0} className={classes.container}>
+                            <Grid container spacing={0}>
                                 <Grid item xs={12} md={6} className={classes.item}>
                                     <TextField
                                         id="standard-basic"
