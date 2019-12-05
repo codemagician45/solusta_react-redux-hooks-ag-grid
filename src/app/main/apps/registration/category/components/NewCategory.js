@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
 // import @material-ui
 import { 
@@ -8,7 +9,7 @@ import {
     AppBar, Tabs, Tab,
     Typography, Box, FormControl,
     InputLabel, Select, MenuItem,
-    Icon, IconButton,
+    Icon, IconButton, CircularProgress, LinearProgress
 } from '@material-ui/core';
 import {
     MuiPickersUtilsProvider,
@@ -103,6 +104,14 @@ const useStyles = makeStyles(theme => ({
         display: 'block',
         width: '100%',
         height: '220px',
+    },
+
+    linearProgress: {
+        width: '100%',
+        '& > * + *': {
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(1),
+        },
     }
 }));
 
@@ -179,36 +188,14 @@ function NewCategory(props) {
     const dispatch = useDispatch();
     const categories = useSelector(({registration}) => registration.category.categories);
     const attendee = useSelector(({registration}) => registration.category.attendee);
-    const savingSuccess = useSelector(({registration}) => registration.category.savingSuccess);    
+    const success = useSelector(({registration}) => registration.category.success);
+    const loading = useSelector(({registration}) => registration.category.loading);
+    const fail = useSelector(({registration}) => registration.category.fail);
     let category = (props.match.path).split('/')[4];
 
     useEffect(() => {
         dispatch(Actions.getCategory());
     }, [dispatch]);
-
-    useEffect(() => {
-        if (savingSuccess) {
-            setDefault();
-            props.history.push('/app/registration/category');
-        }
-    });
-
-    const setDefault = () => {
-        setTabIndex(0);
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPhoneNum('');
-        setCompanyName('');
-        setGender(1);
-        setQId('');
-        setPassportNum('');
-        setNationality('');
-        setExpiryDate(new Date());
-        setBirthDate(new Date());
-        setProfile(null);
-        setError(null);
-    }
 
     const categoryInFo = categories && categories.filter((item) => {
         if (category === 'event-crew') {
@@ -241,7 +228,23 @@ function NewCategory(props) {
                         mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
                         mainPhotoContentType: profile ? profile.type : null, 
                     };
-                    dispatch(Actions.saveAttendee(data));
+                    const header = {
+                        headers: {
+                            'content-type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                        }
+                    };
+                    dispatch(Actions.saveAttendee());
+                    axios.post('https://stage02.solusta.me/api/attendee-sas', data, header)
+                        .then(response => {
+                            console.log('here save attendee response: ', response);
+                            dispatch(Actions.saveAttendeeSuccess(response.data));
+                            props.history.push('/app/registration/category');
+                        })
+                        .catch(error => {
+                            dispatch(Actions.saveAttendeeFail());
+                        });
+
                 } else {
                     setError(true);
                 }
@@ -275,6 +278,11 @@ function NewCategory(props) {
     return(
         <React.Fragment>
             <div className={classes.root}>
+                {loading && (
+                    <div className={classes.linearProgress}>
+                        <LinearProgress />
+                    </div>
+                )}
                 <Grid container spacing={0} className={classes.container}>
                     <Grid item xs={3} md={3} className="relative">
                         <Grid container spacing={0} className={classes.profileItem}>

@@ -3,7 +3,9 @@ import * as Actions from '../actions';
 const initialState = {
     categories: [],
     attendee: {},
-    savingSuccess: false,
+    success: false,
+    loading: false,
+    fail: false,
 };
 
 const categoryReducer = function (state = initialState, action) {
@@ -19,8 +21,22 @@ const categoryReducer = function (state = initialState, action) {
         case Actions.SAVE_ATTENDEE: {
             return {
                 ...state,
+                loading: true,
+            }
+        }
+        case Actions.SAVE_ATTENDEE_SUCCESS: {
+            return {
+                ...state,
                 attendee: action.payload,
-                savingSuccess: true,
+                loading: false,
+                success: true,
+            }
+        }
+        case Actions.SAVE_ATTENDEE_FAIL: {
+            return {
+                ...state,
+                loading: false,
+                fail: true,
             }
         }
         default:
