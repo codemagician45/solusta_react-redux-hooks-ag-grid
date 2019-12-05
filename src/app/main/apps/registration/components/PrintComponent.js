@@ -63,7 +63,7 @@ const styles = (theme) => ({
     friendly: {
         position: 'absolute',
         top: '45%',
-        right: '16%',
+        right: '15%',
         fontSize: '24px',
         color: 'darkblue'
     }
@@ -173,7 +173,7 @@ class PrintComponent extends React.Component {
             axios.get(`https://stage02.solusta.me/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
                 .then((res) => {
                     console.log('here in friendlyID: ', res);
-                    resolve(res.data[0].badgeFriendlyID);
+                    resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);
                 })
                 .catch((err) => {
                     reject(err);
@@ -194,7 +194,7 @@ class PrintComponent extends React.Component {
 
         return (
             <div className={classes.paper}> 
-                {displayData && displayData
+                {friendlyIdArr && displayData && displayData
                     .map((item, index) => {
                         const fId = friendlyIdArr.filter(fItem => fItem.id === item.id);
                         console.log('here inside the render: ', fId);
@@ -203,7 +203,7 @@ class PrintComponent extends React.Component {
                             <div id="modal-print" className={classes.modal_print}>
                                 <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
                                 <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
-                                <h2 className={classes.friendly}>{fId[0].fId}</h2>
+                                {(fId && fId[0]) && <h2 className={classes.friendly}>{fId[0].fId}</h2>}
                                 <ImagePart item={item} />
                                 <div className={classes.photo}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
