@@ -22,16 +22,21 @@ function Registration()
     const products = useSelector(({registerApp}) => registerApp.products.data);
     const rows = useSelector(({registerApp}) => registerApp.products.rows);
     const backgrounds = useSelector(({registerApp}) => registerApp.products.backgrounds);
+    const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
 
     useEffect(() => {
         dispatch(Actions.getProducts());
     }, [dispatch]);
 
     // useEffect(() => {
+    //     dispatch(Actions.getFriendlyID(props.match.params.id));
+    // }, [dispatch]);
+
+    // useEffect(() => {
     //     dispatch(Actions.getBackgrounds());
     // }, [dispatch])
 
-    console.log('here selected rows: ', rows);
+    // console.log('here selected rows: ', rows);
 
     return (
         <FusePageCarded

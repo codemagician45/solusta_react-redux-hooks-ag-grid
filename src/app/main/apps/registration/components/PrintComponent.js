@@ -14,7 +14,7 @@ import BG7 from '../assets/images/bg-7.jpg';
 const styles = (theme) => ({
     modal_print: {
         position:'relative',
-        display:'flex',
+        display:'block',
         margin:'10px',
     },
     nameStyle: {
@@ -45,7 +45,7 @@ const styles = (theme) => ({
         height: '180px',
         right: '0',
         top: '15%',
-        display:'flex'
+        display:'block'
     },
 
     backGround: {
@@ -56,6 +56,13 @@ const styles = (theme) => ({
         width: '100%',
         margin:'auto'
     },
+    friendly: {
+        position: 'absolute',
+        top: '45%',
+        right: '16%',
+        fontSize: '24px',
+        color: 'darkblue'
+    }
 })
 
 const ImagePart = ({ item }) => {
@@ -124,7 +131,7 @@ class PrintComponent extends React.Component {
     render() {
         const { data, rows } = this.state;
         const { classes } = this.props;
-        console.log("printdata",rows)
+        // console.log("printdata",rows)
         return (
             <div className={classes.paper}> 
                 {data && data
@@ -138,6 +145,7 @@ class PrintComponent extends React.Component {
                             <div id="modal-print" className={classes.modal_print}>
                                 <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
                                 <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
+                                {/* <h2 className={classes.friendly}>{friendlyID}</h2> */}
                                 <ImagePart item={item} />
                                 <div className={classes.photo}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
