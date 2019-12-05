@@ -42,12 +42,12 @@ const useStyles = makeStyles(theme => ({
 
 function Category(props) {
     const classes = useStyles();
-    const savingSuccess = useSelector(({registration}) => registration.category.savingSuccess);
-    const [openSnack, setOpenSnack] = useState(savingSuccess);
+    const success = useSelector(({registration}) => registration.category.success);
+    const [openSnack, setOpenSnack] = useState(success);
 
     useEffect(() => {
-        setOpenSnack(savingSuccess);
-    }, [savingSuccess]);
+        setOpenSnack(success);
+    }, [success]);
 
     const addSpeaker = () => {
         props.history.push('/app/registration/category/speaker');

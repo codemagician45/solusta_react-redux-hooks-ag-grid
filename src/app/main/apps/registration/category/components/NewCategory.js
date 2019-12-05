@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
 // import @material-ui
 import { 
@@ -8,7 +9,7 @@ import {
     AppBar, Tabs, Tab,
     Typography, Box, FormControl,
     InputLabel, Select, MenuItem,
-    Icon, IconButton,
+    Icon, IconButton, CircularProgress, LinearProgress
 } from '@material-ui/core';
 import {
     MuiPickersUtilsProvider,
@@ -103,6 +104,14 @@ const useStyles = makeStyles(theme => ({
         display: 'block',
         width: '100%',
         height: '220px',
+    },
+
+    linearProgress: {
+        width: '100%',
+        '& > * + *': {
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(1),
+        },
     }
 }));
 
@@ -179,18 +188,14 @@ function NewCategory(props) {
     const dispatch = useDispatch();
     const categories = useSelector(({registration}) => registration.category.categories);
     const attendee = useSelector(({registration}) => registration.category.attendee);
-    const savingSuccess = useSelector(({registration}) => registration.category.savingSuccess);    
+    const success = useSelector(({registration}) => registration.category.success);
+    const loading = useSelector(({registration}) => registration.category.loading);
+    const fail = useSelector(({registration}) => registration.category.fail);
     let category = (props.match.path).split('/')[4];
 
     useEffect(() => {
         dispatch(Actions.getCategory());
     }, [dispatch]);
-
-    useEffect(() => {
-        if (savingSuccess) {
-            props.history.push('/app/registration/category');
-        }
-    });
 
     const categoryInFo = categories && categories.filter((item) => {
         if (category === 'event-crew') {
@@ -206,32 +211,78 @@ function NewCategory(props) {
     };
 
     const saveAttendee = async () => {
-        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && qId && passportNum && nationality) {
-            setError(false);
-            const mainPhoto = profile && await toBase64(profile);
-            const data = {
-                firstName: firstName,
-                lastName: lastName,
-                gender: (gender === 1) ? 'MALE' : 'FEMALE',
-                phone: phoneNum,
-                email: email,
-                companyName: companyName,
-                attendeeCategorySAS: categoryInFo,
-                mainPhoto: mainPhoto.split(',')[1],
-                mainPhotoContentType: profile ? profile.type : null, 
-            };
-            // console.log('here in save attendee submit: ', mainPhoto.split(',')[1]);
-            dispatch(Actions.saveAttendee(data));
+        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && (qId || (passportNum && nationality))) {
+            if (tabIndex === 0) {
+                if (qId) {
+                    setError(false);
+
+                    const mainPhoto = profile && await toBase64(profile);
+                    const data = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        gender: (gender === 1) ? 'MALE' : 'FEMALE',
+                        phone: phoneNum,
+                        email: email,
+                        companyName: companyName,
+                        attendeeCategorySAS: categoryInFo,
+                        mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
+                        mainPhotoContentType: profile ? profile.type : null, 
+                    };
+                    const header = {
+                        headers: {
+                            'content-type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                        }
+                    };
+                    dispatch(Actions.saveAttendee());
+                    axios.post('https://stage02.solusta.me/api/attendee-sas', data, header)
+                        .then(response => {
+                            console.log('here save attendee response: ', response);
+                            dispatch(Actions.saveAttendeeSuccess(response.data));
+                            props.history.push('/app/registration/category');
+                        })
+                        .catch(error => {
+                            dispatch(Actions.saveAttendeeFail());
+                        });
+
+                } else {
+                    setError(true);
+                }
+            } else {
+                if (passportNum && nationality) {
+                    setError(false);
+
+                    const mainPhoto = profile && await toBase64(profile);
+                    const data = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        gender: (gender === 1) ? 'MALE' : 'FEMALE',
+                        phone: phoneNum,
+                        email: email,
+                        companyName: companyName,
+                        attendeeCategorySAS: categoryInFo,
+                        mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
+                        mainPhotoContentType: profile ? profile.type : null, 
+                    };
+                    dispatch(Actions.saveAttendee(data));
+                } else {
+                    setError(true);
+                }
+            }
         } else {
             setError(true);
         }
     };
-
-    console.log('here inside the New Category: ', categories, categoryInFo, attendee);
+    // console.log('here inside the New Category: ', categories, categoryInFo, attendee);
 
     return(
         <React.Fragment>
             <div className={classes.root}>
+                {loading && (
+                    <div className={classes.linearProgress}>
+                        <LinearProgress />
+                    </div>
+                )}
                 <Grid container spacing={0} className={classes.container}>
                     <Grid item xs={3} md={3} className="relative">
                         <Grid container spacing={0} className={classes.profileItem}>
@@ -357,7 +408,7 @@ function NewCategory(props) {
                             </Tabs>
                         </AppBar>
                         <TabPanel value={tabIndex} index={0}>
-                            <Grid container spacing={0} className={classes.container}>
+                            <Grid container spacing={0}>
                                 <Grid item xs={12} md={12} className={classes.item}>
                                     <TextField
                                         id="standard-basic"
@@ -372,7 +423,7 @@ function NewCategory(props) {
                             </Grid>
                         </TabPanel>
                         <TabPanel value={tabIndex} index={1}>
-                            <Grid container spacing={0} className={classes.container}>
+                            <Grid container spacing={0}>
                                 <Grid item xs={12} md={6} className={classes.item}>
                                     <TextField
                                         id="standard-basic"

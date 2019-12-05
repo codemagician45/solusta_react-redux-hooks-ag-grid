@@ -1,33 +1,59 @@
-import React from 'react';
-import { Button } from '@material-ui/core';
+import React, { useRef, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {Link} from 'react-router-dom';
+import ReactToPrint from 'react-to-print'; // for Print React component
+import printJS from 'print-js';
+
+import { Button, Grid, Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+
+// import Redux
+import withReducer from 'app/store/withReducer';
+import * as Actions from '../store/actions';
+import reducer from '../store/reducers';
+
 import { FuseAnimate, FusePageCarded } from '@fuse';
 import RegistrationTable from './RegistrationTable';
-import withReducer from 'app/store/withReducer';
-import reducer from '../store/reducers';
-import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import printJS from 'print-js';
-import {Link} from 'react-router-dom';
+import PrintComponent from '../components/PrintComponent';
 
 function Registration()
 {
+    const printRef = useRef();
+    const dispatch = useDispatch();
+    const products = useSelector(({registerApp}) => registerApp.products.data);
+    const rows = useSelector(({registerApp}) => registerApp.products.rows);
+    const backgrounds = useSelector(({registerApp}) => registerApp.products.backgrounds);
+
+    useEffect(() => {
+        dispatch(Actions.getProducts());
+    }, [dispatch]);
+
+    // useEffect(() => {
+    //     dispatch(Actions.getBackgrounds());
+    // }, [dispatch])
+
+    console.log('here selected rows: ', rows);
+
     return (
         <FusePageCarded
             classes={{
                 content: "flex",
                 header : "min-h-72 h-72 sm:h-136 sm:min-h-136"
             }}
-            // header={
-            //     <div className="flex flex-1 w-full items-center justify-between">
-            //         <FuseAnimate animation="transition.slideRightIn" delay={300}>
-            //             <Button component={Link} to="/app/registration/mass-print-preview" className="whitespace-no-wrap" color="secondary" variant="contained">
-            //                 <span className="hidden sm:flex">Print Multiple Badge</span>
-            //             </Button>
-            //         </FuseAnimate>
-            //     </div>   
-            // }
+            header={
+                <div className="flex flex-1 w-full items-center justify-between">
+                    <Button component={Link} to="/app/registration/mass-print-preview" className="whitespace-no-wrap" color="secondary" variant="contained">
+                        <span className="hidden sm:flex">Print Multiple Badge</span>
+                    </Button>
+                    <ReactToPrint
+                        trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
+                        content={() => printRef.current}
+                    />
+                    <PrintComponent data={products} rows={rows} backgrounds={backgrounds} ref={printRef}/>
+                </div>   
+            }
             content={
-                    <RegistrationTable/>   
+                    <RegistrationTable />
             }
             innerScroll
         />
