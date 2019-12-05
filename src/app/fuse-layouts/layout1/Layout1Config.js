@@ -5,7 +5,7 @@ const config = {
         scroll        : 'content',
         navbar        : {
             display : true,
-            folded  : false,
+            folded  : true,
             position: 'left'
         },
         toolbar       : {
@@ -14,7 +14,7 @@ const config = {
             position: 'below'
         },
         footer        : {
-            display : true,
+            display : false,
             style   : 'fixed',
             position: 'below'
         },
