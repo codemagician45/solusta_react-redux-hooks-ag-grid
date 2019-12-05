@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Registration from './registration-form/Registration'
+import Registration from './registration-form/Registration';
 
 export const RegistrationConfig = {
     settings: {
