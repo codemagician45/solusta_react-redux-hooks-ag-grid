@@ -17,6 +17,7 @@ const styles = (theme) => ({
         display:'block',
         margin:'10px',
     },
+    
     nameStyle: {
         position: 'absolute',
         top: '57%',
@@ -131,7 +132,8 @@ class PrintComponent extends React.Component {
     render() {
         const { data, rows } = this.state;
         const { classes } = this.props;
-        // console.log("printdata",rows)
+        console.log('here in print component: ', data);
+
         return (
             <div className={classes.paper}> 
                 {data && data
