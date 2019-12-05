@@ -11,6 +11,7 @@ import BG5 from '../assets/images/bg-5.jpg';
 import BG6 from '../assets/images/bg-6.jpg';
 import BG7 from '../assets/images/bg-7.jpg';
 
+
 const styles = (theme) => ({
 
     paper: {
@@ -41,12 +42,11 @@ const styles = (theme) => ({
 
     photo: {
         position: 'absolute',
-        left: '62%',
-        width: '120px',
-        height: '180px',
+        left: '180px',
+        width: '118px',
+        height: '150px',
         right: '0',
-        top: '15%',
-        display:'flex'
+        top: '55px'
     },
 
     backGround: {
@@ -123,10 +123,12 @@ class PrintComponent extends React.Component {
         }
     }
 
+
+
     render() {
         const { data, rows } = this.state;
         const { classes } = this.props;
-        console.log("printdata",rows)
+        console.log("printdata",rows);
         return (
             <div className={classes.paper}>
                 {data && data
@@ -143,6 +145,7 @@ class PrintComponent extends React.Component {
                                 <ImagePart item={item} />
                                 <div className={classes.photo}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
+                                    <span>123456</span>
                                 </div>
                             </div>
                         </Box>

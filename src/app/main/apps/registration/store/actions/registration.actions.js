@@ -16,7 +16,7 @@ export function getProducts()
     const body = {
        key: "value"
     };
-    const request = axios.get('http://dee-mac.local:8088/api/attendee-sas-no-page', body, header);
+    const request = axios.get('http://dee-mac.local:8088/api/attendee-sas', body, header);
 
     return (dispatch) =>
         request.then((response) =>
@@ -74,7 +74,7 @@ export function setImage(data) {
         "companyName":"Test"
         // "mainPhoto":data.mainPhoto
     };
-    const request = axios.put('http://dee-mac.local:8088//api/attendee-sas',body, header);
+    const request = axios.put('http://dee-mac.local:8088/api/attendee-sas',body, header);
     return (dispatch) =>
         request.then((response)=>
             dispatch({
@@ -98,7 +98,7 @@ export function getFriendlyID(id) {
         key: 'value',
     };
     // const id = 1157
-    const request = axios.get('http://dee-mac.local:8088//api/badge-sas?attendeeSAId.equals='+ id, body, header);
+    const request = axios.get('http://dee-mac.local:8088/api/badge-sas?attendeeSAId.equals='+ id, body, header);
 
     return (dispatch) =>
         request.then((response) =>
