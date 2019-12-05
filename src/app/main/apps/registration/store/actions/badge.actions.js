@@ -30,4 +30,21 @@ export function getBackgrounds()
     //             payload: response.data
     //         })
     //     );
+    const header = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+        }
+    };
+    const body = {
+        key: 'value',
+    };
+    const request = axios.get('https://stage01.solusta.me/api/badge-design-sas/1501',body,header);
+
+    return (dispatch) =>
+        request.then((response) =>
+            dispatch({
+                type   : GET_BACKGROUND,
+                payload: response.data
+            })
+        );
 }

@@ -2,7 +2,8 @@ import * as Actions from '../actions';
 
 const initialState = {
     categories: [],
-    attendee: null,
+    attendee: {},
+    savingSuccess: false,
 };
 
 const categoryReducer = function (state = initialState, action) {
@@ -18,7 +19,8 @@ const categoryReducer = function (state = initialState, action) {
         case Actions.SAVE_ATTENDEE: {
             return {
                 ...state,
-                attendee: action.payload
+                attendee: action.payload,
+                savingSuccess: true,
             }
         }
         default:
