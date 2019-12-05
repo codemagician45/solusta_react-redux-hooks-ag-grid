@@ -15,7 +15,7 @@ function ImageCellRender(props){
         padding:'5px'
     };
 
-    if(!products.filter((product) => {return product.id === parseInt(id) })[0].mainPhoto)
+    if(products.filter((product) => {return product.id === parseInt(id) })[0].mainPhoto === '')
         return (
           <img src={'assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{padding:'5px'}}/>
         );

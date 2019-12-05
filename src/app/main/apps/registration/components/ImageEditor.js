@@ -36,8 +36,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PhotoEditor(props) {
+  // console.log("single data for updating",props)
   const dispatch = useDispatch();
   const [image, setImage] = useState(props.image);
+  const [data,setData] = useState(props.requestData);
   const [rect, setRect] = useState(null);
   const imageEditor = React.createRef();
   const classes = useStyles();
@@ -47,6 +49,10 @@ function PhotoEditor(props) {
   }, [props.image]);
 
   useEffect(() => {
+    setData(props.requestData);
+  }, [props.requestData]);
+
+  useEffect(() => {
     props.onCrop(image);
   }, [props, image]);
 
@@ -54,7 +60,11 @@ function PhotoEditor(props) {
     const { imageEditorInst } = imageEditor.current;
     const data = imageEditorInst.toDataURL();
     setImage(data);
-    dispatch(Actions.setImage(data));
+    console.log("data",data)
+    const requestData = props.requestData;
+    requestData.mainPhoto = data;
+    console.log("reques", requestData);
+    // dispatch(Actions.setImage(requestData));
   };
 
   // const setCropImage = (e) => {

@@ -4,6 +4,8 @@ const initialState = {
     data: [],
     rows: [],
     backgrounds: [],
+    friendlyID: null,
+    image:null
 };
 
 const productsReducer = function (state = initialState, action) {
@@ -28,6 +30,19 @@ const productsReducer = function (state = initialState, action) {
                 ...state,
                 backgrounds: action.payload,
             }
+        }
+        case Actions.SET_IMAGE: {
+            return {
+                ...state,
+                image:action.payload
+            }
+        }
+        case Actions.GET_F_ID:
+        {
+            return {
+                ...state,
+                friendlyID: action.payload
+            };
         }
         default:
         {

@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
         height: '180px',
         right: '0',
         top: '15%',
-        display:'flex'
+        display:'block'
     },
 
     backGround: {
@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
         width:'100%',
         textAlign:'center',
         color: 'midnightblue',
+        textTransform: 'uppercase'
     },
 
     companyNameStyle: {
@@ -54,7 +55,14 @@ const useStyles = makeStyles(theme => ({
     },
     modal_print: {
         position:'relative',
-        display:'flex'
+        display:'block'
+    },
+    friendly: {
+        position: 'absolute',
+        top: '45%',
+        right: '16%',
+        fontSize: '24px',
+        color: 'darkblue'
     }
 }));
 
@@ -66,15 +74,22 @@ function PhotoBeforePrint(props) {
     const [open, setOpen] = React.useState(false);
     const [modalImg, setModalImg] = React.useState(null);
     const classes = useStyles();
+    const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
+    console.log("friendly",friendlyID);
 
     useEffect(() => {
         dispatch(Actions.getProducts());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(Actions.getFriendlyID(props.match.params.id));
     }, [dispatch]);
 
     const { id } = props.match.params;
     const image = images && images.filter((image) => {
         return image.id === parseInt(id);
     });
+    // console.log("image",image)
     const name = image && image[0] && (image[0].firstName + ' ' + image[0].middleName + ' ' + image[0].lastName);
     const imgSrc = image && image[0] && (`data:${image[0].mainPhotoContentType};base64, ${image[0].mainPhoto}`);
 
@@ -124,16 +139,18 @@ function PhotoBeforePrint(props) {
                             </FuseAnimate>
                         </div>
                         <FuseAnimate animation="transition.slideRightIn" delay={300}>
+                            {/* <Button variant="contained" color="secondary" ><span className="hidden sm:flex">Save Cropped Result</span></Button> */}
                             <Button onClick={handleOpen} className="whitespace-no-wrap" variant="contained">
                                 <span className="hidden sm:flex">Print Badge</span>
                             </Button>
+                            
                         </FuseAnimate>
                     </div>
                 }
                 content= {
                     (
                         <React.Fragment>
-                            <PhotoEditor image={imgSrc} onCrop={setModalImage} />
+                            <PhotoEditor image={imgSrc} requestData={image[0]} onCrop={setModalImage} />
                             <Modal
                                 aria-labelledby="print-modal-title"
                                 aria-describedby="print-modal-description"
@@ -146,6 +163,7 @@ function PhotoBeforePrint(props) {
                                             <div id="modal-print" className={classes.modal_print}>
                                                 <h1 className={classes.nameStyle}>{name}</h1>
                                                 <h2 className={classes.companyNameStyle}>{image[0].companyName}</h2>
+                                                <h2 className={classes.friendly}>{friendlyID}</h2>
                                                 <img src='assets/images/background/background.png' className={classes.backGround} alt={'port-0'} />
                                                 <div className={classes.photo}>
                                                     <img src={modalImg} className={classes.photoImg} alt={'port-1'} />
