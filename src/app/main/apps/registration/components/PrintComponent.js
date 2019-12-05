@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import { Button, Grid, Box } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -24,6 +25,7 @@ const styles = (theme) => ({
         width:'100%',
         textAlign:'center',
         color: 'midnightblue',
+        textTransform:'uppercase'
     },
 
     companyNameStyle: {
@@ -31,6 +33,7 @@ const styles = (theme) => ({
         top: '64%',
         width:'100%',
         textAlign:'center',
+        textTransform:'uppercase'
     },
 
     paper: {
@@ -115,7 +118,12 @@ class PrintComponent extends React.Component {
         this.state = {
             data : props.data,
             rows: props.rows,
+            friendlyIdArr: [],
         };
+    }
+
+    componentDidMount() {
+        this.getFriendlyIdArr();
     }
     
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -129,32 +137,80 @@ class PrintComponent extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevState.data !== this.state.data) {
+            this.getFriendlyIdArr();
+        }
+    }
+
+    getFriendlyIdArr = () => {
+        const { data } = this.state;
+        const promiseArr =  data.map((item, index) => {
+            return this.getFriendlyId(item);
+        });
+        Promise.all(promiseArr).then(values => {
+            let friendlyIdArr = [];
+            values.map((item, index) => {
+                friendlyIdArr.push({
+                    fId: item,
+                    id: data[index].id,
+                });
+            })
+            this.setState({ friendlyIdArr: friendlyIdArr });
+        });
+    }
+
+    getFriendlyId = (item) => {
+        return new Promise((resolve, reject) => {
+            const header = {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                }
+            };
+            const body = {
+                key: 'value',
+            };
+            axios.get(`https://stage02.solusta.me/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
+                .then((res) => {
+                    console.log('here in friendlyID: ', res);
+                    resolve(res.data[0].badgeFriendlyID);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
     render() {
-        const { data, rows } = this.state;
+        const { data, rows, friendlyIdArr } = this.state;
         const { classes } = this.props;
         console.log('here in print component: ', data);
+        const displayData = data && data
+                                .filter((item) => {
+                                    return rows.some((row) => {
+                                        return row.id === item.id;
+                                    })
+                                });
 
         return (
             <div className={classes.paper}> 
-                {data && data
-                    .filter((item) => {
-                        return rows.some((row) => {
-                            return row.id === item.id;
-                        })
-                    })
-                    .map((item, index) => ( 
+                {displayData && displayData
+                    .map((item, index) => {
+                        const fId = friendlyIdArr.filter(fItem => fItem.id === item.id);
+                        console.log('here inside the render: ', fId);
+                        return ( 
                         <Box className="w-100 h-100" display="none" displayPrint="block" m={1} key={index.toString()}>
                             <div id="modal-print" className={classes.modal_print}>
                                 <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
                                 <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
-                                {/* <h2 className={classes.friendly}>{friendlyID}</h2> */}
+                                <h2 className={classes.friendly}>{fId[0].fId}</h2>
                                 <ImagePart item={item} />
                                 <div className={classes.photo}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
                                 </div>
                             </div>   
                         </Box>
-                ))}
+                )})}
             </div>
         );
     }
