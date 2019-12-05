@@ -17,10 +17,7 @@ const styles = (theme) => ({
         display:'flex',
         margin:'10px',
     },
-<<<<<<< HEAD
-=======
     
->>>>>>> wei
     nameStyle: {
         position: 'absolute',
         top: '57%',
