@@ -12,12 +12,18 @@ import BG6 from '../assets/images/bg-6.jpg';
 import BG7 from '../assets/images/bg-7.jpg';
 
 const styles = (theme) => ({
+
+    paper: {
+        position: 'absolute',
+        background: 'red'
+    },
+
     modal_print: {
         position:'relative',
-        display:'flex',
-        margin:'10px',
+        display:'block',
+        margin:'0',
+        pageBreakerAfter: 'always',
     },
-    
     nameStyle: {
         position: 'absolute',
         top: '57%',
@@ -31,12 +37,6 @@ const styles = (theme) => ({
         top: '64%',
         width:'100%',
         textAlign:'center',
-    },
-
-    paper: {
-        position: 'absolute',
-        width: 400,
-        height:'50%',
     },
 
     photo: {
@@ -57,7 +57,8 @@ const styles = (theme) => ({
         width: '100%',
         margin:'auto'
     },
-})
+
+});
 
 const ImagePart = ({ item }) => {
     switch (item.attendeeCategorySAS[0].categoryName) {
@@ -100,7 +101,7 @@ const ImagePart = ({ item }) => {
             return;
         }
     }
-}
+};
 
 class PrintComponent extends React.Component {
     constructor(props) {
@@ -110,7 +111,7 @@ class PrintComponent extends React.Component {
             rows: props.rows,
         };
     }
-    
+
     static getDerivedStateFromProps(nextProps, prevState) {
         if ((nextProps.data !== prevState.data) || (nextProps.rows !== prevState.rows)) {
             return {
@@ -125,17 +126,16 @@ class PrintComponent extends React.Component {
     render() {
         const { data, rows } = this.state;
         const { classes } = this.props;
-        console.log('here in print component: ', data);
-
+        console.log("printdata",rows)
         return (
-            <div className={classes.paper}> 
+            <div className={classes.paper}>
                 {data && data
                     .filter((item) => {
                         return rows.some((row) => {
                             return row.id === item.id;
                         })
                     })
-                    .map((item, index) => ( 
+                    .map((item, index) => (
                         <Box className="w-100 h-100" display="none" displayPrint="block" m={1} key={index.toString()}>
                             <div id="modal-print" className={classes.modal_print}>
                                 <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
@@ -144,7 +144,7 @@ class PrintComponent extends React.Component {
                                 <div className={classes.photo}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
                                 </div>
-                            </div>   
+                            </div>
                         </Box>
                 ))}
             </div>

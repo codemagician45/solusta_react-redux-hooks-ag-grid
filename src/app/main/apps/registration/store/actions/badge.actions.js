@@ -21,7 +21,7 @@ export function getBackgrounds()
     // const body = {
     //    key: "value"
     // };
-    // const request = axios.get('https://stage02.solusta.me/badge-design-sa', body, header);
+    // const request = axios.get('http://dee-mac.local:8088/badge-design-sa', body, header);
 
     // return (dispatch) =>
     //     request.then((response) =>

@@ -102,7 +102,7 @@ function PhotoBeforePrint(props) {
     const handleClose = () => {
         setOpen(false);
     };
-    
+
     const print = () => {
         document.getElementById('print_btn').style = 'display:none';
         window.print();
@@ -130,7 +130,7 @@ function PhotoBeforePrint(props) {
                         </FuseAnimate>
                     </div>
                 }
-                content={
+                content= {
                     (
                         <React.Fragment>
                             <PhotoEditor image={imgSrc} onCrop={setModalImage} />

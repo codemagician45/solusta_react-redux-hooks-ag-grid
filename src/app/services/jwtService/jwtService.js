@@ -27,7 +27,7 @@ class jwtService extends FuseUtils.EventEmitter {
 
     handleAuthentication = () => {
         let access_token = this.getAccessToken();
-        
+
         if ( !access_token )
         {
             this.emit('onNoAccessToken');
@@ -51,22 +51,22 @@ class jwtService extends FuseUtils.EventEmitter {
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
-                url: 'https://stage02.solusta.me/api/authenticate',
-                headers: {}, 
+                url: 'http://dee-mac.local:8088/api/authenticate',
+                headers: {},
                 data: {
                   username: email,
                   password:password
                 }
               }).then(response => {
                 if ( response.data.id_token )
-                {             
+                {
                     this.setSession(response.data.id_token);
-                    
+
                     const body = {
                        key: "value"
                     }
-                    
-                    axios.get('https://stage02.solusta.me/api/account', body)
+
+                    axios.get('http://dee-mac.local:8088/api/account', body)
                         .then((response) => {
                             let user = {data:{}};
                             user.data = response.data;
@@ -96,7 +96,7 @@ class jwtService extends FuseUtils.EventEmitter {
                 key: "value"
             };
 
-            axios.get('https://stage02.solusta.me/api/account',body)
+            axios.get('http://dee-mac.local:8088/api/account',body)
                 .then(response => {
                     let user = {data:{}};
                     user.data = response.data;
@@ -145,7 +145,7 @@ class jwtService extends FuseUtils.EventEmitter {
             return false;
         }
         const decoded = jwtDecode(access_token);
-        
+
         const currentTime = Date.now() / 1000;
         if ( decoded.exp < currentTime )
         {

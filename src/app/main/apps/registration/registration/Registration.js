@@ -37,7 +37,7 @@ function Registration()
         <FusePageCarded
             classes={{
                 content: "flex",
-                header : "min-h-72 h-72 sm:h-136 sm:min-h-136"
+              header : "min-h-24 h-24 sm:h-36 sm:min-h-36"
             }}
             header={
                 <div className="flex flex-1 w-full items-center justify-between">
@@ -47,7 +47,7 @@ function Registration()
                         content={() => printRef.current}
                     />
                     <PrintComponent data={products} rows={rows} backgrounds={backgrounds} ref={printRef}/>
-                </div>   
+                </div>
             }
             content={
                     <RegistrationTable />

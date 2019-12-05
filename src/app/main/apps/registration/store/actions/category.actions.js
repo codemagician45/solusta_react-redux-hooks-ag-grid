@@ -13,7 +13,7 @@ export const getCategory = () => {
             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
         }
     };
-    const request = axios.get('https://stage02.solusta.me/api/attendee-category-sas', body, header);
+    const request = axios.get('http://dee-mac.local:8088/api/attendee-category-sas', body, header);
 
     return (dispatch) =>
         request.then((response) =>{

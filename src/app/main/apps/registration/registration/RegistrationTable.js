@@ -17,21 +17,21 @@ import reducer from '../store/reducers';
 // import components
 import ImageCellRender from '../components/ImageCellRender';
 
-function RegistrationTable(props) {    
+function RegistrationTable(props) {
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
-    
+
     const columnDefs= [
         {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: true,checkboxSelection: true},
+        {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
         {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
-        {headerName: 'Attendee Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
-        
+
     ];
-    
+
     const rowSelection = "multiple";
 
     const defs = {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 
 // import @material-ui
-import { 
+import {
     Button, Grid, TextField,
     AppBar, Tabs, Tab,
     Typography, Box, FormControl,
@@ -117,7 +117,7 @@ const useStyles = makeStyles(theme => ({
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-  
+
     return (
         <Typography
             component="div"
@@ -144,7 +144,7 @@ function a11yProps(index) {
       'aria-controls': `nav-tabpanel-${index}`,
     };
 }
-  
+
 function LinkTab(props) {
     return (
         <Tab
@@ -183,7 +183,7 @@ function NewCategory(props) {
     const [birthDate, setBirthDate] = useState(new Date());
     const [profile, setProfile] = useState(null);
     const [error, setError] = useState(null);
-    
+
     const classes = useStyles();
     const dispatch = useDispatch();
     const categories = useSelector(({registration}) => registration.category.categories);
@@ -226,7 +226,7 @@ function NewCategory(props) {
                         companyName: companyName,
                         attendeeCategorySAS: categoryInFo,
                         mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
-                        mainPhotoContentType: profile ? profile.type : null, 
+                        mainPhotoContentType: profile ? profile.type : null,
                     };
                     const header = {
                         headers: {
@@ -235,7 +235,7 @@ function NewCategory(props) {
                         }
                     };
                     dispatch(Actions.saveAttendee());
-                    axios.post('https://stage02.solusta.me/api/attendee-sas', data, header)
+                    axios.post('http://dee-mac.local:8088/api/attendee-sas', data, header)
                         .then(response => {
                             console.log('here save attendee response: ', response);
                             dispatch(Actions.saveAttendeeSuccess(response.data));
@@ -262,7 +262,7 @@ function NewCategory(props) {
                         companyName: companyName,
                         attendeeCategorySAS: categoryInFo,
                         mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
-                        mainPhotoContentType: profile ? profile.type : null, 
+                        mainPhotoContentType: profile ? profile.type : null,
                     };
                     dispatch(Actions.saveAttendee(data));
                 } else {

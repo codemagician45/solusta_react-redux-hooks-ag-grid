@@ -100,4 +100,3 @@ function PhotoEditor(props) {
   }
 
   export default withReducer('registerApp', reducer)(PhotoEditor);
-  
