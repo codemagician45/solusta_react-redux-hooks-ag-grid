@@ -124,8 +124,7 @@ class PrintComponent extends React.Component {
     render() {
         const { data, rows } = this.state;
         const { classes } = this.props;
-        console.log('here in print component: ', data);
-
+        console.log("printdata",rows)
         return (
             <div className={classes.paper}> 
                 {data && data
@@ -142,7 +141,6 @@ class PrintComponent extends React.Component {
                                 <ImagePart item={item} />
                                 <div className={classes.photo}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
-
                                 </div>
                             </div>   
                         </Box>

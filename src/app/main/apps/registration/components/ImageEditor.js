@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import withReducer from 'app/store/withReducer';
 import {useDispatch, useSelector} from 'react-redux';
-import "tui-image-editor/dist/tui-image-editor.css";
-import ImageEditor from "@toast-ui/react-image-editor";
+
 import {Button} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import * as Actions from '../store/actions';
+import "tui-image-editor/dist/tui-image-editor.css";
+import ImageEditor from "@toast-ui/react-image-editor";
+
+import withReducer from 'app/store/withReducer';
 import reducer from '../store/reducers';
+import * as Actions from '../store/actions';
+
 
 const icona = require("tui-image-editor/dist/svg/icon-a.svg");
 const iconb = require("tui-image-editor/dist/svg/icon-b.svg");
 const iconc = require("tui-image-editor/dist/svg/icon-c.svg");
 const icond = require("tui-image-editor/dist/svg/icon-d.svg");
-// const download = require("downloadjs");
 
 const myTheme = {
   "menu.backgroundColor": "white",
@@ -25,22 +27,21 @@ const myTheme = {
   "menu.disabledIcon.path": icona,
   "menu.hoverIcon.path": iconc,
 };
+
 const useStyles = makeStyles(theme => ({
   save_div: {
     display:'flex',
     justifyContent:'flex-end'
   },
-  // sav_btn: {
-  //   margin:'auto'
-  // }
 }));
 
-function HomePage(props) {
+function PhotoEditor(props) {
   const dispatch = useDispatch();
   const [image, setImage] = useState(props.image);
   const [rect, setRect] = useState(null);
   const imageEditor = React.createRef();
   const classes = useStyles();
+
   useEffect(() => {
     setImage(props.image);
   }, [props.image]);
@@ -56,19 +57,17 @@ function HomePage(props) {
     dispatch(Actions.setImage(data));
   };
 
-  const setCropImage = (e) => {
-    const cropRect = {
-      left: e.left,
-      top: e.top,
-      width: e.width,
-      height: e.height,
-    };
-    setRect(cropRect);
-  }
-
-    // console.log('here inside the image editor hook: ', image);
-
-    return (
+  // const setCropImage = (e) => {
+  //   const cropRect = {
+  //     left: e.left,
+  //     top: e.top,
+  //     width: e.width,
+  //     height: e.height,
+  //   };
+  //   setRect(cropRect);
+  // }
+  
+   return (
       <React.Fragment>
         <ImageEditor
           includeUI={{
@@ -100,5 +99,5 @@ function HomePage(props) {
     );
   }
 
-  export default withReducer('registerApp', reducer)(HomePage);
+  export default withReducer('registerApp', reducer)(PhotoEditor);
   

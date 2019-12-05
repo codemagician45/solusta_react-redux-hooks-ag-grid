@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-export const GET_PRODUCTS = '[REGISTER APP] GET PRODUCTS';
+export const GET_PRODUCTS = '[REGISTRATION APP] GET PRODUCTS';
 export const SET_ROW = '[REGISTRATION] SET_ROW';
 export const GET_BACKGROUND = '[REGISTRATION] GET_BACKGROUND';
+export const SET_IMAGE = '[REGISTRATION] SET_IMAGE';
 
 export function getProducts()
 {
@@ -51,4 +52,12 @@ export function getBackgrounds() {
                 payload: response.data
             })
         );
+}
+
+
+export function setImage(data) {
+    return {
+        type   : SET_IMAGE,
+        payload: data
+    };
 }

@@ -15,23 +15,26 @@ import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
 // import components
-import ImageRender from './ImageRender';
+import ImageCellRender from '../components/ImageCellRender';
 
 function RegistrationTable(props) {    
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
-    console.log('here in Registration table: ', products);
-
+    
     const columnDefs= [
         {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: true,checkboxSelection: true},
-        {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageRender", filter: false},
+        {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
         {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
+        {headerName: 'Attendee Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
+        
     ];
+    
+    const rowSelection = "multiple";
 
-    let defs = {
+    const defs = {
         defaultColDef: {
             resizable: true,
             sortable: true,
@@ -50,14 +53,16 @@ function RegistrationTable(props) {
             firstName: item.firstName,
             lastName: item.lastName,
             email: item.email,
-            companyName:item.companyName
+            companyName:item.companyName,
+            category: item.attendeeCategorySAS[0].categoryName
         };
         return temp;
     });
 
     const frameworkComponents = {
-        imageRender:ImageRender
+        imageCellRender:ImageCellRender
     };
+
     const getRowHeight = () => {return 48;};
     const headerHeight = () => {return 32;};
     const onSelectionChanged = (params) => {
@@ -70,12 +75,12 @@ function RegistrationTable(props) {
         <React.Fragment>
             <div
             className="table-responsive ag-theme-balham"
-            style={{height:'90%', width: '100%', fontSize: '16px' }}
+            style={{height:'100%', width: '100%', fontSize: '16px' }}
             >
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defs.defaultColDef}
-                    // rowModelType={'serverSide'}
+                    rowSelection = {rowSelection}
                     rowData={rowData}
                     frameworkComponents = {frameworkComponents}
                     // onGridReady={onGridReady}
@@ -85,8 +90,6 @@ function RegistrationTable(props) {
                     floatingFilter = {true}
                     overlayLoadingTemplate={defs.overlayLoadingTemplate}
                     overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
-                    // modules={defs.modules}
-                    // sideBar={defs.sideBar}
                     onSelectionChanged={onSelectionChanged}
                     >
                 </AgGridReact>
@@ -94,6 +97,4 @@ function RegistrationTable(props) {
         </React.Fragment>
     );
 }
-
-// export default withRouter(RegistrationTable);
 export default withReducer('registerApp', reducer)(RegistrationTable);

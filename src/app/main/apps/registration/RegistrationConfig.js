@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Registration from './registration-form/Registration';
+import Registration from './registration/Registration';
 
 export const RegistrationConfig = {
     settings: {
@@ -11,7 +11,7 @@ export const RegistrationConfig = {
     routes  : [
         {
             path     : '/app/registration/registration-forms/:id',
-            component: React.lazy(() => import('./ImageEditor/Image'))
+            component: React.lazy(() => import('./registration/photo-editor/PhotoBeforePrint'))
         },
         {
             path     : '/app/registration/registration-forms',

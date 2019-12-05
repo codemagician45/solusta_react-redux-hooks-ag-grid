@@ -42,7 +42,7 @@ function Registration()
             }}
             header={
                 <div className="flex flex-1 w-full items-center justify-between">
-                    <Button component={Link} to="/app/registration/mass-print-preview" className="whitespace-no-wrap" color="secondary" variant="contained">
+                    <Button component={Link} to="/app/registration/mass-print-preview" className="whitespace-no-wrap" color="secondary" variant="contained" style={{visibility:'hidden'}}>
                         <span className="hidden sm:flex">Print Multiple Badge</span>
                     </Button>
                     <ReactToPrint

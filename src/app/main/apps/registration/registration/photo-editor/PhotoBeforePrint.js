@@ -3,13 +3,13 @@ import { Button, Icon, Typography } from '@material-ui/core';
 import { FuseAnimate, FusePageCarded } from '@fuse';
 import { useDispatch, useSelector } from 'react-redux';
 import withReducer from 'app/store/withReducer';
-import * as Actions from '../store/actions';
+import * as Actions from '../../store/actions';
 import { Link } from 'react-router-dom';
-import reducer from '../store/reducers';
-import HomePage from './ImageEditor';
+import reducer from '../../store/reducers';
+import PhotoEditor from '../../components/ImageEditor';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
-import printJS from 'print-js';
+
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function Image(props) {
+function PhotoBeforePrint(props) {
     const dispatch = useDispatch();
     const images = useSelector(({ registerApp }) => registerApp.products.data);
     const img = useSelector(({ registerApp }) => registerApp.image.data);
@@ -133,7 +133,7 @@ function Image(props) {
                 content={
                     (
                         <React.Fragment>
-                            <HomePage image={imgSrc} onCrop={setModalImage} />
+                            <PhotoEditor image={imgSrc} onCrop={setModalImage} />
                             <Modal
                                 aria-labelledby="print-modal-title"
                                 aria-describedby="print-modal-description"
@@ -168,4 +168,4 @@ function Image(props) {
     )
 }
 
-export default withReducer('registerApp', reducer)(Image);
+export default withReducer('registerApp', reducer)(PhotoBeforePrint);
