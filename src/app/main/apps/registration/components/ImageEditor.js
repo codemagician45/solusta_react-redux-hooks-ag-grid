@@ -60,11 +60,12 @@ function PhotoEditor(props) {
     const { imageEditorInst } = imageEditor.current;
     const data = imageEditorInst.toDataURL();
     setImage(data);
-    console.log("data",data)
+
     const requestData = props.requestData;
-    requestData.mainPhoto = data;
-    console.log("reques", requestData);
-    // dispatch(Actions.setImage(requestData));
+    requestData['mainPhoto'] = data.split(',')[1];
+    requestData['mainPhotoContentType'] = data.slice(5, 14);
+    // console.log(data.slice(5, 14));
+    dispatch(Actions.setImage(requestData));
   };
 
   // const setCropImage = (e) => {

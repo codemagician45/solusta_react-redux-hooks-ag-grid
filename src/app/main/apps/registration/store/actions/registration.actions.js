@@ -64,17 +64,9 @@ export function setImage(data) {
     };
     const body = {
         key: 'value',
-        "id": data.id,
-        // "firstName":"Test",
-        "firstName":data.firstName,
-        "lastName":data.lastName,
-        "gender":data.gender,
-        "email":data.email,
-        "phone":data.phone,
-        "companyName":"Test"
-        // "mainPhoto":data.mainPhoto
+        ...data,
     };
-    const request = axios.put('http://dee-mac.local:8088/api/attendee-sas',body, header);
+    const request = axios.put('https://stage02.solusta.me/api/attendee-sas',body, header);
     return (dispatch) =>
         request.then((response)=>
             dispatch({
@@ -82,10 +74,7 @@ export function setImage(data) {
                 payload:response.data
             })
         )
-    // return {
-    //     type   : SET_IMAGE,
-    //     payload: data
-    // };
+
 }
 
 export function getFriendlyID(id) {

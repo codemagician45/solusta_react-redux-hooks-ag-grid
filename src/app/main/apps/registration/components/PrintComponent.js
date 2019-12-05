@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import { Button, Grid, Box } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
@@ -73,10 +74,10 @@ const styles = (theme) => ({
 
     companyNameStyle: {
         position: 'absolute',
-        top: '63%',
+        top: '64%',
         width:'100%',
         textAlign:'center',
-        color: '#4d4d4d'
+        textTransform:'uppercase'
     },
 
 
@@ -187,7 +188,7 @@ class PrintComponent extends React.Component {
             axios.get(`http://dee-mac.local:8088/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
                 .then((res) => {
                     console.log('here in friendlyID: ', res);
-                    resolve(res.data[0].badgeFriendlyID);
+                    resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);
                 })
                 .catch((err) => {
                     reject(err);
@@ -217,7 +218,7 @@ class PrintComponent extends React.Component {
                             <div id="modal-print" className={classes.modal_print}>
                                 <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
                                 <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
-                                <h2 className={classes.friendly}>{fId[0].fId}</h2>
+                                {(fId && fId[0]) && <h2 className={classes.friendly}>{fId[0].fId}</h2>}
                                 <ImagePart item={item} />
                                 <div className={classes.photoContainer}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
