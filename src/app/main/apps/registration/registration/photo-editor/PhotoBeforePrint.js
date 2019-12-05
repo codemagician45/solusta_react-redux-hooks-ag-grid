@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
         top: '64%',
         width:'100%',
         textAlign:'center',
+        textTransform:'uppercase'
     },
 
     photoImg: {
