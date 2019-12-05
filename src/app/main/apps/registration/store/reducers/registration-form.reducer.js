@@ -1,7 +1,9 @@
 import * as Actions from '../actions';
 
 const initialState = {
-    data: []
+    data: [],
+    rows: [],
+    backgrounds: [],
 };
 
 const productsReducer = function (state = initialState, action) {
@@ -14,6 +16,18 @@ const productsReducer = function (state = initialState, action) {
                 ...state,
                 data: action.payload
             };
+        }
+        case Actions.SET_ROW: {
+            return {
+                ...state,
+                rows: action.payload,
+            }
+        }
+        case Actions.GET_BACKGROUND: {
+            return {
+                ...state,
+                backgrounds: action.payload,
+            }
         }
         default:
         {

@@ -2,6 +2,8 @@ import axios from 'axios';
 
 export const GET_CATEGORY = '[REGISTRATION] GET_CATEGORY';
 export const SAVE_ATTENDEE = '[REGISTRATION] SAVE_ATTENDEE';
+export const SAVE_ATTENDEE_SUCCESS = '[REGISTRATION] SAVE_ATTENDEE_SUCCESS';
+export const SAVE_ATTENDEE_FAIL = '[REGISTRATION] SAVE_ATTENDEE_FAIL';
 
 export const getCategory = () => {
     const body = {};
@@ -22,21 +24,21 @@ export const getCategory = () => {
         });
 }
 
-export const saveAttendee = (data) => {
-    const body = data;
-    const header = {
-        headers: {
-            'content-type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-        }
-    };
-    const request = axios.post('https://stage02.solusta.me/api/attendee-sas', body, header);
+export const saveAttendee = () => {
+    return {
+        type: SAVE_ATTENDEE,
+    }
+}
 
-    return (dispatch) =>
-        request.then((response) =>{
-            return dispatch({
-                type   : SAVE_ATTENDEE,
-                payload: response.data
-            })
-        });
+export const saveAttendeeSuccess = (data) => {
+    return {
+        type: SAVE_ATTENDEE_SUCCESS,
+        payload: data,
+    }
+}
+
+export const saveAttendeeFail = () => {
+    return {
+        type: SAVE_ATTENDEE_FAIL,
+    }
 }
