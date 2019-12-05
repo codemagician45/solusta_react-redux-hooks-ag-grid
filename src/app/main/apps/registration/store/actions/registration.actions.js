@@ -16,7 +16,7 @@ export function getProducts()
     const body = {
        key: "value"
     };
-    const request = axios.get('http://dee-mac.local:8088/api/attendee-sas', body, header);
+    const request = axios.get('http://dee-mac.local:8088/api/attendee-sas-no-page', body, header);
 
     return (dispatch) =>
         request.then((response) =>

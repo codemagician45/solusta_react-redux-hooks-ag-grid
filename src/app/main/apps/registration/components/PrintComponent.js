@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import axios from 'axios';
 import { Button, Grid, Box } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
@@ -16,49 +16,70 @@ const styles = (theme) => ({
 
     paper: {
         position: 'absolute',
+        margin: '0',
+        padding: '0',
         background: 'red'
     },
 
+    outerBox: {
+        margin: '0',
+        width: '100%',
+        overflow: 'hidden'
+    },
     modal_print: {
         position:'relative',
         display:'block',
         margin:'0',
-        pageBreakerAfter: 'always',
+        padding: '0',
+        width: '100%',
+        pageBreakerAfter: 'always'
+    },
+    photoContainer: {
+        position: 'absolute',
+        left: '194px',
+        width: '110px',
+        height: '150px',
+        right: '0',
+        top: '55px',
+        overflow:'hidden'
+    },
+
+    backGround: {
+        width: '100%',
+        height: '100%'
+    },
+
+    photoImg: {
+        width: '100%',
+        margin:'0 auto'
+    },
+    friendly: {
+        position: 'absolute',
+        left: '174px',
+        top: '210px',
+        right: '0',
+        fontSize: '18px',
+        textAlign: 'center',
+        color: '#4d4d4d'
     },
     nameStyle: {
         position: 'absolute',
         top: '57%',
         width:'100%',
         textAlign:'center',
-        color: 'midnightblue',
+        color: '#174883',
         textTransform:'uppercase'
     },
 
     companyNameStyle: {
         position: 'absolute',
-        top: '64%',
+        top: '63%',
         width:'100%',
         textAlign:'center',
-        textTransform:'uppercase'
+        color: '#4d4d4d'
     },
 
-    photo: {
-        position: 'absolute',
-        left: '180px',
-        width: '118px',
-        height: '150px',
-        right: '0',
-        top: '55px'
-    },
 
-    backGround: {
-        width: '100%'
-    },
-
-    photoImg: {
-        width: '100%',
-        margin:'auto'
-    },
 
 });
 
@@ -163,7 +184,7 @@ class PrintComponent extends React.Component {
             const body = {
                 key: 'value',
             };
-            axios.get(`https://stage02.solusta.me/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
+            axios.get(`http://dee-mac.local:8088/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
                 .then((res) => {
                     console.log('here in friendlyID: ', res);
                     resolve(res.data[0].badgeFriendlyID);
@@ -192,13 +213,13 @@ class PrintComponent extends React.Component {
                         const fId = friendlyIdArr.filter(fItem => fItem.id === item.id);
                         console.log('here inside the render: ', fId);
                         return (
-                        <Box className="w-100 h-100" display="none" displayPrint="block" m={1} key={index.toString()}>
+                        <Box className={classes.outerBox} display="none" displayPrint="block" m={1} key={index.toString()}>
                             <div id="modal-print" className={classes.modal_print}>
                                 <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
                                 <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
                                 <h2 className={classes.friendly}>{fId[0].fId}</h2>
                                 <ImagePart item={item} />
-                                <div className={classes.photo}>
+                                <div className={classes.photoContainer}>
                                     <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
                                 </div>
                             </div>
