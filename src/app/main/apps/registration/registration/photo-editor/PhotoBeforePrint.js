@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 function PhotoBeforePrint(props) {
     const dispatch = useDispatch();
     const images = useSelector(({ registerApp }) => registerApp.products.data);
-    const img = useSelector(({ registerApp }) => registerApp.image.data);
+    const img = useSelector(({ registerApp }) => registerApp.products.data);
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
     const [modalImg, setModalImg] = React.useState(null);

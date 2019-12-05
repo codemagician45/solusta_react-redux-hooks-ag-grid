@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {Link} from 'react-router-dom';
 import ReactToPrint from 'react-to-print'; // for Print React component
-import printJS from 'print-js';
 
 import { Button, Grid, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -42,9 +41,7 @@ function Registration()
             }}
             header={
                 <div className="flex flex-1 w-full items-center justify-between">
-                    <Button component={Link} to="/app/registration/mass-print-preview" className="whitespace-no-wrap" color="secondary" variant="contained" style={{visibility:'hidden'}}>
-                        <span className="hidden sm:flex">Print Multiple Badge</span>
-                    </Button>
+                    <Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{visibility:'hidden'}}>Print Before</Button>
                     <ReactToPrint
                         trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
                         content={() => printRef.current}
