@@ -8,7 +8,14 @@ const badgeReducer = function (state = initialState, action) {
 
     switch ( action.type )
     {
-        case Actions.GET_BADGE:
+        case Actions.SET_BADGE:
+        {
+            return {
+                ...state,
+                data: action.payload
+            };
+        }
+        case Actions.GET_BACKGROUND:
         {
             return {
                 ...state,

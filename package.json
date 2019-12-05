@@ -65,6 +65,7 @@
         "react-swipeable-views": "0.13.3",
         "react-table": "6.10.3",
         "react-text-mask": "5.4.3",
+        "react-to-print": "^2.5.0",
         "react-virtualized": "9.21.2",
         "react-window": "1.8.5",
         "redux": "4.0.4",

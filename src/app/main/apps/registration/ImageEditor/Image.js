@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import {Button,Icon, Typography } from '@material-ui/core';
-import {FuseAnimate,FusePageCarded} from '@fuse';
-import {useDispatch, useSelector} from 'react-redux';
+import { Button, Icon, Typography } from '@material-ui/core';
+import { FuseAnimate, FusePageCarded } from '@fuse';
+import { useDispatch, useSelector } from 'react-redux';
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import { Link } from 'react-router-dom';
@@ -23,49 +23,54 @@ const useStyles = makeStyles(theme => ({
         position: 'absolute',
         left: '62%',
         width: '120px',
-        height:'180px',
+        height: '180px',
         right: '0',
         top: '15%',
+        display:'flex'
     },
 
     backGround: {
-        width:'100%'
+        width: '100%'
     },
 
     nameStyle: {
         position: 'absolute',
         top: '57%',
-        left: '24%',
-        color: 'midnightblue', 
+        width:'100%',
+        textAlign:'center',
+        color: 'midnightblue',
     },
 
     companyNameStyle: {
         position: 'absolute',
         top: '64%',
-        left: '40%',
+        width:'100%',
+        textAlign:'center',
     },
 
     photoImg: {
-        width:'100%'
+        width: '100%',
+        margin:'auto'
     },
     modal_print: {
-        position:'relative'
+        position:'relative',
+        display:'flex'
     }
 }));
 
 function Image(props) {
     const dispatch = useDispatch();
-    const images = useSelector(({registerApp}) => registerApp.products.data);
-    const img = useSelector(({registerApp}) => registerApp.image.data);
+    const images = useSelector(({ registerApp }) => registerApp.products.data);
+    const img = useSelector(({ registerApp }) => registerApp.image.data);
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
-    const [modalImg, setModalImg] = React.useState(null);    
+    const [modalImg, setModalImg] = React.useState(null);
     const classes = useStyles();
-    
+
     useEffect(() => {
         dispatch(Actions.getProducts());
     }, [dispatch]);
-    
+
     const { id } = props.match.params;
     const image = images && images.filter((image) => {
         return image.id === parseInt(id);
@@ -80,14 +85,16 @@ function Image(props) {
     function getModalStyle() {
         const top = 50;
         const left = 50;
-        
+
         return {
             top: `${top}%`,
             left: `${left}%`,
             transform: `translate(-${top}%, -${left}%)`,
+            display:'flex',
+            flexDirection:'column'
         };
     }
-      
+
     const handleOpen = () => {
         setOpen(true);
     };
@@ -95,16 +102,16 @@ function Image(props) {
     const handleClose = () => {
         setOpen(false);
     };
+    
     const print = () => {
-        printJS({printable:'modal-print',type:'html', scanStyles:true});
-        // document.getElementById('print_btn').style = 'display:none';
-        // window.print();
-        // document.getElementById('print_btn').style = 'display:block';
+        document.getElementById('print_btn').style = 'display:none';
+        window.print();
+        document.getElementById('print_btn').style = 'display:flex';
     }
     return (
         <div>
             <FusePageCarded
-                header = {
+                header={
                     <div className="flex flex-1 w-full items-center justify-between">
                         <div className="flex items-center">
                             <FuseAnimate animation="transition.expandIn" delay={300}>
@@ -119,50 +126,45 @@ function Image(props) {
                         <FuseAnimate animation="transition.slideRightIn" delay={300}>
                             <Button onClick={handleOpen} className="whitespace-no-wrap" variant="contained">
                                 <span className="hidden sm:flex">Print Badge</span>
-                            </Button>   
+                            </Button>
                         </FuseAnimate>
-                        
                     </div>
                 }
                 content={
-                     (
-                         <React.Fragment>
-                            <HomePage image={imgSrc} onCrop={setModalImage}/>
+                    (
+                        <React.Fragment>
+                            <HomePage image={imgSrc} onCrop={setModalImage} />
                             <Modal
                                 aria-labelledby="print-modal-title"
                                 aria-describedby="print-modal-description"
                                 open={open}
                                 onClose={handleClose}
                             >
-                                <div style={modalStyle}  className={classes.paper} >
+                                <div style={modalStyle} className={classes.paper} >
                                     {image && image[0] && (
                                         <React.Fragment>
                                             <div id="modal-print" className={classes.modal_print}>
                                                 <h1 className={classes.nameStyle}>{name}</h1>
                                                 <h2 className={classes.companyNameStyle}>{image[0].companyName}</h2>
-                                                <img src ='assets/images/background/background.png' className={classes.backGround} alt={'port-0'}   />
+                                                <img src='assets/images/background/background.png' className={classes.backGround} alt={'port-0'} />
                                                 <div className={classes.photo}>
-                                                    <img src={modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
+                                                    <img src={modalImg} className={classes.photoImg} alt={'port-1'} />
                                                 </div>
                                             </div>
-                                            <div className={classes.photo}>
-                                                <img src={modalImg} className={classes.photoImg} delay={100} alt={'port-1'}/>
-                                            </div>
-                                            
-                                            <Button onClick={print} className="whitespace-no-wrap" variant="contained" id="print_btn">
-                                                <span className="hidden sm:flex">Print Test</span>
+                                            <Button onClick={print} color="primary" variant="contained" id="print_btn">
+                                                <span className="hidden sm:flex">Print</span>
                                             </Button>
                                         </React.Fragment>
                                     )}
                                 </div>
                             </Modal>
                         </React.Fragment>
-                        )
+                    )
                 }
                 innerScroll
             />
         </div>
-        
+
     )
 }
 
