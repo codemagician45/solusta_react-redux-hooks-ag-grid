@@ -14,7 +14,7 @@ export function getProducts()
     const body = {
        key: "value"
     };
-    const request = axios.get('https://stage02.solusta.me/api/attendee-sas', body, header);
+    const request = axios.get('http://dee-mac.local:8088//api/attendee-sas', body, header);
 
     return (dispatch) =>
         request.then((response) =>
@@ -42,7 +42,7 @@ export function getBackgrounds() {
     const body = {
         key: 'value',
     };
-    const request = axios.get('https://stage02.solusta.me/api/badge-design-sas/1501', body, header);
+    const request = axios.get('http://dee-mac.local:8088//api/badge-design-sas/1501', body, header);
 
     return (dispatch) =>
         request.then((response) =>
