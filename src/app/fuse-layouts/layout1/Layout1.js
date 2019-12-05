@@ -134,9 +134,9 @@ function Layout1(props)
 
                                     </div>
 
-                                    {config.footer.display && config.footer.position === 'below' && (
+                                    {/* {config.footer.display && config.footer.position === 'below' && (
                                         <FooterLayout1/>
-                                    )}
+                                    )} */}
 
                                     {/* <SettingsPanel/> */}
 
@@ -147,15 +147,15 @@ function Layout1(props)
                                 )}
                             </div>
 
-                            {config.footer.display && config.footer.style !== 'fixed' && config.footer.position === 'above' && (
+                            {/* {config.footer.display && config.footer.style !== 'fixed' && config.footer.position === 'above' && (
                                 <FooterLayout1/>
-                            )}
+                            )} */}
 
                         </FuseScrollbars>
 
-                        {config.footer.display && config.footer.style === 'fixed' && config.footer.position === 'above' && (
+                        {/* {config.footer.display && config.footer.style === 'fixed' && config.footer.position === 'above' && (
                             <FooterLayout1/>
-                        )}
+                        )} */}
 
                     </div>
 
@@ -212,9 +212,9 @@ function Layout1(props)
                                     )}
                                 </FuseScrollbars>
 
-                                {config.footer.display && config.footer.position === 'below' && config.footer.style === 'fixed' && (
+                                {/* {config.footer.display && config.footer.position === 'below' && config.footer.style === 'fixed' && (
                                     <FooterLayout1/>
-                                )}
+                                )} */}
 
                                 {/* <SettingsPanel/> */}
 
@@ -225,9 +225,9 @@ function Layout1(props)
                             )}
                         </div>
 
-                        {config.footer.display && config.footer.position === 'above' && (
+                        {/* {config.footer.display && config.footer.position === 'above' && (
                             <FooterLayout1/>
-                        )}
+                        )} */}
                     </div>
 
                     {config.rightSidePanel.display && (
