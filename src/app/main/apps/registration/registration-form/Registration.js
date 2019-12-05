@@ -28,12 +28,7 @@ function Registration()
         dispatch(Actions.getProducts());
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     dispatch(Actions.getBackgrounds());
-    // }, [dispatch])
-
     console.log('here selected rows: ', rows);
-
     return (
         <FusePageCarded
             classes={{
@@ -46,7 +41,7 @@ function Registration()
                         <span className="hidden sm:flex">Print Multiple Badge</span>
                     </Button>
                     <ReactToPrint
-                        trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
+                        trigger={() => <Button color="secondary" variant="contained">Print Multiple Badge</Button>}
                         content={() => printRef.current}
                     />
                     <PrintComponent data={products} rows={rows} backgrounds={backgrounds} ref={printRef}/>

@@ -31,7 +31,7 @@ function RegistrationTable(props) {
         {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
     ];
 
-    let defs = {
+    const defs = {
         defaultColDef: {
             resizable: true,
             sortable: true,
@@ -70,7 +70,7 @@ function RegistrationTable(props) {
         <React.Fragment>
             <div
             className="table-responsive ag-theme-balham"
-            style={{height:'90%', width: '100%', fontSize: '16px' }}
+            style={{height:'100%', width: '100%', fontSize: '16px' }}
             >
                 <AgGridReact
                     columnDefs={columnDefs}

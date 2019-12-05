@@ -17,6 +17,7 @@ const styles = (theme) => ({
         display:'flex',
         margin:'10px',
     },
+    
     nameStyle: {
         position: 'absolute',
         top: '57%',
