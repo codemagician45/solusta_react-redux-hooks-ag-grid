@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+// import env server link
+import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
+const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
+
 export const GET_CATEGORY = '[REGISTRATION] GET_CATEGORY';
 export const SAVE_ATTENDEE = '[REGISTRATION] SAVE_ATTENDEE';
 export const SAVE_ATTENDEE_SUCCESS = '[REGISTRATION] SAVE_ATTENDEE_SUCCESS';
@@ -13,7 +17,7 @@ export const getCategory = () => {
             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
         }
     };
-    const request = axios.get('http://dee-mac.local:8088/api/attendee-category-sas', body, header);
+    const request = axios.get(`${SERVER_LINK}/api/attendee-category-sas`, body, header);
 
     return (dispatch) =>
         request.then((response) =>{

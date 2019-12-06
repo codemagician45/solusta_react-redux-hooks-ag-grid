@@ -24,6 +24,9 @@ import withReducer from 'app/store/withReducer';
 import * as Actions from '../../store/actions';
 import reducer from '../../store/reducers';
 
+// import env server link
+import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
+const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -235,7 +238,8 @@ function NewCategory(props) {
                         }
                     };
                     dispatch(Actions.saveAttendee());
-                    axios.post('http://dee-mac.local:8088/api/attendee-sas', data, header)
+
+                    axios.post(`${SERVER_LINK}/api/attendee-sas`, data, header)
                         .then(response => {
                             console.log('here save attendee response: ', response);
                             dispatch(Actions.saveAttendeeSuccess(response.data));
@@ -244,7 +248,6 @@ function NewCategory(props) {
                         .catch(error => {
                             dispatch(Actions.saveAttendeeFail());
                         });
-
                 } else {
                     setError(true);
                 }

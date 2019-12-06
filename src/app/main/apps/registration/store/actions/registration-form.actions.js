@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+// import env server link
+import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
+const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
+
 export const GET_PRODUCTS = '[REGISTER APP] GET PRODUCTS';
 export const SET_ROW = '[REGISTRATION] SET_ROW';
 export const GET_BACKGROUND = '[REGISTRATION] GET_BACKGROUND';
@@ -14,7 +18,7 @@ export function getProducts()
     const body = {
        key: "value"
     };
-    const request = axios.get('http://dee-mac.local:8088/api/attendee-sas', body, header);
+    const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, body, header);
 
     return (dispatch) =>
         request.then((response) =>
@@ -42,7 +46,7 @@ export function getBackgrounds() {
     const body = {
         key: 'value',
     };
-    const request = axios.get('http://dee-mac.local:8088/api/badge-design-sas/1501', body, header);
+    const request = axios.get(`${SERVER_LINK}/api/badge-design-sas/1501`, body, header);
 
     return (dispatch) =>
         request.then((response) =>
