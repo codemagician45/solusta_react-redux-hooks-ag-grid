@@ -27,7 +27,6 @@ function Registration()
     const count = useSelector(({registerApp}) => registerApp.products.count);
     const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
     const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
-    const count = useSelector(({ registerApp }) => registerApp.products.count);
 
     console.log("data with pagination",allAttendee)
     console.log("count",count)
