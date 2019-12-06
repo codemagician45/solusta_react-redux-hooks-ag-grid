@@ -22,7 +22,7 @@ function ImageCellRender(props){
         );
     else {
         return(
-          <Link to={`/app/registration/registration-forms/${id}`}>
+          <Link to={`/app/registration/registration/${id}`}>
               <img src={`data:${product && product.length > 0 && product[0].mainPhotoContentType};base64, ${product && product.length > 0 && product[0].mainPhoto}`} style={style} alt={'profile'}/>
           </Link>
         );

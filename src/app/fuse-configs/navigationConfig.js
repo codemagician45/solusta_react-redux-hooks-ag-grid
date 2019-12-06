@@ -12,10 +12,10 @@ const navigationConfig = [
                 'icon'    : 'how_to_reg',
                 'children': [
                     {
-                        'id'   : 'registration-forms',
+                        'id'   : 'registration',
                         'title': 'Registration Forms',
                         'type' : 'item',
-                        'url'  : '/app/registration/registration-forms'
+                        'url'  : '/app/registration/registration'
                     },
                     {
                         'id'   : 'badges',

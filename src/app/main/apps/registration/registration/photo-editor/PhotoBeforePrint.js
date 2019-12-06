@@ -125,13 +125,14 @@ function PhotoBeforePrint(props) {
         document.getElementById('print_btn').style = 'display:flex';
     }
     return (
+        // <PhotoEditor image={imgSrc} requestData={image[0]} onCrop={setModalImage} />
         <div>
             <FusePageCarded
                 header={
                     <div className="flex flex-1 w-full items-center justify-between">
                         <div className="flex items-center">
                             <FuseAnimate animation="transition.expandIn" delay={300}>
-                                <Typography className="normal-case flex items-center" component={Link} role="button" to="/app/registration/registration-forms" color="inherit">
+                                <Typography className="normal-case flex items-center" component={Link} role="button" to="/app/registration/registration" color="inherit">
                                     <Icon className="text-32 mr-0 sm:mr-12">arrow_back</Icon>
                                 </Typography>
                             </FuseAnimate>

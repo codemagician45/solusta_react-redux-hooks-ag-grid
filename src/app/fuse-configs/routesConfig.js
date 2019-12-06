@@ -17,7 +17,7 @@ const routes = [
         {
             path     : '/',
             exact    : true,
-            component: () => (localStorage.getItem('jwt_access_token'))? <Redirect to="/app/registration/registration-forms"/> : <Redirect to="/login"/>
+            component: () => (localStorage.getItem('jwt_access_token'))? <Redirect to="/app/registration/registration"/> : <Redirect to="/login"/>
         },
         {
             component: () => <Redirect to="/pages/errors/error-404"/>
