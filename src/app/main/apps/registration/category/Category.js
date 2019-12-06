@@ -12,7 +12,7 @@ import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
 // import components
-import Notification from './components/Notification';
+import Notification from '../components/Notification';
 
 const useStyles = makeStyles(theme => ({
     root: {

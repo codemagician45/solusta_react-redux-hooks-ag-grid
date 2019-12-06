@@ -21,11 +21,11 @@ import DateFnsUtils from '@date-io/date-fns';
 
 // import redux
 import withReducer from 'app/store/withReducer';
-import * as Actions from '../../store/actions';
-import reducer from '../../store/reducers';
+import * as Actions from '../store/actions';
+import reducer from '../store/reducers';
 
 // import env server link
-const environment = require('../../RegistrationEnv');
+const environment = require('../RegistrationEnv');
 const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 const useStyles = makeStyles(theme => ({

@@ -10,11 +10,11 @@ export const RegistrationConfig = {
 	},
 	routes: [
 		{
-			path: '/app/registration/registration-forms/:id',
+			path: '/app/registration/registration/:id',
 			component: React.lazy(() => import('./registration/photo-editor/PhotoBeforePrint'))
 		},
 		{
-			path: '/app/registration/registration-forms',
+			path: '/app/registration/registration',
 			component: Registration
 		},
 		{
@@ -24,31 +24,31 @@ export const RegistrationConfig = {
 		},
 		{
 			path: '/app/registration/category/speaker',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		},
 		{
 			path: '/app/registration/category/organizer',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		},
 		{
 			path: '/app/registration/category/participant',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		},
 		{
 			path: '/app/registration/category/event-crew',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		},
 		{
 			path: '/app/registration/category/media',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		},
 		{
 			path: '/app/registration/category/security',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		},
 		{
 			path: '/app/registration/category/contractor',
-			component: React.lazy(() => import('./category/components/NewCategory'))
+			component: React.lazy(() => import('./components/NewCategory'))
 		}
 	]
 };
