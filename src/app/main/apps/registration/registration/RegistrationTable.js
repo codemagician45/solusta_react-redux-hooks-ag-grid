@@ -54,7 +54,7 @@ function RegistrationTable(props) {
             lastName: item.lastName,
             email: item.email,
             companyName:item.companyName,
-            category: item.attendeeCategorySAS[0].categoryName
+            category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
         };
         return temp;
     });

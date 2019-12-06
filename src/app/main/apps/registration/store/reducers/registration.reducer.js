@@ -4,6 +4,9 @@ const initialState = {
     data: [],
     rows: [],
     backgrounds: [],
+    page: 0,
+    size: 50,
+    count: 1,
     friendlyID: null,
     image:null
 };
@@ -16,7 +19,9 @@ const productsReducer = function (state = initialState, action) {
         {
             return {
                 ...state,
-                data: action.payload
+                data: state.data.concat(action.payload),
+                // page: state.page + 1,
+                // count: action.payload.length,
             };
         }
         case Actions.SET_ROW: {
