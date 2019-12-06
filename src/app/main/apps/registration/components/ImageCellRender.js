@@ -4,12 +4,13 @@ import { Link} from 'react-router-dom';
 
 function ImageCellRender(props){
 
-    const products = useSelector(({registerApp}) => registerApp.products.data);
+    // const products = useSelector(({registerApp}) => registerApp.products.data);
+    const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
     const id = props.data.id;
     // const image_url = products.filter((product) => {return product.id === parseInt(id) })[0].mainPhoto;
     // const image_type = products.filter((product) => {return product.id === parseInt(id) })[0].mainPhotoContentType;
-    const product = products.filter((product) => {return product.id === parseInt(id) });
-
+    const product = allAttendee.filter((product) => {return product.id === parseInt(id) });
+    
     const style = {
         height:'48px',
         width: '48px',
@@ -18,7 +19,7 @@ function ImageCellRender(props){
 
     if(product && product.length > 0 && product[0].mainPhoto === '')
         return (
-          <img src={'assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{padding:'5px'}}/>
+          <img src={'../assets/images/profile.jpg'} width={48} height={48} alt={'profile'} style={{padding:'5px'}}/>
         );
     else {
         return(

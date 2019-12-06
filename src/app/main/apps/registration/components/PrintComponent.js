@@ -192,7 +192,7 @@ class PrintComponent extends React.Component {
             };
             axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
                 .then((res) => {
-                    console.log('here in friendlyID: ', res);
+                    // console.log('here in friendlyID: ', res);
                     resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);
                 })
                 .catch((err) => {
@@ -204,7 +204,7 @@ class PrintComponent extends React.Component {
     render() {
         const { data, rows, friendlyIdArr } = this.state;
         const { classes } = this.props;
-        console.log('here in print component: ', data);
+        // console.log('here in print component: ', data);
         const displayData = data && data
                                 .filter((item) => {
                                     return rows.some((row) => {

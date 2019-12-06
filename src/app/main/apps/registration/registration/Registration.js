@@ -23,9 +23,22 @@ function Registration()
     const rows = useSelector(({registerApp}) => registerApp.products.rows);
     const backgrounds = useSelector(({registerApp}) => registerApp.products.backgrounds);
     const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
+    const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
+    const count = useSelector(({ registerApp }) => registerApp.products.count);
+
+    console.log("data with pagination",allAttendee)
+    console.log("count",count)
 
     useEffect(() => {
         dispatch(Actions.getProducts());
+    }, [dispatch]);
+
+    useEffect(() => {
+            dispatch(Actions.getAllAttendee(0));    
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(Actions.getAttendeeCount());
     }, [dispatch]);
 
     // useEffect(() => {
@@ -51,7 +64,7 @@ function Registration()
                         trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
                         content={() => printRef.current}
                     />
-                    <PrintComponent data={products} rows={rows} backgrounds={backgrounds} ref={printRef}/>
+                    <PrintComponent data={allAttendee} rows={rows} backgrounds={backgrounds} ref={printRef}/>
                 </div>
             }
             content={

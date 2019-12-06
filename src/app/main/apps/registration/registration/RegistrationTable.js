@@ -20,6 +20,13 @@ import ImageCellRender from '../components/ImageCellRender';
 function RegistrationTable(props) {
     const dispatch = useDispatch();
     const products = useSelector(({registerApp}) => registerApp.products.data);
+    
+    const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
+    console.log(allAttendee)
+
+    // useEffect(() => {
+    //     dispatch(Actions.getAllAttendee());
+    // }, [dispatch]);
 
     const columnDefs= [
         {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: true,checkboxSelection: true},
@@ -47,17 +54,19 @@ function RegistrationTable(props) {
         overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
 
-    const rowData = products.map((item)=>{
+    const rowData = allAttendee.map((item)=>{
         const temp ={
             id: item.id,
             firstName: item.firstName,
             lastName: item.lastName,
             email: item.email,
             companyName:item.companyName,
-            category: item.attendeeCategorySAS[0].categoryName
+            category: item.attendeeCategorySAS[0] && item.attendeeCategorySAS[0].categoryName
         };
         return temp;
     });
+
+    const paginationPageSize = 20;
 
     const frameworkComponents = {
         imageCellRender:ImageCellRender
@@ -91,6 +100,7 @@ function RegistrationTable(props) {
                     overlayLoadingTemplate={defs.overlayLoadingTemplate}
                     overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
                     onSelectionChanged={onSelectionChanged}
+                    paginationPageSize={paginationPageSize}
                     >
                 </AgGridReact>
             </div>
