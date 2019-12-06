@@ -10,39 +10,39 @@ export const SAVE_ATTENDEE_SUCCESS = '[REGISTRATION] SAVE_ATTENDEE_SUCCESS';
 export const SAVE_ATTENDEE_FAIL = '[REGISTRATION] SAVE_ATTENDEE_FAIL';
 
 export const getCategory = () => {
-    const body = {};
-    const header = {
-        headers: {
-            'content-type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-        }
-    };
-    const request = axios.get(`${SERVER_LINK}/api/attendee-category-sas`, body, header);
+	const body = {};
+	const header = {
+		headers: {
+			'content-type': 'application/json',
+			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+		}
+	};
+	const request = axios.get(`${SERVER_LINK}/api/attendee-category-sas`, body, header);
 
-    return (dispatch) =>
-        request.then((response) =>{
-            return dispatch({
-                type   : GET_CATEGORY,
-                payload: response.data
-            })
-        });
+	return (dispatch) =>
+		request.then((response) => {
+			return dispatch({
+				type: GET_CATEGORY,
+				payload: response.data
+			})
+		});
 }
 
 export const saveAttendee = () => {
-    return {
-        type: SAVE_ATTENDEE,
-    }
+	return {
+		type: SAVE_ATTENDEE,
+	}
 }
 
 export const saveAttendeeSuccess = (data) => {
-    return {
-        type: SAVE_ATTENDEE_SUCCESS,
-        payload: data,
-    }
+	return {
+		type: SAVE_ATTENDEE_SUCCESS,
+		payload: data,
+	}
 }
 
 export const saveAttendeeFail = () => {
-    return {
-        type: SAVE_ATTENDEE_FAIL,
-    }
+	return {
+		type: SAVE_ATTENDEE_FAIL,
+	}
 }
