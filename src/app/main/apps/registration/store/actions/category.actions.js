@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // import env server link
-import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
-const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
+const environment = require('../../RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 export const GET_CATEGORY = '[REGISTRATION] GET_CATEGORY';
 export const SAVE_ATTENDEE = '[REGISTRATION] SAVE_ATTENDEE';

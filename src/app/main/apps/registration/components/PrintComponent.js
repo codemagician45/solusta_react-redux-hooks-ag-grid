@@ -15,8 +15,8 @@ import BG6 from '../assets/images/bg-6.jpg';
 import BG7 from '../assets/images/bg-7.jpg';
 
 // import env server link
-import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
-const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
+const environment = require('../RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 const styles = (theme) => ({
 

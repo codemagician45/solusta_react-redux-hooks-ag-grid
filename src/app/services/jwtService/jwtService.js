@@ -1,6 +1,10 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import FuseUtils from '@fuse/FuseUtils';
+
+// import env server link
+const environment = require('../../main/apps/registration/RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 class jwtService extends FuseUtils.EventEmitter {
 
     init()
@@ -51,7 +55,7 @@ class jwtService extends FuseUtils.EventEmitter {
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
-                url: 'http://dee-mac.local:8088/api/authenticate',
+                url: `${SERVER_LINK}/api/authenticate`,
                 headers: {},
                 data: {
                   username: email,
@@ -66,7 +70,7 @@ class jwtService extends FuseUtils.EventEmitter {
                        key: "value"
                     }
 
-                    axios.get('http://dee-mac.local:8088/api/account', body)
+                    axios.get(`${SERVER_LINK}/api/account`, body)
                         .then((response) => {
                             let user = {data:{}};
                             user.data = response.data;
@@ -96,7 +100,7 @@ class jwtService extends FuseUtils.EventEmitter {
                 key: "value"
             };
 
-            axios.get('http://dee-mac.local:8088/api/account',body)
+            axios.get(`${SERVER_LINK}/api/account`,body)
                 .then(response => {
                     let user = {data:{}};
                     user.data = response.data;

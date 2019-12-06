@@ -52,17 +52,3 @@ export const RegistrationConfig = {
         }
     ]
 };
-
-export const RegistrationEnvConfig = {
-    env: {
-        'ServerLink' : 'http://dee-mac.local:8088',
-    }, 
-    prod: {
-        'ServerLink' : 'https://stage02.solusta.me',
-    },
-}
-
-/**
- * env = 'server' or 'local'
- */
-export const env = 'server';

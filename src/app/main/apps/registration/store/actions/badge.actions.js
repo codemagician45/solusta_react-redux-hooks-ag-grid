@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // import env server link
-import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
-const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
+const environment = require('../../RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 export const SET_BADGE = '[BADGE APP] SET BADGE';
 export const GET_BACKGROUND = '[BADGE APP] GET_BACKGROUND';

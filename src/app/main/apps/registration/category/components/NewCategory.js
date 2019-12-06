@@ -25,8 +25,8 @@ import * as Actions from '../../store/actions';
 import reducer from '../../store/reducers';
 
 // import env server link
-import { RegistrationEnvConfig, env } from '../../RegistrationConfig';
-const SERVER_LINK = (env === 'server') ? RegistrationEnvConfig.prod.ServerLink : RegistrationEnvConfig.env.ServerLink;
+const environment = require('../../RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -120,7 +120,7 @@ const useStyles = makeStyles(theme => ({
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-
+    
     return (
         <Typography
             component="div"
