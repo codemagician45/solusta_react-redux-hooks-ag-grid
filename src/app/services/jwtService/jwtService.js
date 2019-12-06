@@ -5,6 +5,7 @@ import FuseUtils from '@fuse/FuseUtils';
 // import env server link
 const environment = require('../../main/apps/registration/RegistrationEnv');
 const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
+
 class jwtService extends FuseUtils.EventEmitter {
 
     init()
