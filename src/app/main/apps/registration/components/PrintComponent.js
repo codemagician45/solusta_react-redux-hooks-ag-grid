@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// import @material-ui components
 import { Button, Grid, Box } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
+// import assets
 import BG1 from '../assets/images/bg-1.jpg';
 import BG2 from '../assets/images/bg-2.jpg';
 import BG3 from '../assets/images/bg-3.jpg';
@@ -12,6 +14,9 @@ import BG5 from '../assets/images/bg-5.jpg';
 import BG6 from '../assets/images/bg-6.jpg';
 import BG7 from '../assets/images/bg-7.jpg';
 
+// import env server link
+const environment = require('../RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 const styles = (theme) => ({
 
@@ -185,7 +190,7 @@ class PrintComponent extends React.Component {
             const body = {
                 key: 'value',
             };
-            axios.get(`http://dee-mac.local:8088/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
+            axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
                 .then((res) => {
                     console.log('here in friendlyID: ', res);
                     resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);
@@ -212,7 +217,6 @@ class PrintComponent extends React.Component {
                 {displayData && displayData
                     .map((item, index) => {
                         const fId = friendlyIdArr.filter(fItem => fItem.id === item.id);
-                        console.log('here inside the render: ', fId);
                         return (
                         <Box className={classes.outerBox} display="none" displayPrint="block" m={1} key={index.toString()}>
                             <div id="modal-print" className={classes.modal_print}>
