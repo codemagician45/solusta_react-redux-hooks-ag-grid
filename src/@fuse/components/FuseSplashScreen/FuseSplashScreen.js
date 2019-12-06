@@ -8,7 +8,7 @@ function FuseSplashScreen()
             <div className="center">
 
                 <div className="logo">
-                    <img width="128" src="assets/images/logos/fuse.svg" alt="logo"/>
+                    <img width="72" src="assets/logo-icon/apple-icon-72x72.png" alt="logo"/>
                 </div>
                 <div className="spinner-wrapper">
                     <div className="spinner">

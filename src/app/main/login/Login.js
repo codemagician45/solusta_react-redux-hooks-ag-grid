@@ -32,7 +32,7 @@ function Login()
             <div className="flex flex-col flex-grow-0 items-center text-white p-16 text-center md:p-128 md:items-start md:flex-shrink-0 md:flex-1 md:text-left">
 
                 <FuseAnimate animation="transition.expandIn">
-                    <img className="w-128 mb-32" src="assets/images/logos/solusta_logo_NEW.svg" alt="logo"/>
+                    <img className="mb-32" src="assets/images/logos/solusta-apps-logo-white.png" alt="logo"/>
                 </FuseAnimate>
 
                 <FuseAnimate animation="transition.slideUpIn" delay={300}>
@@ -43,8 +43,9 @@ function Login()
 
                 <FuseAnimate delay={400}>
                     <Typography variant="subtitle1" color="inherit" className="max-w-512 mt-16">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl erat, vel convallis elit fermentum pellentesque. Sed mollis velit
-                        facilisis facilisis.
+                        "SOLUSTA"
+                        - bright, shining (from old Irish)
+                        <p>One of the leading talent agencies in Doha established in 2016. <br/>Over the course of the years we worked with the biggest international brands and local organizations and authorities from private and government sectors.</p>
                     </Typography>
                 </FuseAnimate>
             </div>
@@ -64,9 +65,8 @@ function Login()
                             className="w-full mb-32"
                         >
                             <Tab
-                                icon={<img className="h-40 p-4 bg-black rounded-12" src="assets/images/logos/jwt.svg" alt="firebase"/>}
+                                icon={<img className="h-40 p-4 rounded-12" src="assets/images/logos/solusta-apps-logo-blue.png" alt="firebase"/>}
                                 className="min-w-0"
-                                label="JWT"
                             />
                             {/*<Tab*/}
                             {/*    icon={<img className="h-40" src="assets/images/logos/firebase.svg" alt="firebase"/>}*/}
