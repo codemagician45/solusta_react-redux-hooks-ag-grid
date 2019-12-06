@@ -8,7 +8,9 @@ const initialState = {
     size: 50,
     count: 1,
     friendlyID: null,
-    image:null
+    image:null,
+    allData:[],
+    count: 0
 };
 
 const productsReducer = function (state = initialState, action) {
@@ -47,6 +49,21 @@ const productsReducer = function (state = initialState, action) {
             return {
                 ...state,
                 friendlyID: action.payload
+            };
+        }
+        case Actions.GET_ALL_PRODUCTS:
+        {
+            return {
+                ...state,
+                allData: action.payload
+                // allData: state.allData.concat(action.payload)
+            };
+        }
+        case Actions.GET_COUNT:
+        {
+            return {
+                ...state,
+                count: action.payload
             };
         }
         default:

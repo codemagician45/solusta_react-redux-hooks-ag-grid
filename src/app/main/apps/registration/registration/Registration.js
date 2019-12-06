@@ -26,6 +26,11 @@ function Registration()
     const size = useSelector(({registerApp}) => registerApp.products.size);
     const count = useSelector(({registerApp}) => registerApp.products.count);
     const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
+    const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
+    const count = useSelector(({ registerApp }) => registerApp.products.count);
+
+    console.log("data with pagination",allAttendee)
+    console.log("count",count)
 
     // useEffect(() => {
     //     if (count === 0) {
@@ -38,6 +43,24 @@ function Registration()
     useEffect(() => {
         dispatch(Actions.getProducts());
     }, [dispatch]);
+
+    useEffect(() => {
+            dispatch(Actions.getAllAttendee(0));    
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(Actions.getAttendeeCount());
+    }, [dispatch]);
+
+    // useEffect(() => {
+    //     dispatch(Actions.getFriendlyID(props.match.params.id));
+    // }, [dispatch]);
+
+    // useEffect(() => {
+    //     dispatch(Actions.getBackgrounds());
+    // }, [dispatch])
+
+    // console.log('here selected rows: ', rows);
 
     return (
         <FusePageCarded
@@ -52,7 +75,7 @@ function Registration()
                         trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
                         content={() => printRef.current}
                     />
-                    <PrintComponent data={products} rows={rows} backgrounds={backgrounds} ref={printRef}/>
+                    <PrintComponent data={allAttendee} rows={rows} backgrounds={backgrounds} ref={printRef}/>
                 </div>
             }
             content={

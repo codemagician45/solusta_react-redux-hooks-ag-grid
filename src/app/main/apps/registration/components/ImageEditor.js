@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux';
 
-import {Button} from '@material-ui/core';
+import { Button, Icon, Typography } from '@material-ui/core';
+// import {Button} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import "tui-image-editor/dist/tui-image-editor.css";
 import ImageEditor from "@toast-ui/react-image-editor";
 
+import { Link } from 'react-router-dom';
 import withReducer from 'app/store/withReducer';
 import reducer from '../store/reducers';
 import * as Actions from '../store/actions';
@@ -31,7 +33,7 @@ const myTheme = {
 const useStyles = makeStyles(theme => ({
   save_div: {
     display:'flex',
-    justifyContent:'flex-end'
+    justifyContent:'space-between'
   },
 }));
 
@@ -80,6 +82,13 @@ function PhotoEditor(props) {
   
    return (
       <React.Fragment>
+        <div className={classes.save_div}>
+          <Typography className="normal-case flex items-center" component={Link} role="button" to="/app/registration/registration" color="inherit">
+              <Icon className="text-32 mr-0 sm:mr-12">arrow_back</Icon>
+              Back
+          </Typography>
+          <Button variant="contained" color="secondary" onClick={saveImageToDisk}>Save Cropped Result</Button>
+        </div>
         <ImageEditor
           includeUI={{
             loadImage: {
@@ -90,7 +99,7 @@ function PhotoEditor(props) {
             menu: ["crop", "flip", "rotate", "draw", "shape", "text", "filter"],
             initMenu: "",
             uiSize: {
-              height: `calc(100vh - 300px)`,
+              height: `calc(100vh - 20px)`,
             },
             menuBarPosition: "bottom",
           }}
@@ -103,9 +112,7 @@ function PhotoEditor(props) {
           usageStatistics={true}
           ref={imageEditor}
         />
-        <div className={classes.save_div}>
-          <Button variant="contained" color="secondary" onClick={saveImageToDisk}>Save Cropped Result</Button>
-        </div>
+        
       </React.Fragment>
     );
   }
