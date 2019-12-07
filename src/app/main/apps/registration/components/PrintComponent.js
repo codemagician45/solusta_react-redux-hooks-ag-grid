@@ -90,44 +90,46 @@ const styles = (theme) => ({
 });
 
 const ImagePart = ({ item }) => {
-    switch (item.attendeeCategorySAS[0].categoryName) {
-        case "Speaker": {
+    switch (item.attendeeCategorySAS[0].categoryName.toUpperCase()) {
+        case "SPEAKER": {
             return (
                 <img src={BG3} alt="background"/>
-            )
+            );
         }
-        case "Organizer": {
+        case "ORGANIZER": {
             return (
                 <img src={BG5} alt="background"/>
-            )
+            );
         }
-        case "Participant": {
+        case "PARTICIPANT": {
             return (
                 <img src={BG1} alt="background"/>
-            )
+            );
         }
-        case "Event Crew" : {
+        case "EVENT CREW" : {
             return (
                 <img src={BG6} alt="background"/>
-            )
+            );
         }
-        case "Media": {
+        case "MEDIA": {
             return (
                 <img src={BG2} alt="background"/>
-            )
+            );
         }
-        case "Security": {
+        case "SECURITY": {
             return (
                 <img src={BG4} alt="background"/>
-            )
+            );
         }
-        case "Contractor": {
+        case "CONTRACTOR": {
             return (
                 <img src={BG7} alt="background"/>
-            )
+            );
         }
         default: {
-            return;
+            return (
+                <img src={BG7} alt="background"/>
+            );
         }
     }
 }

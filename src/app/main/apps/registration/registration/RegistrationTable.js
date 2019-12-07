@@ -22,7 +22,7 @@ function RegistrationTable(props) {
     const products = useSelector(({registerApp}) => registerApp.products.data);
 
     const columnDefs= [
-        {headerName: 'ID', field: 'id',cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true,headerCheckboxSelectionFilteredOnly: true,checkboxSelection: true},
+        {headerName: 'ID', field: 'id', cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
         {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
         {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
@@ -49,11 +49,11 @@ function RegistrationTable(props) {
     const rowData = products.map((item)=>{
         const temp ={
             id: item.id,
+            category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
             firstName: item.firstName,
             lastName: item.lastName,
             email: item.email,
-            companyName:item.companyName,
-            category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
+            companyName: item.companyName,
         };
         return temp;
     });
@@ -67,8 +67,11 @@ function RegistrationTable(props) {
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
         const selectedRow = gridApi.getSelectedRows();
+        console.log('here in the row select in registration-ag-grid: ', selectedRow);
         dispatch(Actions.setRow(selectedRow));
     };
+
+    console.log('here inside the registration table: ', products);
 
     return (
         <React.Fragment>
