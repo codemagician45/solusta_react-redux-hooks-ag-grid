@@ -2,6 +2,8 @@ import * as Actions from '../actions';
 
 const initialState = {
     attendees: [],
+    badgeIDs: [],
+    printCounts: [],
     selectedRows: [],
     page: 0,
     size: 25,
@@ -15,7 +17,7 @@ const badgeReducer = function (state = initialState, action) {
             return {
                 ...state,
                 count: action.payload,
-            }
+            };
         }
         case Actions.GET_ATTENDEES:
         {
@@ -28,6 +30,18 @@ const badgeReducer = function (state = initialState, action) {
             return {
                 ...state,
                 selectedRows: action.payload,
+            };
+        }
+        case Actions.GET_BADGE_IDS: {
+            return {
+                ...state,
+                badgeIDs: action.payload,
+            };
+        }
+        case Actions.GET_PRINT_COUNTS: {
+            return {
+                ...state,
+                printCounts: action.payload,
             };
         }
         default:
