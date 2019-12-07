@@ -135,6 +135,7 @@ const ImagePart = ({ item }) => {
 }
 
 class PrintComponent extends React.Component {
+    _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
@@ -146,16 +147,19 @@ class PrintComponent extends React.Component {
     }
 
     componentDidMount() {
-        const { data, rows } = this.state;
-        const displayData = data && rows && data
-                            .filter((item) => {
-                                return rows.some((row) => {
-                                    return row.id === item.id;
-                                })
-                            });
-        this.setState({ displayData: displayData }, () => {
-            this.getFriendlyIdArr();
-        });
+        this._isMounted = true;
+        if (this._isMounted) {
+            const { data, rows } = this.state;
+            const displayData = data && rows && data
+                                .filter((item) => {
+                                    return rows.some((row) => {
+                                        return row.id === item.id;
+                                    })
+                                });
+            this.setState({ displayData: displayData }, () => {
+                this.getFriendlyIdArr();
+            });
+        }
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -170,18 +174,24 @@ class PrintComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if ((prevState.data !== this.state.data) || (prevState.rows !== this.state.rows)) {
-            const { data, rows } = this.state;
-            const displayData = data && data
-                                .filter((item) => {
-                                    return rows.some((row) => {
-                                        return row.id === item.id;
-                                    })
-                                });
-            this.setState({ displayData: displayData }, () => {
-                this.getFriendlyIdArr();
-            });
+        if (this._isMounted) {
+            if ((prevState.data !== this.state.data) || (prevState.rows !== this.state.rows)) {
+                const { data, rows } = this.state;
+                const displayData = data && data
+                                    .filter((item) => {
+                                        return rows.some((row) => {
+                                            return row.id === item.id;
+                                        })
+                                    });
+                this.setState({ displayData: displayData }, () => {
+                    this.getFriendlyIdArr();
+                });
+            }
         }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     getFriendlyIdArr = () => {
@@ -225,7 +235,7 @@ class PrintComponent extends React.Component {
     render() {
         const { friendlyIdArr, displayData } = this.state;
         const { classes } = this.props;
-
+        console.log('print component selected row: ', this.state.rows)
         return (
             <div className={classes.paper}>
                 {displayData && displayData
