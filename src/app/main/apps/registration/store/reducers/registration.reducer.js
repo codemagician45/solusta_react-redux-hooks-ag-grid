@@ -30,7 +30,7 @@ const productsReducer = function (state = initialState, action) {
             return {
                 ...state,
                 rows: action.payload,
-            }
+            };
         }
         case Actions.GET_BACKGROUND: {
             return {
@@ -42,7 +42,7 @@ const productsReducer = function (state = initialState, action) {
             return {
                 ...state,
                 image:action.payload
-            }
+            };
         }
         case Actions.GET_F_ID:
         {
