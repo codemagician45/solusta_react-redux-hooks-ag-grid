@@ -49,7 +49,7 @@ function Badge()
         <div className="flex flex-1 w-full items-center justify-between">
           <Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{visibility:'hidden'}}>Print Before</Button>
           <ReactToPrint
-            trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
+            trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
             content={() => printRef.current}
           />
           <BadgePrintComponent attendees={attendees} selectedRows={selectedRows} ref={printRef}/>

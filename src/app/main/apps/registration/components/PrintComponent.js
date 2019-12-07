@@ -23,30 +23,29 @@ const styles = (theme) => ({
     paper: {
         position: 'absolute',
         margin: '0',
-        padding: '0',
-        background: 'red'
+        padding: '0'
     },
 
     outerBox: {
-        margin: '0',
-        width: '100%',
-        overflow: 'hidden'
+        position: 'absolute',
+        margin: '0'
     },
     modal_print: {
         position:'relative',
         display:'block',
         margin:'0',
         padding: '0',
-        width: '100%',
+        width: '90mm',
+        height: '140mm',
         pageBreakerAfter: 'always'
     },
     photoContainer: {
         position: 'absolute',
-        left: '194px',
-        width: '110px',
-        height: '150px',
+        left: '50mm',
+        width: '34mm',
+        height: '44mm',
         right: '0',
-        top: '55px',
+        top: '17mm',
         overflow:'hidden'
     },
 
@@ -56,33 +55,35 @@ const styles = (theme) => ({
     },
 
     photoImg: {
-        width: '100%',
-        margin:'0 auto'
+        position: 'relative',
+        margin:'0 auto',
     },
     friendly: {
+        fontFamily: '"Times New Roman", Times, serif',
         position: 'absolute',
-        left: '174px',
-        top: '210px',
+        left: '44mm',
+        top: '62mm',
         right: '0',
-        fontSize: '18px',
+        fontSize: '22px',
         textAlign: 'center',
         color: '#4d4d4d'
     },
     nameStyle: {
+        fontFamily: '"Times New Roman", Times, serif',
         position: 'absolute',
-        top: '57%',
+        top: '78mm',
         width:'100%',
         textAlign:'center',
-        color: '#174883',
-        textTransform:'uppercase'
+        color: '#174883'
     },
 
     companyNameStyle: {
+        fontFamily: '"Times New Roman", Times, serif',
         position: 'absolute',
-        top: '64%',
+        top: '86mm',
         width:'100%',
         textAlign:'center',
-        textTransform:'uppercase'
+        color: '#4d4d4d'
     },
 
 
