@@ -10,7 +10,7 @@ export const GET_BACKGROUND = '[REGISTRATION] GET_BACKGROUND';
 export const SET_IMAGE = '[REGISTRATION] SET_IMAGE';
 export const GET_F_ID = '[REGISTRATION] GET_F_ID'
 
-export function getProducts(page, size) {
+export function getProducts(page=null, size=null) {
 	const header = {
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`
