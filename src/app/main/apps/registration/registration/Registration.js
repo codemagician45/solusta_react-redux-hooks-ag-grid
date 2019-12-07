@@ -71,7 +71,7 @@ function Registration()
                 <div className="flex flex-1 w-full items-center justify-between">
                     <Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{visibility:'hidden'}}>Print Before</Button>
                     <ReactToPrint
-                        trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
+                        trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
                         content={() => printRef.current}
                     />
                     <PrintComponent data={attendees} rows={rows} backgrounds={backgrounds} ref={printRef}/>

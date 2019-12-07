@@ -56,7 +56,7 @@ function RegistrationTable(props) {
     // ];
 
     const columnDefs= [
-        {headerName: 'ID', field: 'id', cellRenderer: 'loadingRenderer', sortable: false, suppressMenu: true, cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
+        {headerName: 'ID', field: 'id', cellRenderer: 'loadingRenderer', suppressMenu: true, cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
         {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
         {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},

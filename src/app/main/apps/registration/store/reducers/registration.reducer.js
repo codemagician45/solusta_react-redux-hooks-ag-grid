@@ -20,7 +20,7 @@ const productsReducer = function (state = initialState, action) {
         {
             return {
                 ...state,
-                attendees: state.attendees.concat(action.payload),
+                attendees: action.payload,
             };
         }
         case Actions.SET_ROW: {

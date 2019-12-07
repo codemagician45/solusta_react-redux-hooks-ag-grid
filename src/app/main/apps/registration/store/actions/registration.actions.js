@@ -21,8 +21,8 @@ export function getProducts(page=null, size=null) {
 	// const body = {
 	// 	key: "value"
 	// };
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${page}&size=${size}`, null, header);
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
 
 	return (dispatch) =>
 		request.then((response) =>
@@ -69,17 +69,16 @@ export function setImage(data) {
 		}
 	};
 	const body = {
-		key: 'value',
 		...data,
 	};
-	const request = axios.put(`${SERVER_LINK}/api/attendee-sas`, body, header);
-	return (dispatch) =>
-		request.then((response) =>
-			dispatch({
-				type: SET_IMAGE,
-				payload: response.data
-			})
-		)
+	const request = axios.put(`${SERVER_LINK}/api/attendee-sas`, body, header).then(res => console.log('here in crop image action: ', res.data));
+	// return (dispatch) =>
+	// 	request.then((response) =>
+	// 		dispatch({
+	// 			type: SET_IMAGE,
+	// 			payload: response.data
+	// 		})
+	// 	)
 }
 
 export function getFriendlyID(id) {
@@ -112,7 +111,7 @@ export function getAllAttendee(page){
     const body = {
 		key: 'value',
     };
-    const request = axios.get(`${SERVER_LINK}/api/attendee-sas/?page=${page}&size=2762`, header,body);
+    const request = axios.get(`${SERVER_LINK}/api/attendee-sas/?page=${page}&size=100`, header,body);
     // request.then(pageArray.push(page))
         return (dispatch) =>
             request.then((response) =>
