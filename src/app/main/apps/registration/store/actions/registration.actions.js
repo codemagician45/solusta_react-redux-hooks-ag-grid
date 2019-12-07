@@ -78,7 +78,6 @@ export function setImage(data) {
 				payload: response.data
 			})
 		)
-
 }
 
 export function getFriendlyID(id) {
