@@ -140,12 +140,22 @@ class PrintComponent extends React.Component {
         this.state = {
             data : props.data,
             rows: props.rows,
+            displayData: [],
             friendlyIdArr: [],
         };
     }
 
     componentDidMount() {
-        this.getFriendlyIdArr();
+        const { data, rows } = this.state;
+        const displayData = data && rows && data
+                            .filter((item) => {
+                                return rows.some((row) => {
+                                    return row.id === item.id;
+                                })
+                            });
+        this.setState({ displayData: displayData }, () => {
+            this.getFriendlyIdArr();
+        });
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -160,14 +170,23 @@ class PrintComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevState.data !== this.state.data) {
-            this.getFriendlyIdArr();
+        if ((prevState.data !== this.state.data) || (prevState.rows !== this.state.rows)) {
+            const { data, rows } = this.state;
+            const displayData = data && data
+                                .filter((item) => {
+                                    return rows.some((row) => {
+                                        return row.id === item.id;
+                                    })
+                                });
+            this.setState({ displayData: displayData }, () => {
+                this.getFriendlyIdArr();
+            });
         }
     }
 
     getFriendlyIdArr = () => {
-        const { data } = this.state;
-        const promiseArr =  data.map((item, index) => {
+        const { displayData } = this.state;
+        const promiseArr =  displayData.map((item, index) => {
             return this.getFriendlyId(item);
         });
         Promise.all(promiseArr).then(values => {
@@ -175,7 +194,7 @@ class PrintComponent extends React.Component {
             values.map((item, index) => {
                 friendlyIdArr.push({
                     fId: item,
-                    id: data[index].id,
+                    id: displayData[index].id,
                 });
             })
             this.setState({ friendlyIdArr: friendlyIdArr });
@@ -204,15 +223,8 @@ class PrintComponent extends React.Component {
     }
 
     render() {
-        const { data, rows, friendlyIdArr } = this.state;
+        const { friendlyIdArr, displayData } = this.state;
         const { classes } = this.props;
-        // console.log('here in print component: ', data);
-        const displayData = data && data
-                                .filter((item) => {
-                                    return rows.some((row) => {
-                                        return row.id === item.id;
-                                    })
-                                });
 
         return (
             <div className={classes.paper}>

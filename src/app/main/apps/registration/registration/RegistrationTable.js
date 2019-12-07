@@ -17,19 +17,46 @@ import reducer from '../store/reducers';
 // import components
 import ImageCellRender from '../components/ImageCellRender';
 
+// lazy loading cell renderer
+function LoadingRenderer(props) {
+    if (props.value !== undefined) {
+        return props.value;
+    } else {
+        return (
+            <img src="../assets/images/loading.gif" alt={'loading'} />
+        );
+    }
+}
+
 function RegistrationTable(props) {
     const dispatch = useDispatch();
-    const products = useSelector(({registerApp}) => registerApp.products.data);
+    const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
     
-    const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
-    console.log(allAttendee)
+    // const allAttendee = useSelector(({ registerApp }) => registerApp.registration.allData);
+    // console.log(allAttendee)
 
-    // useEffect(() => {
-    //     dispatch(Actions.getAllAttendee());
-    // }, [dispatch]);
+    // const columnDefs= [
+    //     {
+    //         headerName: 'NO',
+    //         width: 50,
+    //         valueGetter: 'node.id',
+    //         cellRenderer: 'loadingRenderer',
+    //         // we don't want to sort by the row index, this doesn't make sense as the point
+    //         // of the row index is to know the row index in what came back from the server
+    //         sortable: false,
+    //         suppressMenu: true
+    //     },
+    //     {headerName: 'ID', field: 'id', cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
+    //     {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
+    //     {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
+    //     {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
+    //     {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'15px' };}},
+    //     {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'15px' };}},
+    //     {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
+    // ];
 
     const columnDefs= [
-        {headerName: 'ID', field: 'id', cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
+        {headerName: 'ID', field: 'id', cellRenderer: 'loadingRenderer', sortable: false, suppressMenu: true, cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
         {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
         {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
@@ -53,7 +80,7 @@ function RegistrationTable(props) {
         overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
 
-    const rowData = allAttendee.map((item)=>{
+    const rowData = attendees.map((item)=>{
         const temp ={
             id: item.id,
             category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
@@ -68,7 +95,8 @@ function RegistrationTable(props) {
     const paginationPageSize = 20;
 
     const frameworkComponents = {
-        imageCellRender:ImageCellRender
+        loadingRenderer: LoadingRenderer,
+        imageCellRender:ImageCellRender,
     };
 
     const getRowHeight = () => {return 48;};
@@ -80,7 +108,7 @@ function RegistrationTable(props) {
         dispatch(Actions.setRow(selectedRow));
     };
 
-    console.log('here inside the registration table: ', products);
+    console.log('here inside the registration table: ', attendees);
 
     return (
         <React.Fragment>

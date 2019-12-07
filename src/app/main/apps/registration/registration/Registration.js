@@ -19,17 +19,17 @@ function Registration()
 {
     const printRef = useRef();
     const dispatch = useDispatch();
-    const products = useSelector(({registerApp}) => registerApp.products.data);
-    const rows = useSelector(({registerApp}) => registerApp.products.rows);
-    const backgrounds = useSelector(({registerApp}) => registerApp.products.backgrounds);
-    const page = useSelector(({registerApp}) => registerApp.products.page);
-    const size = useSelector(({registerApp}) => registerApp.products.size);
-    const count = useSelector(({registerApp}) => registerApp.products.count);
-    const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
-    const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
+    const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
+    const rows = useSelector(({registerApp}) => registerApp.registration.rows);
+    const backgrounds = useSelector(({registerApp}) => registerApp.registration.backgrounds);
+    // const page = useSelector(({registerApp}) => registerApp.products.page);
+    // const size = useSelector(({registerApp}) => registerApp.products.size);
+    // const count = useSelector(({registerApp}) => registerApp.products.count);
+    // const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
+    // const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
 
-    console.log("data with pagination",allAttendee)
-    console.log("count",count)
+    // console.log("data with pagination",allAttendee)
+    // console.log("count",count)
 
     // useEffect(() => {
     //     if (count === 0) {
@@ -43,13 +43,13 @@ function Registration()
         dispatch(Actions.getProducts());
     }, [dispatch]);
 
-    useEffect(() => {
-            dispatch(Actions.getAllAttendee(0));    
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(Actions.getAllAttendee(0));    
+    // }, [dispatch]);
 
-    useEffect(() => {
-        dispatch(Actions.getAttendeeCount());
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(Actions.getAttendeeCount());
+    // }, [dispatch]);
 
     // useEffect(() => {
     //     dispatch(Actions.getFriendlyID(props.match.params.id));
@@ -74,7 +74,7 @@ function Registration()
                         trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
                         content={() => printRef.current}
                     />
-                    <PrintComponent data={allAttendee} rows={rows} backgrounds={backgrounds} ref={printRef}/>
+                    <PrintComponent data={attendees} rows={rows} backgrounds={backgrounds} ref={printRef}/>
                 </div>
             }
             content={
