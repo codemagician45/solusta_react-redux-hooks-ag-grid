@@ -12,7 +12,7 @@ export const GET_F_ID = '[REGISTRATION] GET_F_ID';
 export const GET_ALL_PRODUCTS = '[REGISTRATION] GET_ALL_PRODUCTS';
 export const GET_COUNT = '[REGISTRATION] GET_COUNT';
 
-export function getProducts(page, size) {
+export function getProducts(page=null, size=null) {
 	const header = {
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`
@@ -80,7 +80,6 @@ export function setImage(data) {
 				payload: response.data
 			})
 		)
-
 }
 
 export function getFriendlyID(id) {

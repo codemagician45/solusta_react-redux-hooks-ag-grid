@@ -36,7 +36,6 @@ function RegistrationTable(props) {
         {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'15px' };}},
         {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
-
     ];
 
     const rowSelection = "multiple";
@@ -77,7 +76,7 @@ function RegistrationTable(props) {
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
         const selectedRow = gridApi.getSelectedRows();
-        dispatch(Actions.setRow(selectedRow))
+        dispatch(Actions.setRow(selectedRow));
     };
 
     return (
