@@ -19,9 +19,9 @@ function Badge()
   const dispatch = useDispatch();
   const selectedRows = useSelector(({registerApp}) => registerApp.badge.selectedRows);
   const attendees = useSelector(({registerApp}) => registerApp.badge.attendees);
-  const page = useSelector(({registerApp}) => registerApp.badge.page);
-  const size = useSelector(({registerApp}) => registerApp.badge.size);
-  const count = useSelector(({registerApp}) => registerApp.badge.count);
+  // const page = useSelector(({registerApp}) => registerApp.badge.page);
+  // const size = useSelector(({registerApp}) => registerApp.badge.size);
+  // const count = useSelector(({registerApp}) => registerApp.badge.count);
 
   // useEffect(() => {
   //   dispatch(Actions.getCount());
