@@ -27,8 +27,7 @@ const styles = (theme) => ({
     },
 
     outerBox: {
-        position: 'absolute',
-        margin: '0'
+        margin: '0 auto'
     },
     modal_print: {
         position:'relative',
@@ -71,16 +70,19 @@ const styles = (theme) => ({
     nameStyle: {
         fontFamily: '"Times New Roman", Times, serif',
         position: 'absolute',
+        paddingLeft: '2mm',
+        paddingRight: '2mm',
         top: '78mm',
-        width:'100%',
+        width: '90mm',
         textAlign:'center',
-        color: '#174883'
+        color: '#174883',
+        whiteSpace: 'nowrap',
     },
 
     companyNameStyle: {
         fontFamily: '"Times New Roman", Times, serif',
         position: 'absolute',
-        top: '86mm',
+        top: '88mm',
         width:'100%',
         textAlign:'center',
         color: '#4d4d4d'
