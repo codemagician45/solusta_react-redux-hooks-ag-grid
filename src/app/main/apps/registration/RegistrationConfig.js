@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Registration from './registration/Registration';
-
 export const RegistrationConfig = {
 	settings: {
 		layout: {
@@ -10,17 +8,18 @@ export const RegistrationConfig = {
 	},
 	routes: [
 		{
-			path: '/app/registration/registration/:id',
-			component: React.lazy(() => import('./registration/photo-editor/PhotoBeforePrint'))
+			path: '/app/registration/registration',
+			exact: true,
+			component: React.lazy(() => import('./registration/Registration')),
 		},
 		{
-			path: '/app/registration/registration',
-			component: Registration
+			path: '/app/registration/registration/:id',
+			component: React.lazy(() => import('./registration/PhotoEditor')),
 		},
 		{
 			path: '/app/registration/category',
 			exact: true,
-			component: React.lazy(() => import('./category/Category'))
+			component: React.lazy(() => import('./category/Category')),
 		},
 		{
 			path: '/app/registration/category/speaker',

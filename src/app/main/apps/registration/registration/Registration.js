@@ -1,19 +1,24 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {Link} from 'react-router-dom';
+import axios from 'axios';
 import ReactToPrint from 'react-to-print'; // for Print React component
 
-import { Button, Grid, Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+// import @material-ui components
+import { Button } from '@material-ui/core';
 
 // import Redux
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
-import { FuseAnimate, FusePageCarded } from '@fuse';
+// import components
+import { FusePageCarded } from '@fuse';
 import RegistrationTable from './RegistrationTable';
-import PrintComponent from '../components/PrintComponent';
+import RegistrationPrint from './RegistrationPrint';
+
+// import env server link
+const environment = require('../RegistrationEnv');
+const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 function Registration()
 {
@@ -21,46 +26,12 @@ function Registration()
     const dispatch = useDispatch();
     const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
     const rows = useSelector(({registerApp}) => registerApp.registration.rows);
-    const backgrounds = useSelector(({registerApp}) => registerApp.registration.backgrounds);
-    // const page = useSelector(({registerApp}) => registerApp.products.page);
-    // const size = useSelector(({registerApp}) => registerApp.products.size);
-    // const count = useSelector(({registerApp}) => registerApp.products.count);
-    // const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
-    // const allAttendee = useSelector(({ registerApp }) => registerApp.products.allData);
-
-    // console.log("data with pagination",allAttendee)
-    // console.log("count",count)
-
-    // useEffect(() => {
-    //     if (count === 0) {
-    //         return; 
-    //     } else {
-    //         dispatch(Actions.getProducts(page, size));
-    //     }
-    // }, [dispatch, page, count, size]);
 
     useEffect(() => {
-        dispatch(Actions.getProducts());
+        dispatch(Actions.getRegistrationAttendees());
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     dispatch(Actions.getAllAttendee(0));    
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //     dispatch(Actions.getAttendeeCount());
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //     dispatch(Actions.getFriendlyID(props.match.params.id));
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //     dispatch(Actions.getBackgrounds());
-    // }, [dispatch])
-
-    // console.log('here selected rows: ', rows);
-
+    // console.log('here in registration: ', rows);
     return (
         <FusePageCarded
             classes={{
@@ -74,7 +45,7 @@ function Registration()
                         trigger={() => <Button color="secondary" variant="contained">Print Image</Button>}
                         content={() => printRef.current}
                     />
-                    <PrintComponent data={attendees} rows={rows} backgrounds={backgrounds} ref={printRef}/>
+                    <RegistrationPrint attendees={attendees} rows={rows} ref={printRef}/>
                 </div>
             }
             content={

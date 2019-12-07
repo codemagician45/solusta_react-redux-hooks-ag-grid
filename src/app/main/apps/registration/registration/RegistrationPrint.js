@@ -134,12 +134,12 @@ const ImagePart = ({ item }) => {
     }
 }
 
-class PrintComponent extends React.Component {
+class RegistrationPrint extends React.Component {
     _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
-            data : props.data,
+            attendees : props.attendees,
             rows: props.rows,
             displayData: [],
             friendlyIdArr: [],
@@ -149,8 +149,8 @@ class PrintComponent extends React.Component {
     componentDidMount() {
         this._isMounted = true;
         if (this._isMounted) {
-            const { data, rows } = this.state;
-            const displayData = data && rows && data
+            const { attendees, rows } = this.state;
+            const displayData = attendees && rows && attendees
                                 .filter((item) => {
                                     return rows.some((row) => {
                                         return row.id === item.id;
@@ -163,9 +163,9 @@ class PrintComponent extends React.Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if ((nextProps.data !== prevState.data) || (nextProps.rows !== prevState.rows)) {
+        if ((nextProps.attendees !== prevState.attendees) || (nextProps.rows !== prevState.rows)) {
             return {
-                data: nextProps.data,
+                attendees: nextProps.attendees,
                 rows: nextProps.rows,
             }
         } else {
@@ -175,9 +175,9 @@ class PrintComponent extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this._isMounted) {
-            if ((prevState.data !== this.state.data) || (prevState.rows !== this.state.rows)) {
-                const { data, rows } = this.state;
-                const displayData = data && data
+            if ((prevState.attendees !== this.state.attendees) || (prevState.rows !== this.state.rows)) {
+                const { attendees, rows } = this.state;
+                const displayData = attendees && attendees
                                     .filter((item) => {
                                         return rows.some((row) => {
                                             return row.id === item.id;
@@ -235,7 +235,8 @@ class PrintComponent extends React.Component {
     render() {
         const { friendlyIdArr, displayData } = this.state;
         const { classes } = this.props;
-        console.log('print component selected row: ', this.state.rows)
+        // console.log('print component selected row: ', this.state.rows)
+        
         return (
             <div className={classes.paper}>
                 {displayData && displayData
@@ -259,6 +260,6 @@ class PrintComponent extends React.Component {
     }
 }
 
-const StyledPrintComponent = withStyles(styles)(PrintComponent);
+const StyledRegistrationPrint = withStyles(styles)(RegistrationPrint);
 
-export default StyledPrintComponent;
+export default StyledRegistrationPrint;
