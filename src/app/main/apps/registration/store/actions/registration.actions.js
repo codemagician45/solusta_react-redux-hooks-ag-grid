@@ -22,7 +22,7 @@ export function getProducts(page=null, size=null) {
 	// 	key: "value"
 	// };
 	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${page}&size=${size}`, null, header);
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
 
 	return (dispatch) =>
 		request.then((response) =>
@@ -112,7 +112,7 @@ export function getAllAttendee(page){
     const body = {
 		key: 'value',
     };
-    const request = axios.get(`${SERVER_LINK}/api/attendee-sas/?page=${page}&size=100`, header,body);
+    const request = axios.get(`${SERVER_LINK}/api/attendee-sas/?page=${page}&size=2762`, header,body);
     // request.then(pageArray.push(page))
         return (dispatch) =>
             request.then((response) =>
