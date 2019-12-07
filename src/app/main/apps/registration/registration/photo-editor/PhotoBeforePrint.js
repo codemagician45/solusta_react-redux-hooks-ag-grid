@@ -69,13 +69,13 @@ const useStyles = makeStyles(theme => ({
 
 function PhotoBeforePrint(props) {
     const dispatch = useDispatch();
-    const images = useSelector(({ registerApp }) => registerApp.products.allData);
+    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
     const [modalImg, setModalImg] = React.useState(null);
-    const classes = useStyles();
-    const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
-    console.log("friendly",friendlyID);
+    // const classes = useStyles();
+    // const friendlyID = useSelector(({ registerApp }) => registerApp.products.friendlyID);
+    // console.log("friendly",friendlyID);
 
     useEffect(() => {
         dispatch(Actions.getProducts());
@@ -86,12 +86,12 @@ function PhotoBeforePrint(props) {
     }, [dispatch]);
 
     const { id } = props.match.params;
-    const image = images && images.filter((image) => {
-        return image.id === parseInt(id);
+    const attendee = attendees && attendees.filter((attendee) => {
+        return attendee.id === parseInt(id);
     });
-    // console.log("image",image)
-    const name = image && image[0] && (image[0].firstName + ' ' + image[0].middleName + ' ' + image[0].lastName);
-    const imgSrc = image && image[0] && (`data:${image[0].mainPhotoContentType};base64, ${image[0].mainPhoto}`);
+    // console.log("attendee",attendee)
+    const name = attendee && attendee[0] && (attendee[0].firstName + ' ' + attendee[0].middleName + ' ' + attendee[0].lastName);
+    const imgSrc = attendee && attendee[0] && (`data:${attendee[0].mainPhotoContentType};base64, ${attendee[0].mainPhoto}`);
 
     const setModalImage = (data) => {
         setModalImg(data);
@@ -124,7 +124,7 @@ function PhotoBeforePrint(props) {
         document.getElementById('print_btn').style = 'display:flex';
     }
     return (
-        <PhotoEditor image={imgSrc} requestData={image[0]} onCrop={setModalImage} />
+        <PhotoEditor image={imgSrc} requestData={attendee[0]} onCrop={setModalImage} />
         // <div>
         //     <FusePageCarded
         //         header={
