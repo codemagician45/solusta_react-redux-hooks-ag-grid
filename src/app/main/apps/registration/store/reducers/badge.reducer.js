@@ -19,14 +19,14 @@ const badgeReducer = function (state = initialState, action) {
                 count: action.payload,
             };
         }
-        case Actions.GET_ATTENDEES:
+        case Actions.GET_BADGE_ATTENDEES:
         {
             return {
                 ...state,
                 attendees: state.attendees.concat(action.payload),
             };
         }
-        case Actions.SET_ATTENDEE_SELECT_ROW: {
+        case Actions.SET_BADGE_ATTENDEE_SELECT_ROW: {
             return {
                 ...state,
                 selectedRows: action.payload,
@@ -43,6 +43,40 @@ const badgeReducer = function (state = initialState, action) {
                 ...state,
                 printCounts: action.payload,
             };
+        }
+        case Actions.ADD_BADGE_ACTIVITY: {
+            const data = action.payload;
+            const printCounts = state.printCounts.map((item, index) => {
+                if (item.badgeId === data.badgeId) {
+                    return {
+                        ...item,
+                        printedCount: data.printCount + 1,
+                    }
+                }
+                return item;
+            });
+
+            return {
+                ...state,
+                printCounts: printCounts,
+            }
+        }
+        case Actions.UPDATE_BADGE_ACTIVITY: {
+            const data = action.payload;
+            const printCounts = state.printCounts.map((item, index) => {
+                if (item.badgeId === data.badgeId) {
+                    return {
+                        ...item,
+                        printedCount: data.printCount + 1,
+                    }
+                }
+                return item;
+            });
+
+            return {
+                ...state,
+                printCounts: printCounts,
+            }
         }
         default:
         {
