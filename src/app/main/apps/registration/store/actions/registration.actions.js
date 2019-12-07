@@ -14,8 +14,8 @@ export function getRegistrationAttendees() {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${page}&size=${size}`, null, header);
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${50}`, null, header);
 
 	return (dispatch) =>
 		request.then((response) =>

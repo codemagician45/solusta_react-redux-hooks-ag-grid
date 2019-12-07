@@ -112,6 +112,10 @@ function RegistrationTable(props) {
         dispatch(Actions.setRegistrationRows(selectedRow));
     };
 
+    const onGridReady = (params) => {
+
+    }
+
     console.log('here in registration table: ', attendees);
 
     return (
@@ -124,17 +128,18 @@ function RegistrationTable(props) {
                     columnDefs={columnDefs}
                     defaultColDef={defs.defaultColDef}
                     rowSelection='multiple'
+                    rowDeselection={true}
                     rowData={rowData}
                     frameworkComponents = {frameworkComponents}
-                    // onGridReady={onGridReady}
+                    onGridReady={onGridReady}
+                    getRowHeight={getRowHeight}
+                    headerHeight={headerHeight}
                     pagination={true}
-                    getRowHeight = {getRowHeight}
-                    headerHeight = {headerHeight}
-                    floatingFilter = {true}
+                    paginationAutoPageSize={true}
+                    floatingFilter={true}
                     overlayLoadingTemplate={defs.overlayLoadingTemplate}
                     overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
                     onSelectionChanged={onSelectionChanged}
-                    paginationPageSize={paginationPageSize}
                 >
                 </AgGridReact>
             </div>
