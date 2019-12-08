@@ -41,8 +41,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PhotoEditor(props) {
+  // console.log("props",props)
   const [image, setImage] = useState(null);
   const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
+  console.log(attendees)
   const imageEditor = React.createRef();
   const attendeeId = props.match.params.id;
   const classes = useStyles();
