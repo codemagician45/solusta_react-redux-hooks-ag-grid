@@ -241,8 +241,8 @@ function BadgeTable(props) {
 		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
 	};
 	const rowData = attendees && attendees.map((item) => {
-		const badgeFriendId = badgeIDs.length > 0 ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeFriendlyID : -1;
-		const badgeId = badgeIDs.length > 0 ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeId : 0;
+		const badgeFriendId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === item.id)) ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeFriendlyID : -1;
+		const badgeId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === item.id)) ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeId : 0;
 		const printCount = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).printedCount : -1;
 		const badgeActivityId = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;	
 		const temp = {

@@ -104,6 +104,8 @@ function RegistrationTable(props) {
         companyName: attendee.companyName,
     }));
 
+    console.log(rowData)
+
     // const components = {
     //     loadingRenderer: function(params) {
     //       if (params.value !== undefined) {
@@ -156,7 +158,13 @@ function RegistrationTable(props) {
         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/20}&size=${100}`, null, header).then(
             res => {
                 console.log("res",res);
-                updateData(res.data);
+                const value = res.data.map((item, index) => {
+                    return {
+                        ...item,
+                        category: item.attendeeCategorySAS[0].categoryName,
+                    }
+                });
+                updateData(value);
             }
         );
         // updateData(attendees)
