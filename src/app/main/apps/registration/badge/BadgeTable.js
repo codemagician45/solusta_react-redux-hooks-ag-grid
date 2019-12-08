@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -27,14 +27,8 @@ function ActionCellRenderer(props) {
 	const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
-		if (data.printCount) {
 			dispatch(Actions.updateBadgeActivity(data));
-		} else {
-			dispatch(Actions.addBadgeActivity(data));
-		}
-
-		
-		// console.log('here print button click event: ', data);
+			console.log('here print button click event: ', data);
 	}
 
 	return (
@@ -47,6 +41,7 @@ function BadgeTable(props) {
 	const attendees = useSelector(({registerApp}) => registerApp.badge.attendees);
 	const badgeIDs = useSelector(({registerApp}) => registerApp.badge.badgeIDs);
 	const printCounts = useSelector(({registerApp}) => registerApp.badge.printCounts);
+
 
 	useEffect(() => {
 		getBadgeIdArr();
@@ -68,12 +63,14 @@ function BadgeTable(props) {
 				if (value) {
 					badgeIdArr.push({
 						badgeFriendlyID: value.badgeFriendlyID,
+						badgeActivitySAId: value.badgeActivitySAId,
 						attendeeSAId: value.attendeeSAId,
 						badgeId: value.id,
 					});
 				} else {
 					badgeIdArr.push({
 						badgeFriendlyID: 0,
+						badgeActivitySAId: 0,
 						attendeeSAId: 0,
 						badgeId: 0,
 					});
@@ -247,11 +244,12 @@ function BadgeTable(props) {
 		const badgeFriendId = badgeIDs.length > 0 ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeFriendlyID : -1;
 		const badgeId = badgeIDs.length > 0 ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeId : 0;
 		const printCount = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).printedCount : -1;
-		// const printCount = 0;
+		const badgeActivityId = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;	
 		const temp = {
 			id: item.id,
 			badgeId: badgeId,
 			badgeFriendId: badgeFriendId,
+			badgeActivityId: badgeActivityId,
 			printCount: printCount,
 			category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
 			firstName: item.firstName,
