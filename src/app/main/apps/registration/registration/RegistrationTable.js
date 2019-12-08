@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
 
@@ -16,6 +16,7 @@ import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
 import axios from 'axios';
+import { Button } from '@material-ui/core';
 
 // import env server link
 const environment = require('../RegistrationEnv');
@@ -61,7 +62,8 @@ function ImageCellRender(props) {
 function RegistrationTable(props) {
     const dispatch = useDispatch();
     const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
-    const [step,setStep] = useState(null);
+    const [gridApi,setGridApi] = useState(null);
+    const [lazyLoadingResult,setResult] = useState(null);
     // const columnDefs= [
     //     {headerName: 'ID', field: 'id', cellRenderer: 'loadingRenderer', suppressMenu: true, cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
     //     {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
@@ -104,8 +106,6 @@ function RegistrationTable(props) {
         companyName: attendee.companyName,
     }));
 
-    console.log(rowData)
-
     // const components = {
     //     loadingRenderer: function(params) {
     //       if (params.value !== undefined) {
@@ -129,35 +129,37 @@ function RegistrationTable(props) {
     const onGridReady = params => {
         
         const gridApi = params.api;
-        const gridColumnApi = params.columnApi;
+        setGridApi(gridApi)
+        // const gridColumnApi = params.columnApi;
         const updateData = data => {
-            console.log("height",data.rowHeight)
             let dataSource = {
                  rowCount : null,
                  getRows : function(params){
                     console.log("asking for " + params.startRow + " to " + params.endRow);
                     setTimeout(function() {
-                        let rowsThisPage = data.slice(params.startRow, params.endRow);
+                        let dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
+                        let rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
                         let lastRow = -1;
-                        if (data.length <= params.endRow) {
-                          lastRow = data.length;
+                        if (dataAfterSortingAndFiltering.length <= params.endRow) {
+                          lastRow = dataAfterSortingAndFiltering.length;
                         }
-                        console.log(rowsThisPage,lastRow)
                         params.successCallback(rowsThisPage, lastRow);
                       }, 500);
                  }
             };
             params.api.setDatasource(dataSource);
         };
-        // console.log("ready confirm")
         const header = {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
             }
         };
-        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/20}&size=${100}`, null, header).then(
+        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/20}&size=${20}`, null, header).then(
             res => {
                 console.log("res",res);
+                // const pinnedBottomRowData = res.data[0];
+                setResult(res.data);
+                
                 const value = res.data.map((item, index) => {
                     return {
                         ...item,
@@ -165,12 +167,153 @@ function RegistrationTable(props) {
                     }
                 });
                 updateData(value);
+                console.log(lazyLoadingResult && lazyLoadingResult)
             }
         );
-        // updateData(attendees)
         
     };
 
+    const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
+        return sortData(sortModel, filterData(filterModel, allOfTheData));
+      }
+    const sortData = (sortModel, data) => {
+        var sortPresent = sortModel && sortModel.length > 0;
+        if (!sortPresent) {
+            return data;
+        }
+        var resultOfSort = data.slice();
+        resultOfSort.sort(function(a, b) {
+            for (var k = 0; k < sortModel.length; k++) {
+            var sortColModel = sortModel[k];
+            var valueA = a[sortColModel.colId];
+            var valueB = b[sortColModel.colId];
+            if (valueA == valueB) {
+                continue;
+            }
+            var sortDirection = sortColModel.sort === "asc" ? 1 : -1;
+            if (valueA > valueB) {
+                return sortDirection;
+            } else {
+                return sortDirection * -1;
+            }
+            }
+            return 0;
+        });
+        return resultOfSort;
+    }
+    const filterData = (filterModel, data) => {
+        var filterPresent = filterModel && Object.keys(filterModel).length > 0;
+        if (!filterPresent) {
+          return data;
+        }
+        var resultOfFilter = [];
+        // ID filter
+        for (var i = 0; i < data.length; i++) {
+          var item = data[i];
+          if (filterModel.id) {
+            var id = item.id;
+            var allowedId = parseInt(filterModel.id.filter);
+            if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
+              if (id !== allowedId) {
+                continue;
+              }
+            } 
+          }
+        // Category filter   
+          if (filterModel.category) {
+            var category = item.category;
+            var allowedCategory = filterModel.category.filter;
+            if (filterModel.category.type == "contains" || filterModel.category.type == "equals") { 
+                if(!category.toUpperCase().includes(allowedCategory.toUpperCase())){
+                continue;
+              }
+            } 
+          }
+        //   First Name Filter
+          if (filterModel.firstName) {
+            var firstName = item.firstName;
+            var allowedFirstName = filterModel.firstName.filter;
+            if (filterModel.firstName.type == "contains"|| filterModel.category.type == "equals") {
+                if(!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())){
+                continue;
+              }
+            } 
+          }
+        //   Last Name Filter
+          if (filterModel.lastName) {
+            var lastName = item.lastName;
+            var allowedLastName = filterModel.lastName.filter;
+            if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
+                if(!lastName.toUpperCase().includes(allowedLastName.toUpperCase())){  
+                continue;
+              }
+            } 
+          }
+        //  Company Name Filter
+        if (filterModel.companyName) {
+            var companyName = item.companyName;
+            var allowedCompanyName = filterModel.companyName.filter;
+            if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
+                if(!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())){
+                continue;
+              }
+            } 
+          }
+        // Email Filter 
+        if (filterModel.email) {
+            var email = item.email;
+            var allowedEmail = filterModel.email.filter;
+            if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
+                if(!email.toUpperCase().includes(allowedEmail.toUpperCase())){
+                continue;
+              }
+            } 
+          }
+          resultOfFilter.push(item);
+        }
+        return resultOfFilter;
+      }
+
+    const exportExcel = () => {
+        const columnWidth = 100;
+        const params = {
+            columnWidth: columnWidth,
+            sheetName: "Test",
+            exportMode: undefined,
+            // suppressTextAsCDATA: getBooleanValue("#suppressTextAsCDATA"),
+            rowHeight: 30,
+            headerRowHeight: 40,
+            customHeader: []
+        };
+        // console.log(gridApi)
+        gridApi.exportDataAsExcel(params);
+    }
+
+    const pinnedTopRowData = [
+        {
+            id:1166,
+            category:'PARTICIPANT',
+            mainPhoto:'',
+            firstName:'Ngoc',
+            lastName:'Nguyen',
+            email:'doanngocnguyen@yahoo.com',
+            companyName:'Embassy of Vietnam'
+        }
+
+    ];
+    
+    const pinnedBottomRowData = [
+        {
+            id:1251,
+            category:'PARTICIPANT',
+            mainPhoto:'',
+            firstName:'Alhasan',
+            lastName:'Zwayne',
+            email:'azwayne@brookings.edu',
+            companyName:'Brookings Doha Center'
+        }
+
+    ];
 
     const frameworkComponents = {
         loadingRenderer: LoadingRenderer,
@@ -185,7 +328,7 @@ function RegistrationTable(props) {
         dispatch(Actions.setRegistrationRows(selectedRow));
     };
 
-    console.log('here in registration table: ', attendees);
+    // console.log('here in registration table: ', attendees);
 
     return (
         <React.Fragment>
@@ -193,6 +336,7 @@ function RegistrationTable(props) {
             className="table-responsive ag-theme-balham"
             style={{height:'100%', width: '100%', fontSize: '16px' }}
             >
+                <Button onClick={exportExcel} color="secondary">Export to Excel</Button>
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defs.defaultColDef}
@@ -210,6 +354,10 @@ function RegistrationTable(props) {
                     maxBlocksInCache={maxBlocksInCache}
                     cacheBlockSize = {cacheBlockSize}
                     rowHeight ={rowHeight}
+
+                    // pinnedTopRowData = {pinnedTopRowData}
+                    // pinnedBottomRowData = {pinnedBottomRowData}
+
                     // components = {components}
                     pagination={true}
                     paginationAutoPageSize={true}
