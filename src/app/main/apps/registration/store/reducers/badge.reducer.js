@@ -44,30 +44,13 @@ const badgeReducer = function (state = initialState, action) {
                 printCounts: action.payload,
             };
         }
-        case Actions.ADD_BADGE_ACTIVITY: {
-            const data = action.payload;
-            const printCounts = state.printCounts.map((item, index) => {
-                if (item.badgeId === data.badgeId) {
-                    return {
-                        ...item,
-                        printedCount: data.printCount + 1,
-                    }
-                }
-                return item;
-            });
-
-            return {
-                ...state,
-                printCounts: printCounts,
-            }
-        }
         case Actions.UPDATE_BADGE_ACTIVITY: {
             const data = action.payload;
             const printCounts = state.printCounts.map((item, index) => {
                 if (item.badgeId === data.badgeId) {
                     return {
                         ...item,
-                        printedCount: data.printCount + 1,
+                        printedCount: data.printedCount,
                     }
                 }
                 return item;
