@@ -29,16 +29,16 @@ function ActionCellRenderer(props) {
 		const { data } = props;
 		if (data.printCount) {
 			dispatch(Actions.updateBadgeActivity(data));
+			//
 		} else {
 			dispatch(Actions.addBadgeActivity(data));
 		}
 
-		
 		// console.log('here print button click event: ', data);
-	}
+	};
 
 	return (
-		<Button onClick={printHandler} variant="contained" color="secondary">Print</Button>
+		<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
 	);
 }
 
@@ -83,7 +83,7 @@ function BadgeTable(props) {
 		}).catch(error => {
 			console.log('here error in get badge id error: ', error);
 		});
-	}
+	};
 
 	const getPrintCountArr = () => {
 		const promiseArr = badgeIDs && badgeIDs.map((badgeID, index) => {
@@ -111,7 +111,7 @@ function BadgeTable(props) {
 		}).catch(error => {
 			console.log('here error in get print count error: ', error);
 		});
-	}
+	};
 
 	const getBadgeId = (item) => {
 		return new Promise((resolve, reject) => {
@@ -129,7 +129,7 @@ function BadgeTable(props) {
 					reject(err);
 				});
 		});
-	}
+	};
 
 	const getPrintCount = (item) => {
 		return new Promise((resolve, reject) => {
@@ -220,8 +220,8 @@ function BadgeTable(props) {
 			}
 		},
 		{
-			headerName: 'Email',
-			field: 'email',
+			headerName: 'Company',
+			field: 'companyName',
 			cellStyle: () => {
 				return {
 					padding: '15px',
@@ -229,7 +229,7 @@ function BadgeTable(props) {
 					'font-family': 'sans-serif'
 				};
 			}
-		},
+		}
 	];
 	const defs = {
 		defaultColDef: {
@@ -256,7 +256,7 @@ function BadgeTable(props) {
 			category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
 			firstName: item.firstName,
 			lastName: item.lastName,
-			email: item.email,
+			companyName: item.companyName,
 		};
 		return temp;
 	});
