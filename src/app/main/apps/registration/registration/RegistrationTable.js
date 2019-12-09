@@ -150,43 +150,51 @@ function RegistrationTable(props) {
     // lazyloading parameter
     const rowHeight = 48;
     const rowBuffer = 0;
-    const rowModelType = "infinite";
+    const rowModelType = "serverSide";
+    // const rowModelType = "infinite";
     const cacheOverflowSize = 2;
     const maxConcurrentDatasourceRequests = 1;
     const infiniteInitialRowCount = 1;
     const maxBlocksInCache = 2;
-    const cacheBlockSize = 20;
-    const paginationPageSize = 20;
+    const cacheBlockSize = 15;
+    const paginationPageSize = 15;
 
     const onGridReady = params => {
         
         const gridApi = params.api;
         setGridApi(gridApi)
         const gridColumnApi = params.columnApi;
+        // const updateData = data => {
+        //     let dataSource = {
+        //          rowCount : null,
+        //          getRows : function(params){
+        //             console.log("asking for " + params.startRow + " to " + params.endRow);
+        //             setTimeout(function() {
+        //                 let dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
+        //                 let rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
+        //                 let lastRow = -1;
+        //                 if (dataAfterSortingAndFiltering.length <= params.endRow) {
+        //                   lastRow = dataAfterSortingAndFiltering.length;
+        //                 }
+        //                 params.successCallback(rowsThisPage, lastRow);
+        //               }, 500);
+        //          }
+        //     };
+        //     params.api.setDatasource(dataSource);
+        // };
+
         const updateData = data => {
-            let dataSource = {
-                 rowCount : null,
-                 getRows : function(params){
-                    console.log("asking for " + params.startRow + " to " + params.endRow);
-                    setTimeout(function() {
-                        let dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
-                        let rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
-                        let lastRow = -1;
-                        if (dataAfterSortingAndFiltering.length <= params.endRow) {
-                          lastRow = dataAfterSortingAndFiltering.length;
-                        }
-                        params.successCallback(rowsThisPage, lastRow);
-                      }, 500);
-                 }
-            };
-            params.api.setDatasource(dataSource);
+            const server = new FakeServer(data);
+            const dataSource = new ServerSideDatasource(server);
+            params.api.setServerSideDatasource(dataSource);
         };
+
         const header = {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
             }
         };
-        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/20}&size=${20}`, null, header).then(
+        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/15}&size=${100}`, null, header).then(
             res => {
                 console.log("res",res);
                 setResult(res.data);
@@ -198,15 +206,46 @@ function RegistrationTable(props) {
                     }
                 });
                 updateData(value);
-                console.log(lazyLoadingResult && lazyLoadingResult)
             }
         );
         
     };
 
+    const ServerSideDatasource = (server) => {
+        return {
+            getRows: function(params) {
+                setTimeout(function() {
+                  var response = server.getResponse(params.request);
+                  if (response.success) {
+                    params.successCallback(response.rows, response.lastRow);
+                  } else {
+                    params.failCallback();
+                  }
+                }, 500);
+              }
+        };
+    }
+
+    const FakeServer = (allData) => {
+        return {
+          getResponse: function(request) {
+            console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+            let dataAfterSortingAndFiltering = sortAndFilter(allData, request.sortModel, request.filterModel);
+            let rowsThisPage = dataAfterSortingAndFiltering.slice(request.startRow, request.endRow);
+            let lastRow = dataAfterSortingAndFiltering.length <= request.endRow ? dataAfterSortingAndFiltering.length : -1;
+            return {
+              success: true,
+              rows: rowsThisPage,
+              lastRow: lastRow
+            };
+          }
+        };
+      }
+
     const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
         return sortData(sortModel, filterData(filterModel, allOfTheData));
       }
+
     const sortData = (sortModel, data) => {
         var sortPresent = sortModel && sortModel.length > 0;
         if (!sortPresent) {
@@ -232,6 +271,7 @@ function RegistrationTable(props) {
         });
         return resultOfSort;
     }
+
     const filterData = (filterModel, data) => {
         var filterPresent = filterModel && Object.keys(filterModel).length > 0;
         if (!filterPresent) {
@@ -320,21 +360,7 @@ function RegistrationTable(props) {
         gridApi.exportDataAsExcel(params);
     }
 
-    // const onBtnExport = () => {
-    //     var params = {
-    //         // suppressQuotes: ,
-    //         // columnSeparator: true,
-    //         columnWidth:100,
-    //         customHeader: 'none',
-    //         customFooter: 'none'
-    //     }
-    //     if (params.suppressQuotes || params.columnSeparator) {
-    //       alert(
-    //         "NOTE: you are downloading a file with non-standard quotes or separators - it may not render correctly in Excel."
-    //       );
-    //     }
-    //     gridApi.exportDataAsCsv(params);
-    //   }
+    
 
     const frameworkComponents = {
         loadingRenderer: LoadingRenderer,
@@ -358,7 +384,6 @@ function RegistrationTable(props) {
             style={{height:'100%', width: '100%', fontSize: '16px' }}
             >
                 <Button onClick={exportExcel} color="secondary">Export to Excel</Button>
-                {/* <Button onClick={onBtnExport} color="secondary">Export to csv</Button> */}
                 <AgGridReact
                     modules = {defs.modules}
                     columnDefs={columnDefs}
@@ -371,9 +396,9 @@ function RegistrationTable(props) {
                     onGridReady={onGridReady}
                     rowBuffer={rowBuffer}
                     rowModelType={rowModelType}
-                    cacheOverflowSize={cacheOverflowSize}
-                    maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
-                    infiniteInitialRowCount={infiniteInitialRowCount}
+                    // cacheOverflowSize={cacheOverflowSize}
+                    // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
+                    // infiniteInitialRowCount={infiniteInitialRowCount}
                     maxBlocksInCache={maxBlocksInCache}
                     cacheBlockSize = {cacheBlockSize}
                     rowHeight ={rowHeight}
