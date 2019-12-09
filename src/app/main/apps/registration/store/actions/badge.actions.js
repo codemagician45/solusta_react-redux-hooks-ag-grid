@@ -33,7 +33,7 @@ export function getBadgeAttendees(page=null, size=null) {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
 	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${page}&size=${size}`, null, header);
 
 	return (dispatch) =>

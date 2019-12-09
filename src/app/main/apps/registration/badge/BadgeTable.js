@@ -296,14 +296,13 @@ function BadgeTable(props) {
 				style={{ height: '100%', width: '100%', fontSize: '16px' }}
 			>
 				<AgGridReact
-					modules={AllModules}
 					columnDefs={columnDefs}
 					defaultColDef={defs.defaultColDef}
 					rowSelection='multiple'
 					rowData={rowData}
 					frameworkComponents={frameworkComponents}
 					pagination={true}
-					paginationPageSize={13}
+					paginationPageSize={100}
 					getRowHeight={getRowHeight}
 					headerHeight={headerHeight}
 					floatingFilter={true}
