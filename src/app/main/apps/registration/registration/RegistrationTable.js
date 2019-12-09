@@ -157,9 +157,9 @@ function RegistrationTable(props) {
     const rowBuffer = 0;
     const rowModelType = "serverSide";
     // const rowModelType = "infinite";
-    const cacheOverflowSize = 2;
-    const maxConcurrentDatasourceRequests = 1;
-    const infiniteInitialRowCount = 1;
+    // const cacheOverflowSize = 2;
+    // const maxConcurrentDatasourceRequests = 1;
+    // const infiniteInitialRowCount = 1;
     const maxBlocksInCache = 2;
     const cacheBlockSize = 100;
     const paginationPageSize = 15;
