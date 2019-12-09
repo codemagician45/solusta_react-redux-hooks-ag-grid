@@ -36,25 +36,26 @@ function LoadingRenderer(props) {
 
 // Image cell renderer
 function ImageCellRender(props) {
-    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // console.log(props)
     const id = props.data && props.data.id;
-    // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
-    const attendee = props.data && props.data;
+    const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
+    // const attendee = props.data && props.data;
 
     const style = {
         height: '48px',
         width: '48px',
         padding: '5px'
     };
-
-    if (attendee && attendee.mainPhoto === '')
+    console.log(attendee)
+    if (attendee[0] && attendee[0].mainPhoto === '')
         return (
             <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
         );
     else {
         return (
             <Link to={`/app/registration/registration/${id}`}>
-                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
+                <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} />
             </Link>
         );
     }
@@ -413,16 +414,18 @@ function RegistrationTable(props) {
                     rowDeselection={true}
                     rowData={rowData}
                     frameworkComponents={frameworkComponents}
+                    getRowHeight={getRowHeight}
+					headerHeight={headerHeight}
 
-                    onGridReady={onGridReady}
-                    rowBuffer={rowBuffer}
-                    rowModelType={rowModelType}
-                    // cacheOverflowSize={cacheOverflowSize}
-                    // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
-                    // infiniteInitialRowCount={infiniteInitialRowCount}
-                    maxBlocksInCache={maxBlocksInCache}
-                    cacheBlockSize={cacheBlockSize}
-                    rowHeight={rowHeight}
+                    // onGridReady={onGridReady}
+                    // rowBuffer={rowBuffer}
+                    // rowModelType={rowModelType}
+                    // // cacheOverflowSize={cacheOverflowSize}
+                    // // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
+                    // // infiniteInitialRowCount={infiniteInitialRowCount}
+                    // maxBlocksInCache={maxBlocksInCache}
+                    // cacheBlockSize={cacheBlockSize}
+                    // rowHeight={rowHeight}
 
                     // components = {components}
                     pagination={true}
