@@ -56,6 +56,7 @@ function FakeServer(allData) {
 
 // Action cell renderer
 function ActionCellRenderer(props) {
+	console.log("badgeIds",props)
 	const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
