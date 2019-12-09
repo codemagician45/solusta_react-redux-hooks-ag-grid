@@ -2,7 +2,7 @@ module.exports = {
     env: 'server',
 
     ServerLink: {
-        env: 'http://dee-mac.local:8088',
-        prod: 'https://stage02.solusta.me',
+        prod: 'http://dee-mac.local:8088',
+        prod2: 'https://stage02.solusta.me',
     },
 }

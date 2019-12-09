@@ -161,7 +161,7 @@ function RegistrationTable(props) {
     // const maxConcurrentDatasourceRequests = 1;
     // const infiniteInitialRowCount = 1;
     const maxBlocksInCache = 2;
-    const cacheBlockSize = 15;
+    const cacheBlockSize = 100;
     const paginationPageSize = 15;
 
     const onGridReady = params => {
@@ -198,7 +198,7 @@ function RegistrationTable(props) {
                 'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
             }
         };
-        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/15}&size=${100}`, null, header).then(
+        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/15}&size=${2700}`, null, header).then(
             res => {
                 console.log("res", res);
                 mount.current && setLazyLoadingResult(res.data);
@@ -295,7 +295,7 @@ function RegistrationTable(props) {
                 }
             }
 
-            // Category filter   
+            // Category filter
             if (filterModel.category) {
                 var category = item.category;
                 var allowedCategory = filterModel.category.filter;
@@ -339,7 +339,7 @@ function RegistrationTable(props) {
                 }
             }
 
-            // Email Filter 
+            // Email Filter
             if (filterModel.email) {
                 var email = item.email;
                 var allowedEmail = filterModel.email.filter;
@@ -369,7 +369,7 @@ function RegistrationTable(props) {
         gridApi.exportDataAsExcel(params);
     }
 
-    
+
 
     const frameworkComponents = {
         loadingRenderer: LoadingRenderer,
