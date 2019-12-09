@@ -315,7 +315,7 @@ function RegistrationTable(props) {
         const printCount = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).printedCount : -1;
         const isCollected = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).isCollected : 0;
         const badgeActivityId = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
-        console.log('here in registration table: ', badgeId, printCount, badgeActivityId)
+        // console.log('here in registration table: ', badgeId, printCount, badgeActivityId)
         const temp = {
             id: attendee.id,
             category: (attendee.attendeeCategorySAS && attendee.attendeeCategorySAS[0]) ? attendee.attendeeCategorySAS[0].categoryName : '',
@@ -357,52 +357,33 @@ function RegistrationTable(props) {
         mount.current && setGridApi(gridApi)
         const gridColumnApi = params.columnApi;
         // const updateData = data => {
-        //     let dataSource = {
-        //          rowCount : null,
-        //          getRows : function(params){
-        //             console.log("asking for " + params.startRow + " to " + params.endRow);
-        //             setTimeout(function() {
-        //                 let dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
-        //                 let rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
-        //                 let lastRow = -1;
-        //                 if (dataAfterSortingAndFiltering.length <= params.endRow) {
-        //                   lastRow = dataAfterSortingAndFiltering.length;
-        //                 }
-        //                 params.successCallback(rowsThisPage, lastRow);
-        //               }, 500);
-        //          }
-        //     };
-        //     params.api.setDatasource(dataSource);
+        //     const server = new FakeServer(data);
+        //     const dataSource = new ServerSideDatasource(server);
+        //     params.api.setServerSideDatasource(dataSource);
         // };
 
-        const updateData = data => {
-            const server = new FakeServer(data);
-            const dataSource = new ServerSideDatasource(server);
-            params.api.setServerSideDatasource(dataSource);
-        };
-
-        const header = {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-            }
-        };
-        axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header).then(
-            response => {
-                axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${response.data}`, null, header).then(
-                    res => {
-                        console.log("res", res);
-                        mount.current && setLazyLoadingResult(res.data);
-                        const value = res.data.map((item, index) => {
-                            return {
-                                ...item,
-                                category: item.attendeeCategorySAS[0].categoryName,
-                            }
-                        });
-                        updateData(value);
-                    }
-                );
-            }
-        );
+        // const header = {
+        //     headers: {
+        //         'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+        //     }
+        // };
+        // axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header).then(
+        //     response => {
+        //         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${response.data}`, null, header).then(
+        //             res => {
+        //                 console.log("res", res);
+        //                 mount.current && setLazyLoadingResult(res.data);
+        //                 const value = res.data.map((item, index) => {
+        //                     return {
+        //                         ...item,
+        //                         category: item.attendeeCategorySAS[0].categoryName,
+        //                     }
+        //                 });
+        //                 updateData(value);
+        //             }
+        //         );
+        //     }
+        // );
         
     };
 
@@ -547,6 +528,7 @@ function RegistrationTable(props) {
         return resultOfFilter;
     }
 
+
     const exportExcel = () => {
         // const columnWidth :100;
         const params = {
@@ -594,7 +576,7 @@ function RegistrationTable(props) {
                     getRowHeight={getRowHeight}
 					headerHeight={headerHeight}
 
-                    // onGridReady={onGridReady}
+                    onGridReady={onGridReady}
                     // rowBuffer={rowBuffer}
                     // rowModelType={rowModelType}
                     // // cacheOverflowSize={cacheOverflowSize}
