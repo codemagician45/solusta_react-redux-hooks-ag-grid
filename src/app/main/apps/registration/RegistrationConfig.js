@@ -52,6 +52,10 @@ export const RegistrationConfig = {
 		{
 			path: '/app/registration/badges',
 			component: React.lazy(() => import('./badge/Badge')),
-		}
+		},
+		{
+			path: '/app/registration/collection',
+			component: React.lazy(() => import('./collection/Collection')),
+		},
 	]
 };
