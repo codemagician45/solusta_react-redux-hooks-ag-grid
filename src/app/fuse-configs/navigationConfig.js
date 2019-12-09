@@ -1,60 +1,60 @@
 const navigationConfig = [
     {
-        'id'      : 'applications',
-        'title'   : 'Applications',
-        'type'    : 'group',
-        'icon'    : 'apps',
+        'id': 'applications',
+        'title': 'Applications',
+        'type': 'group',
+        'icon': 'apps',
         'children': [
             {
-                'id'      : 'registration',
-                'title'   : 'Registration',
-                'type'    : 'collapse',
-                'icon'    : 'how_to_reg',
+                'id': 'registration',
+                'title': 'Registration',
+                'type': 'collapse',
+                'icon': 'how_to_reg',
                 'children': [
                     {
-                        'id'   : 'registration',
+                        'id': 'registration',
                         'title': 'Registration Forms',
-                        'type' : 'item',
-                        'url'  : '/app/registration/registration'
+                        'type': 'item',
+                        'url': '/app/registration/registration'
                     },
                     {
-                        'id'   : 'badges',
+                        'id': 'badges',
                         'title': 'Badges',
-                        'type' : 'item',
-                        'url'  : '/app/registration/badges'
+                        'type': 'item',
+                        'url': '/app/registration/badges'
                     },
                     {
-                        'id'   : 'accreditation',
-                        'title': 'Accreditation',
-                        'type' : 'item',
-                        'url'  : '/app/registration/accreditation'
+                        'id': 'collection',
+                        'title': 'Collection',
+                        'type': 'item',
+                        'url': '/app/registration/collection'
                     },
                     {
-                        'id'   : 'category',
+                        'id': 'category',
                         'title': 'Add New',
-                        'type' : 'item',
-                        'url'  : '/app/registration/category'
+                        'type': 'item',
+                        'url': '/app/registration/category'
                     }
                 ]
             },
             {
-                'id'      : 'workshop',
-                'title'   : 'Workshop',
-                'type'    : 'collapse',
-                'icon'    : 'work',
+                'id': 'workshop',
+                'title': 'Workshop',
+                'type': 'collapse',
+                'icon': 'work',
                 'children': [
                     {
-                        'id'   : 'workshop-forms',
+                        'id': 'workshop-forms',
                         'title': 'Workshop-Forms',
-                        'type' : 'item',
-                        'url'  : '/app/workshop/workshop-forms'
+                        'type': 'item',
+                        'url': '/app/workshop/workshop-forms'
                     },
                     {
-                        'id'   : 'workshop-accreditations',
+                        'id': 'workshop-accreditations',
                         'title': 'Workshop Accreditations',
-                        'type' : 'item',
-                        'url'  : '/app/workshop/workshop-accreditations'
-                    },    
+                        'type': 'item',
+                        'url': '/app/workshop/workshop-accreditations'
+                    },
                 ]
             },
         ]
