@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -72,7 +72,7 @@ function BadgeTable(props) {
 	const dispatch = useDispatch();
 	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
 	const badgeIDs = useSelector(({ registerApp }) => registerApp.badge.badgeIDs);
-	const printCounts = useSelector(({ registerApp }) => registerApp.badge.printCounts);
+	const printedCounts = useSelector(({ registerApp }) => registerApp.badge.printedCounts);
 
 	useEffect(() => {
 		getBadgeIdArr();
@@ -90,7 +90,6 @@ function BadgeTable(props) {
 		Promise.all(promiseArr).then(values => {
 			let badgeIdArr = [];
 			values.map((value, index) => {
-				// return attendeeID and badgeFriendlyID
 				if (value) {
 					badgeIdArr.push({
 						badgeFriendlyID: value.badgeFriendlyID,
@@ -178,7 +177,6 @@ function BadgeTable(props) {
 	}
 
 	const columnDefs = [
-		// {headerName: 'Badge ID', field: 'badgeId', cellStyle:() => { return { padding:'15px', 'font-size': '14px', 'font-family': 'sans-serif' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
 		{
 			headerName: 'Badge ID',
 			field: 'badgeFriendId',
@@ -256,11 +254,11 @@ function BadgeTable(props) {
 		overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
 		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
 	};
-	const rowData = attendees && attendees.map((item) => {
+	const rowData = attendees.map((item) => {
 		const badgeFriendId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === item.id)) ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeFriendlyID : -1;
 		const badgeId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === item.id)) ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeId : 0;
-		const printCount = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).printedCount : -1;
-		const badgeActivityId = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
+		const printCount = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).printedCount : -1;
+		const badgeActivityId = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
 		const temp = {
 			id: item.id,
 			badgeId: badgeId,
@@ -289,8 +287,7 @@ function BadgeTable(props) {
 		console.log('here in selected row data in ag-grid: ', selectedRow);
 		// dispatch(Actions.setAttendeeSelectRow(selectedRow));
 	};
-
-	console.log('here is print count: ', printCounts, badgeIDs);
+	console.log('here is print count: ', printedCounts, badgeIDs);
 
 	return (
 		<React.Fragment>
@@ -305,7 +302,6 @@ function BadgeTable(props) {
 					rowSelection='multiple'
 					rowData={rowData}
 					frameworkComponents={frameworkComponents}
-					// onGridReady={onGridReady}
 					pagination={true}
 					paginationPageSize={13}
 					getRowHeight={getRowHeight}
