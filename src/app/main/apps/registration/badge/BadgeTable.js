@@ -63,9 +63,15 @@ function ActionCellRenderer(props) {
 		console.log('here print button click event: ', data);
 	}
 
-	return (
-		<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
-	);
+	if (props.data.printCount >= 1) {
+		return (
+			<Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
+		);
+	} else {
+		return (
+			<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
+		);
+	}
 }
 
 function BadgeTable(props) {
