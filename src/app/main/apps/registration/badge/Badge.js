@@ -13,39 +13,38 @@ import { FusePageCarded } from '@fuse';
 import BadgeTable from './BadgeTable';
 import BadgePrintComponent from './BadgePrintComponent';
 
-function Badge()
-{
-  const printRef = useRef();
-  const dispatch = useDispatch();
-  const selectedRows = useSelector(({registerApp}) => registerApp.badge.selectedRows);
-  const attendees = useSelector(({registerApp}) => registerApp.badge.attendees);
+function Badge() {
+	const printRef = useRef();
+	const dispatch = useDispatch();
+	const selectedRows = useSelector(({ registerApp }) => registerApp.badge.selectedRows);
+	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
 
-  useEffect(() => {
-    dispatch(Actions.getBadgeAttendees());
-  }, [dispatch]);
+	useEffect(() => {
+		dispatch(Actions.getBadgeAttendees());
+	}, [dispatch]);
 
-  return (
-    <FusePageCarded
-      classes={{
-        content: "flex",
-        header : "min-h-24 h-24 sm:h-36 sm:min-h-36"
-      }}
-      header={
-        <div className="flex flex-1 w-full items-center justify-between">
-          <Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{visibility:'hidden'}}>Print Before</Button>
-          <ReactToPrint
-            trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
-            content={() => printRef.current}
-          />
-          <BadgePrintComponent attendees={attendees} selectedRows={selectedRows} ref={printRef}/>
-        </div>
-      }
-      content={
-        <BadgeTable />
-      }
-      innerScroll
-    />
-  );
+	return (
+		<FusePageCarded
+			classes={{
+				content: "flex",
+				header: "min-h-24 h-24 sm:h-36 sm:min-h-36"
+			}}
+			header={
+				<div className="flex flex-1 w-full items-center justify-between">
+					<Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{ visibility: 'hidden' }}>Print Before</Button>
+					<ReactToPrint
+						trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
+						content={() => printRef.current}
+					/>
+					<BadgePrintComponent attendees={attendees} selectedRows={selectedRows} ref={printRef} />
+				</div>
+			}
+			content={
+				<BadgeTable />
+			}
+			innerScroll
+		/>
+	);
 }
 
 export default withReducer('registerApp', reducer)(Badge);
