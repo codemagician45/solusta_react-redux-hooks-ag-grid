@@ -185,7 +185,7 @@ function BadgeTable(props) {
 			cellStyle: {
 				'padding': '15px',
 				'font-size': '14px',
-				'font-family': 'sans-serif'
+				'font-family': 'sans-serif',
 			}
 		},
 		{
@@ -193,7 +193,7 @@ function BadgeTable(props) {
 			cellRenderer: "actionCellRenderer",
 			field: 'action',
 			cellStyle: {
-				'margin-top': '5px'
+				'margin-top': '5px',
 			},
 			sortable: false,
 			filter: false
