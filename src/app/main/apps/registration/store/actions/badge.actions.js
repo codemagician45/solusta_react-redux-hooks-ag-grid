@@ -27,14 +27,14 @@ export function getCount() {
 		);
 }
 
-export function getBadgeAttendees(page=null, size=null) {
+export function getBadgeAttendees(page = null, size = null) {
 	const header = {
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${page}&size=${size}`, null, header);
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${20}`, null, header);
 
 	return (dispatch) =>
 		request.then((response) =>
@@ -79,13 +79,13 @@ export function updateBadgeActivity(data) {
 	const request = axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header);
 
 	return (dispatch) =>
-	request.then((response) =>
-		dispatch({
-			type: UPDATE_BADGE_ACTIVITY,
-			payload: {
-				...response.data,
-				badgeId: data.badgeId,
-			},
-		})
-	);
+		request.then((response) =>
+			dispatch({
+				type: UPDATE_BADGE_ACTIVITY,
+				payload: {
+					...response.data,
+					badgeId: data.badgeId,
+				},
+			})
+		);
 }
