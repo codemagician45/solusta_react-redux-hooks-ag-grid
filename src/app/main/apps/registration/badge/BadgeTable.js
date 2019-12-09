@@ -73,7 +73,7 @@ function BadgeTable(props) {
 	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
 	const badgeIDs = useSelector(({ registerApp }) => registerApp.badge.badgeIDs);
 	const printedCounts = useSelector(({ registerApp }) => registerApp.badge.printedCounts);
-
+	const [gridApi, setGridApi] = useState(null);
 	useEffect(() => {
 		getBadgeIdArr();
 	}, [attendees]);
@@ -272,6 +272,24 @@ function BadgeTable(props) {
 		};
 		return temp;
 	});
+	const onGridReady = params => {
+		const gridApi = params.api;
+		setGridApi(gridApi)
+	}
+	const exportExcel = () => {
+        // const columnWidth :100;
+        const params = {
+            columnWidth: 100,
+            sheetName: '',
+            exportMode: undefined,
+            // suppressTextAsCDATA: ,
+            rowHeight: 30,
+            headerRowHeight: 40,
+            // customHeader: []
+        };
+
+        gridApi.exportDataAsExcel(params);
+    }
 	const frameworkComponents = {
 		actionCellRenderer: ActionCellRenderer
 	};
@@ -295,6 +313,7 @@ function BadgeTable(props) {
 				className="table-responsive ag-theme-balham"
 				style={{ height: '100%', width: '100%', fontSize: '16px' }}
 			>
+				<Button onClick={exportExcel} color="secondary">Export to Excel</Button>
 				<AgGridReact
 					columnDefs={columnDefs}
 					defaultColDef={defs.defaultColDef}
@@ -309,6 +328,8 @@ function BadgeTable(props) {
 					overlayLoadingTemplate={defs.overlayLoadingTemplate}
 					overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
 					onSelectionChanged={onSelectionChanged}
+
+					onGridReady={onGridReady}
 				>
 				</AgGridReact>
 			</div>

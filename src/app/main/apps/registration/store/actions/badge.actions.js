@@ -34,7 +34,7 @@ export function getBadgeAttendees(page=null, size=null) {
 		}
 	};
 	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${page}&size=${size}`, null, header);
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
 
 	return (dispatch) =>
 		request.then((response) =>
