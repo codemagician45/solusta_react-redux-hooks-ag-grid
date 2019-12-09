@@ -22,13 +22,45 @@ import reducer from '../store/reducers';
 const environment = require('../RegistrationEnv');
 const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
+// Ag-Grid Server Side Data source
+function ServerSideDatasource(server) {
+	return {
+		getRows: function (params) {
+			setTimeout(function () {
+				var response = server.getResponse(params.request);
+				if (response.success) {
+					params.successCallback(response.rows, response.lastRow);
+				} else {
+					params.failCallback();
+				}
+			}, 500);
+		}
+	};
+}
+
+// Ag-Grid Fake server
+function FakeServer(allData) {
+	return {
+		getResponse: function (request) {
+			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+			var rowsThisPage = allData.slice(request.startRow, request.endRow);
+			var lastRow = allData.length <= request.endRow ? allData.length : -1;
+			return {
+				success: true,
+				rows: rowsThisPage,
+				lastRow: lastRow
+			};
+		}
+	};
+}
+
 // Action cell renderer
 function ActionCellRenderer(props) {
 	const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
-			dispatch(Actions.updateBadgeActivity(data));
-			console.log('here print button click event: ', data);
+		dispatch(Actions.updateBadgeActivity(data));
+		console.log('here print button click event: ', data);
 	}
 
 	return (
@@ -38,10 +70,9 @@ function ActionCellRenderer(props) {
 
 function BadgeTable(props) {
 	const dispatch = useDispatch();
-	const attendees = useSelector(({registerApp}) => registerApp.badge.attendees);
-	const badgeIDs = useSelector(({registerApp}) => registerApp.badge.badgeIDs);
-	const printCounts = useSelector(({registerApp}) => registerApp.badge.printCounts);
-
+	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
+	const badgeIDs = useSelector(({ registerApp }) => registerApp.badge.badgeIDs);
+	const printCounts = useSelector(({ registerApp }) => registerApp.badge.printCounts);
 
 	useEffect(() => {
 		getBadgeIdArr();
@@ -151,23 +182,18 @@ function BadgeTable(props) {
 		{
 			headerName: 'Badge ID',
 			field: 'badgeFriendId',
-			cellStyle: () => {
-				return {
-					padding: '15px',
-					'font-size': '14px',
-					'font-family': 'sans-serif'
-				};
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
 			}
 		},
 		{
 			headerName: 'Action',
 			cellRenderer: "actionCellRenderer",
 			field: 'action',
-			cellStyle: () => {
-				return {
-					'text-align': 'center',
-					'margin-top': '5px'
-				}
+			cellStyle: {
+				'margin-top': '5px',
 			},
 			sortable: false,
 			filter: false
@@ -175,56 +201,46 @@ function BadgeTable(props) {
 		{
 			headerName: 'Printed(Count)',
 			field: 'printCount',
-			cellStyle: () => {
-				return {
-					padding: '15px',
-					'font-size': '14px',
-					'font-family': 'sans-serif'
-				};
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
 			}
 		},
 		{
 			headerName: 'First Name',
 			field: 'firstName',
-			cellStyle: () => {
-				return {
-					padding: '15px',
-					'font-size': '14px',
-					'font-family': 'sans-serif'
-				};
-			}
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
+			},
 		},
 		{
 			headerName: 'Last Name',
 			field: 'lastName',
-			cellStyle: () => {
-				return {
-					padding: '15px',
-					'font-size': '14px',
-					'font-family': 'sans-serif'
-				};
-			}
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
+			},
 		},
 		{
 			headerName: 'Category',
 			field: 'category',
-			cellStyle: () => {
-				return {
-					padding: '15px',
-					'font-size': '14px',
-					'font-family': 'sans-serif'
-				};
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
 			}
 		},
 		{
 			headerName: 'Company',
 			field: 'companyName',
-			cellStyle: () => {
-				return {
-					padding: '15px',
-					'font-size': '14px',
-					'font-family': 'sans-serif'
-				};
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
 			}
 		}
 	];
@@ -244,7 +260,7 @@ function BadgeTable(props) {
 		const badgeFriendId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === item.id)) ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeFriendlyID : -1;
 		const badgeId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === item.id)) ? badgeIDs.find(el => el.attendeeSAId === item.id).badgeId : 0;
 		const printCount = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).printedCount : -1;
-		const badgeActivityId = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;	
+		const badgeActivityId = (printCounts.length > 0 && printCounts.find(el => el.badgeId === badgeId)) ? printCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
 		const temp = {
 			id: item.id,
 			badgeId: badgeId,
@@ -280,20 +296,21 @@ function BadgeTable(props) {
 		<React.Fragment>
 			<div
 				className="table-responsive ag-theme-balham"
-				style={{height:'100%', width: '100%', fontSize: '16px' }}
+				style={{ height: '100%', width: '100%', fontSize: '16px' }}
 			>
 				<AgGridReact
+					modules={AllModules}
 					columnDefs={columnDefs}
 					defaultColDef={defs.defaultColDef}
 					rowSelection='multiple'
 					rowData={rowData}
-					frameworkComponents = {frameworkComponents}
+					frameworkComponents={frameworkComponents}
 					// onGridReady={onGridReady}
 					pagination={true}
 					paginationPageSize={13}
-					getRowHeight = {getRowHeight}
-					headerHeight = {headerHeight}
-					floatingFilter = {true}
+					getRowHeight={getRowHeight}
+					headerHeight={headerHeight}
+					floatingFilter={true}
 					overlayLoadingTemplate={defs.overlayLoadingTemplate}
 					overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
 					onSelectionChanged={onSelectionChanged}

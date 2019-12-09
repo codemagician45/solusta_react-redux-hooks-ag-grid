@@ -1,11 +1,11 @@
-import React, { useState, useEffect, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
 import { AllModules } from '@ag-grid-enterprise/all-modules';
-import {ExcelExportModule} from "@ag-grid-enterprise/excel-export";
+import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
@@ -40,21 +40,21 @@ function ImageCellRender(props) {
     const id = props.data && props.data.id;
     // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
     const attendee = props.data && props.data;
-    
+
     const style = {
-        height:'48px',
+        height: '48px',
         width: '48px',
-        padding:'5px'
+        padding: '5px'
     };
 
-    if(attendee && attendee.mainPhoto === '')
+    if (attendee && attendee.mainPhoto === '')
         return (
-            <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{padding:'5px'}}/>
+            <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
         );
     else {
-        return(
+        return (
             <Link to={`/app/registration/registration/${id}`}>
-                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'}/>
+                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
             </Link>
         );
     }
@@ -62,57 +62,71 @@ function ImageCellRender(props) {
 
 function RegistrationTable(props) {
     const dispatch = useDispatch();
-    const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
-    const [gridApi,setGridApi] = useState(null);
-    const [lazyLoadingResult,setResult] = useState(null);
-    // const columnDefs= [
-    //     {headerName: 'ID', field: 'id', cellRenderer: 'loadingRenderer', suppressMenu: true, cellStyle:() => { return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
-    //     {headerName: 'Category', field: 'category',cellStyle:() => { return { padding:'15px' };}},
-    //     {headerName: 'Main Photo', field: 'mainPhoto',cellRenderer: "imageCellRender", filter: false},
-    //     {headerName: 'First Name', field: 'firstName',cellStyle:() => { return { padding:'15px' };}},
-    //     {headerName: 'Last Name', field: 'lastName',cellStyle:() => { return { padding:'15px' };}},
-    //     {headerName: 'Email', field: 'email',cellStyle:() => { return { padding:'15px' };}},
-    //     {headerName: 'Company Name', field: 'companyName',cellStyle:() => { return { padding:'15px' };}},
-    // ];
+    const mount = useRef(false);
+    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const [gridApi, setGridApi] = useState(null);
+    const [lazyLoadingResult, setLazyLoadingResult] = useState(null);
 
-    const columnDefs= [
-        {headerName: 'ID', field: 'id', suppressMenu: true,  cellStyle:() => {return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true,
+    useEffect(() => {
+        mount.current = true;
+        return () => {
+            mount.current = false;
+        }
+    })
+
+    const columnDefs = [
+        {
+            headerName: 'ID', field: 'id', suppressMenu: true, cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
+            headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true,
             filter: "agNumberColumnFilter",
             filterParams: {
-            filterOptions: ["equals", "contains"],
-            suppressAndOrCondition: true
-            }},
-        {headerName: 'Category', field: 'category',cellStyle:() => {return { padding:'15px' };},
-            filter: "agTextColumnFilter",
-            filterParams: {
-            filterOptions: ["equals", "contains"],
-            suppressAndOrCondition: true}
+                filterOptions: ["equals", "contains"],
+                suppressAndOrCondition: true
+            }
         },
-        {headerName: 'Main Photo', field: 'mainPhoto', filter: false,cellRenderer: "imageCellRender",},
-        {headerName: 'First Name', field: 'firstName',cellStyle:() => {return { padding:'15px' };},
+        {
+            headerName: 'Category', field: 'category', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-            filterOptions: ["equals", "contains"],
-            suppressAndOrCondition: true}
+                filterOptions: ["equals", "contains"],
+                suppressAndOrCondition: true
+            }
         },
-
-        {headerName: 'Last Name', field: 'lastName',cellStyle:() => {return { padding:'15px' };},
+        { headerName: 'Main Photo', field: 'mainPhoto', filter: false, cellRenderer: "imageCellRender", },
+        {
+            headerName: 'First Name', field: 'firstName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-            filterOptions: ["equals", "contains"],
-            suppressAndOrCondition: true}
+                filterOptions: ["equals", "contains"],
+                suppressAndOrCondition: true
+            }
         },
 
-        {headerName: 'Email', field: 'email',cellStyle:() => {return { padding:'15px' };},
+        {
+            headerName: 'Last Name', field: 'lastName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-            filterOptions: ["equals", "contains"],
-            suppressAndOrCondition: true}},
-        {headerName: 'Company Name', field: 'companyName',cellStyle:() => {return { padding:'15px' };},
+                filterOptions: ["equals", "contains"],
+                suppressAndOrCondition: true
+            }
+        },
+
+        {
+            headerName: 'Email', field: 'email', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-            filterOptions: ["equals", "contains"],
-            suppressAndOrCondition: true}},
+                filterOptions: ["equals", "contains"],
+                suppressAndOrCondition: true
+            }
+        },
+        {
+            headerName: 'Company Name', field: 'companyName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
+            filter: "agTextColumnFilter",
+            filterParams: {
+                filterOptions: ["equals", "contains"],
+                suppressAndOrCondition: true
+            }
+        },
     ];
 
     const defs = {
@@ -129,7 +143,7 @@ function RegistrationTable(props) {
         overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
 
-    const rowData = attendees && attendees.map((attendee)=>({
+    const rowData = attendees && attendees.map((attendee) => ({
         id: attendee.id,
         category: (attendee.attendeeCategorySAS && attendee.attendeeCategorySAS[0]) ? attendee.attendeeCategorySAS[0].categoryName : '',
         firstName: attendee.firstName,
@@ -138,15 +152,6 @@ function RegistrationTable(props) {
         companyName: attendee.companyName,
     }));
 
-    // const components = {
-    //     loadingRenderer: function(params) {
-    //       if (params.value !== undefined) {
-    //         return params.value;
-    //       } else {
-    //         return '<img src="../images/loading.gif">';
-    //       }
-    //     }
-    //   }
     // lazyloading parameter
     const rowHeight = 48;
     const rowBuffer = 0;
@@ -160,9 +165,8 @@ function RegistrationTable(props) {
     const paginationPageSize = 15;
 
     const onGridReady = params => {
-        
         const gridApi = params.api;
-        setGridApi(gridApi)
+        mount.current && setGridApi(gridApi)
         const gridColumnApi = params.columnApi;
         // const updateData = data => {
         //     let dataSource = {
@@ -196,9 +200,8 @@ function RegistrationTable(props) {
         };
         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/15}&size=${100}`, null, header).then(
             res => {
-                console.log("res",res);
-                setResult(res.data);
-                
+                console.log("res", res);
+                mount.current && setLazyLoadingResult(res.data);
                 const value = res.data.map((item, index) => {
                     return {
                         ...item,
@@ -208,7 +211,6 @@ function RegistrationTable(props) {
                 updateData(value);
             }
         );
-        
     };
 
     const ServerSideDatasource = (server) => {
@@ -244,7 +246,7 @@ function RegistrationTable(props) {
 
     const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
         return sortData(sortModel, filterData(filterModel, allOfTheData));
-      }
+    }
 
     const sortData = (sortModel, data) => {
         var sortPresent = sortModel && sortModel.length > 0;
@@ -252,20 +254,20 @@ function RegistrationTable(props) {
             return data;
         }
         var resultOfSort = data.slice();
-        resultOfSort.sort(function(a, b) {
+        resultOfSort.sort(function (a, b) {
             for (var k = 0; k < sortModel.length; k++) {
-            var sortColModel = sortModel[k];
-            var valueA = a[sortColModel.colId];
-            var valueB = b[sortColModel.colId];
-            if (valueA == valueB) {
-                continue;
-            }
-            var sortDirection = sortColModel.sort === "asc" ? 1 : -1;
-            if (valueA > valueB) {
-                return sortDirection;
-            } else {
-                return sortDirection * -1;
-            }
+                var sortColModel = sortModel[k];
+                var valueA = a[sortColModel.colId];
+                var valueB = b[sortColModel.colId];
+                if (valueA == valueB) {
+                    continue;
+                }
+                var sortDirection = sortColModel.sort === "asc" ? 1 : -1;
+                if (valueA > valueB) {
+                    return sortDirection;
+                } else {
+                    return sortDirection * -1;
+                }
             }
             return 0;
         });
@@ -275,75 +277,82 @@ function RegistrationTable(props) {
     const filterData = (filterModel, data) => {
         var filterPresent = filterModel && Object.keys(filterModel).length > 0;
         if (!filterPresent) {
-          return data;
+            return data;
         }
         var resultOfFilter = [];
-        // ID filter
+
         for (var i = 0; i < data.length; i++) {
-          var item = data[i];
-          if (filterModel.id) {
-            var id = item.id;
-            var allowedId = parseInt(filterModel.id.filter);
-            if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
-              if (id !== allowedId) {
-                continue;
-              }
-            } 
-          }
-        // Category filter   
-          if (filterModel.category) {
-            var category = item.category;
-            var allowedCategory = filterModel.category.filter;
-            if (filterModel.category.type == "contains" || filterModel.category.type == "equals") { 
-                if(!category.toUpperCase().includes(allowedCategory.toUpperCase())){
-                continue;
-              }
-            } 
-          }
-        //   First Name Filter
-          if (filterModel.firstName) {
-            var firstName = item.firstName;
-            var allowedFirstName = filterModel.firstName.filter;
-            if (filterModel.firstName.type == "contains"|| filterModel.firstName.type == "equals") {
-                if(!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())){
-                continue;
-              }
-            } 
-          }
-        //   Last Name Filter
-          if (filterModel.lastName) {
-            var lastName = item.lastName;
-            var allowedLastName = filterModel.lastName.filter;
-            if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
-                if(!lastName.toUpperCase().includes(allowedLastName.toUpperCase())){  
-                continue;
-              }
-            } 
-          }
-        //  Company Name Filter
-        if (filterModel.companyName) {
-            var companyName = item.companyName;
-            var allowedCompanyName = filterModel.companyName.filter;
-            if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
-                if(!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())){
-                continue;
-              }
-            } 
-          }
-        // Email Filter 
-        if (filterModel.email) {
-            var email = item.email;
-            var allowedEmail = filterModel.email.filter;
-            if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
-                if(!email.toUpperCase().includes(allowedEmail.toUpperCase())){
-                continue;
-              }
-            } 
-          }
-          resultOfFilter.push(item);
+            var item = data[i];
+
+            // ID filter
+            if (filterModel.id) {
+                var id = item.id;
+                var allowedId = parseInt(filterModel.id.filter);
+                if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
+                    if (id !== allowedId) {
+                        continue;
+                    }
+                }
+            }
+
+            // Category filter   
+            if (filterModel.category) {
+                var category = item.category;
+                var allowedCategory = filterModel.category.filter;
+                if (filterModel.category.type == "contains" || filterModel.category.type == "equals") {
+                    if (!category.toUpperCase().includes(allowedCategory.toUpperCase())) {
+                        continue;
+                    }
+                }
+            }
+
+            //   First Name Filter
+            if (filterModel.firstName) {
+                var firstName = item.firstName;
+                var allowedFirstName = filterModel.firstName.filter;
+                if (filterModel.firstName.type == "contains" || filterModel.firstName.type == "equals") {
+                    if (!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())) {
+                        continue;
+                    }
+                }
+            }
+
+            //   Last Name Filter
+            if (filterModel.lastName) {
+                var lastName = item.lastName;
+                var allowedLastName = filterModel.lastName.filter;
+                if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
+                    if (!lastName.toUpperCase().includes(allowedLastName.toUpperCase())) {
+                        continue;
+                    }
+                }
+            }
+
+            //  Company Name Filter
+            if (filterModel.companyName) {
+                var companyName = item.companyName;
+                var allowedCompanyName = filterModel.companyName.filter;
+                if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
+                    if (!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())) {
+                        continue;
+                    }
+                }
+            }
+
+            // Email Filter 
+            if (filterModel.email) {
+                var email = item.email;
+                var allowedEmail = filterModel.email.filter;
+                if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
+                    if (!email.toUpperCase().includes(allowedEmail.toUpperCase())) {
+                        continue;
+                    }
+                }
+            }
+            resultOfFilter.push(item);
         }
         return resultOfFilter;
-      }
+    }
 
     const exportExcel = () => {
         // const columnWidth :100;
@@ -356,7 +365,7 @@ function RegistrationTable(props) {
             headerRowHeight: 40,
             // customHeader: []
         };
-        
+
         gridApi.exportDataAsExcel(params);
     }
 
@@ -364,11 +373,11 @@ function RegistrationTable(props) {
 
     const frameworkComponents = {
         loadingRenderer: LoadingRenderer,
-        imageCellRender:ImageCellRender,
+        imageCellRender: ImageCellRender,
     };
 
-    const getRowHeight = () => {return 48;};
-    const headerHeight = () => {return 32;};
+    const getRowHeight = () => { return 48; };
+    const headerHeight = () => { return 32; };
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
         const selectedRow = gridApi.getSelectedRows();
@@ -380,18 +389,18 @@ function RegistrationTable(props) {
     return (
         <React.Fragment>
             <div
-            className="table-responsive ag-theme-balham"
-            style={{height:'100%', width: '100%', fontSize: '16px' }}
+                className="table-responsive ag-theme-balham"
+                style={{ height: '100%', width: '100%', fontSize: '16px' }}
             >
                 <Button onClick={exportExcel} color="secondary">Export to Excel</Button>
                 <AgGridReact
-                    modules = {defs.modules}
+                    modules={defs.modules}
                     columnDefs={columnDefs}
                     defaultColDef={defs.defaultColDef}
                     rowSelection='multiple'
                     rowDeselection={true}
                     rowData={rowData}
-                    frameworkComponents = {frameworkComponents}
+                    frameworkComponents={frameworkComponents}
 
                     onGridReady={onGridReady}
                     rowBuffer={rowBuffer}
@@ -400,8 +409,8 @@ function RegistrationTable(props) {
                     // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
                     // infiniteInitialRowCount={infiniteInitialRowCount}
                     maxBlocksInCache={maxBlocksInCache}
-                    cacheBlockSize = {cacheBlockSize}
-                    rowHeight ={rowHeight}
+                    cacheBlockSize={cacheBlockSize}
+                    rowHeight={rowHeight}
 
                     // components = {components}
                     pagination={true}
