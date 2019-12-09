@@ -293,7 +293,7 @@ function BadgeTable(props) {
             headerRowHeight: 40,
             // customHeader: []
         };
-
+		console.log(gridApi)
         gridApi.exportDataAsExcel(params);
     }
 	const frameworkComponents = {
@@ -336,6 +336,7 @@ function BadgeTable(props) {
 					onSelectionChanged={onSelectionChanged}
 
 					onGridReady={onGridReady}
+					modules = {defs.modules}
 				>
 				</AgGridReact>
 			</div>
