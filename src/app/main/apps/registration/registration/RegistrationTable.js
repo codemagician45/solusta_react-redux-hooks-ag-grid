@@ -64,6 +64,7 @@ function RegistrationTable(props) {
     const dispatch = useDispatch();
     const mount = useRef(false);
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // const attendeeCount = useSelector(({ registerApp }) => registerApp.badge.count);
     const [gridApi, setGridApi] = useState(null);
     const [lazyLoadingResult, setLazyLoadingResult] = useState(null);
 
@@ -73,6 +74,12 @@ function RegistrationTable(props) {
             mount.current = false;
         }
     })
+
+    // useEffect(() => {
+	// 	dispatch(Actions.getCount())
+    // }, [dispatch]);
+    
+    // console.log("count",attendeeCount)
 
     const columnDefs = [
         {
@@ -198,19 +205,24 @@ function RegistrationTable(props) {
                 'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
             }
         };
-        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/15}&size=${2700}`, null, header).then(
-            res => {
-                console.log("res", res);
-                mount.current && setLazyLoadingResult(res.data);
-                const value = res.data.map((item, index) => {
-                    return {
-                        ...item,
-                        category: item.attendeeCategorySAS[0].categoryName,
+        axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header).then(
+            response => {
+                axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${response.data}`, null, header).then(
+                    res => {
+                        console.log("res", res);
+                        mount.current && setLazyLoadingResult(res.data);
+                        const value = res.data.map((item, index) => {
+                            return {
+                                ...item,
+                                category: item.attendeeCategorySAS[0].categoryName,
+                            }
+                        });
+                        updateData(value);
                     }
-                });
-                updateData(value);
+                );
             }
         );
+        
     };
 
     const ServerSideDatasource = (server) => {
