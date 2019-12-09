@@ -5,6 +5,7 @@ import { Link} from 'react-router-dom';
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
 import { AllModules } from '@ag-grid-enterprise/all-modules';
+import {ExcelExportModule} from "@ag-grid-enterprise/excel-export";
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
@@ -75,13 +76,43 @@ function RegistrationTable(props) {
     // ];
 
     const columnDefs= [
-        {headerName: 'ID', field: 'id', suppressMenu: true,  cellStyle:() => {return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true},
-        {headerName: 'Category', field: 'category',cellStyle:() => {return { padding:'15px' };}},
+        {headerName: 'ID', field: 'id', suppressMenu: true,  cellStyle:() => {return { padding:'15px' };}, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true,
+            filter: "agNumberColumnFilter",
+            filterParams: {
+            filterOptions: ["equals", "contains"],
+            suppressAndOrCondition: true
+            }},
+        {headerName: 'Category', field: 'category',cellStyle:() => {return { padding:'15px' };},
+            filter: "agTextColumnFilter",
+            filterParams: {
+            filterOptions: ["equals", "contains"],
+            suppressAndOrCondition: true}
+        },
         {headerName: 'Main Photo', field: 'mainPhoto', filter: false,cellRenderer: "imageCellRender",},
-        {headerName: 'First Name', field: 'firstName',cellStyle:() => {return { padding:'15px' };}},
-        {headerName: 'Last Name', field: 'lastName',cellStyle:() => {return { padding:'15px' };}},
-        {headerName: 'Email', field: 'email',cellStyle:() => {return { padding:'15px' };}},
-        {headerName: 'Company Name', field: 'companyName',cellStyle:() => {return { padding:'15px' };}},
+        {headerName: 'First Name', field: 'firstName',cellStyle:() => {return { padding:'15px' };},
+            filter: "agTextColumnFilter",
+            filterParams: {
+            filterOptions: ["equals", "contains"],
+            suppressAndOrCondition: true}
+        },
+
+        {headerName: 'Last Name', field: 'lastName',cellStyle:() => {return { padding:'15px' };},
+            filter: "agTextColumnFilter",
+            filterParams: {
+            filterOptions: ["equals", "contains"],
+            suppressAndOrCondition: true}
+        },
+
+        {headerName: 'Email', field: 'email',cellStyle:() => {return { padding:'15px' };},
+            filter: "agTextColumnFilter",
+            filterParams: {
+            filterOptions: ["equals", "contains"],
+            suppressAndOrCondition: true}},
+        {headerName: 'Company Name', field: 'companyName',cellStyle:() => {return { padding:'15px' };},
+            filter: "agTextColumnFilter",
+            filterParams: {
+            filterOptions: ["equals", "contains"],
+            suppressAndOrCondition: true}},
     ];
 
     const defs = {
@@ -93,6 +124,7 @@ function RegistrationTable(props) {
         sideBar: "columns",
         rowData: [],
         modules: AllModules,
+        // modules:ExcelExportModule,
         overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
         overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
@@ -130,7 +162,7 @@ function RegistrationTable(props) {
         
         const gridApi = params.api;
         setGridApi(gridApi)
-        // const gridColumnApi = params.columnApi;
+        const gridColumnApi = params.columnApi;
         const updateData = data => {
             let dataSource = {
                  rowCount : null,
@@ -157,7 +189,6 @@ function RegistrationTable(props) {
         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow/20}&size=${20}`, null, header).then(
             res => {
                 console.log("res",res);
-                // const pinnedBottomRowData = res.data[0];
                 setResult(res.data);
                 
                 const value = res.data.map((item, index) => {
@@ -233,7 +264,7 @@ function RegistrationTable(props) {
           if (filterModel.firstName) {
             var firstName = item.firstName;
             var allowedFirstName = filterModel.firstName.filter;
-            if (filterModel.firstName.type == "contains"|| filterModel.category.type == "equals") {
+            if (filterModel.firstName.type == "contains"|| filterModel.firstName.type == "equals") {
                 if(!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())){
                 continue;
               }
@@ -275,45 +306,35 @@ function RegistrationTable(props) {
       }
 
     const exportExcel = () => {
-        const columnWidth = 100;
+        // const columnWidth :100;
         const params = {
-            columnWidth: columnWidth,
-            sheetName: "Test",
+            columnWidth: 100,
+            sheetName: '',
             exportMode: undefined,
-            // suppressTextAsCDATA: getBooleanValue("#suppressTextAsCDATA"),
+            // suppressTextAsCDATA: ,
             rowHeight: 30,
             headerRowHeight: 40,
-            customHeader: []
+            // customHeader: []
         };
-        // console.log(gridApi)
+        
         gridApi.exportDataAsExcel(params);
     }
 
-    const pinnedTopRowData = [
-        {
-            id:1166,
-            category:'PARTICIPANT',
-            mainPhoto:'',
-            firstName:'Ngoc',
-            lastName:'Nguyen',
-            email:'doanngocnguyen@yahoo.com',
-            companyName:'Embassy of Vietnam'
-        }
-
-    ];
-    
-    const pinnedBottomRowData = [
-        {
-            id:1251,
-            category:'PARTICIPANT',
-            mainPhoto:'',
-            firstName:'Alhasan',
-            lastName:'Zwayne',
-            email:'azwayne@brookings.edu',
-            companyName:'Brookings Doha Center'
-        }
-
-    ];
+    // const onBtnExport = () => {
+    //     var params = {
+    //         // suppressQuotes: ,
+    //         // columnSeparator: true,
+    //         columnWidth:100,
+    //         customHeader: 'none',
+    //         customFooter: 'none'
+    //     }
+    //     if (params.suppressQuotes || params.columnSeparator) {
+    //       alert(
+    //         "NOTE: you are downloading a file with non-standard quotes or separators - it may not render correctly in Excel."
+    //       );
+    //     }
+    //     gridApi.exportDataAsCsv(params);
+    //   }
 
     const frameworkComponents = {
         loadingRenderer: LoadingRenderer,
@@ -337,7 +358,9 @@ function RegistrationTable(props) {
             style={{height:'100%', width: '100%', fontSize: '16px' }}
             >
                 <Button onClick={exportExcel} color="secondary">Export to Excel</Button>
+                {/* <Button onClick={onBtnExport} color="secondary">Export to csv</Button> */}
                 <AgGridReact
+                    modules = {defs.modules}
                     columnDefs={columnDefs}
                     defaultColDef={defs.defaultColDef}
                     rowSelection='multiple'
@@ -354,9 +377,6 @@ function RegistrationTable(props) {
                     maxBlocksInCache={maxBlocksInCache}
                     cacheBlockSize = {cacheBlockSize}
                     rowHeight ={rowHeight}
-
-                    // pinnedTopRowData = {pinnedTopRowData}
-                    // pinnedBottomRowData = {pinnedBottomRowData}
 
                     // components = {components}
                     pagination={true}
