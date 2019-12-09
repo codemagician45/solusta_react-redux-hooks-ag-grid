@@ -3,7 +3,7 @@ import * as Actions from '../actions';
 const initialState = {
     attendees: [],
     badgeIDs: [],
-    printCounts: [],
+    printedCounts: [],
     selectedRows: [],
     page: 0,
     size: 25,
@@ -11,8 +11,7 @@ const initialState = {
 };
 
 const badgeReducer = function (state = initialState, action) {
-    switch ( action.type )
-    {   
+    switch (action.type) {
         case Actions.GET_COUNT: {
             return {
                 ...state,
@@ -20,12 +19,12 @@ const badgeReducer = function (state = initialState, action) {
             };
         }
         case Actions.GET_BADGE_ATTENDEES:
-        {
-            return {
-                ...state,
-                attendees: state.attendees.concat(action.payload),
-            };
-        }
+            {
+                return {
+                    ...state,
+                    attendees: state.attendees.concat(action.payload),
+                };
+            }
         case Actions.SET_BADGE_ATTENDEE_SELECT_ROW: {
             return {
                 ...state,
@@ -41,12 +40,12 @@ const badgeReducer = function (state = initialState, action) {
         case Actions.GET_PRINT_COUNTS: {
             return {
                 ...state,
-                printCounts: action.payload,
+                printedCounts: action.payload,
             };
         }
         case Actions.UPDATE_BADGE_ACTIVITY: {
             const data = action.payload;
-            const printCounts = state.printCounts.map((item, index) => {
+            const printedCounts = state.printedCounts.map((item, index) => {
                 if (item.badgeId === data.badgeId) {
                     return {
                         ...item,
@@ -58,13 +57,13 @@ const badgeReducer = function (state = initialState, action) {
 
             return {
                 ...state,
-                printCounts: printCounts,
+                printedCounts: printedCounts,
             }
         }
         default:
-        {
-            return state;
-        }
+            {
+                return state;
+            }
     }
 };
 
