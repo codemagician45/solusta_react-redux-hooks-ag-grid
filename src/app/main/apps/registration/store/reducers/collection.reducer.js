@@ -4,6 +4,7 @@ const initialState = {
     attendees: [],
     badgeIds: [],
     isCollected: [],
+    updatingRows: [],
 };
 
 const collectionReducer = function (state = initialState, action) {
@@ -26,17 +27,20 @@ const collectionReducer = function (state = initialState, action) {
                 isCollected: action.payload,
             }
         }
+        case Actions.SET_COLLECTION_UPDATING_ROWS: {
+            return {
+                ...state,
+                updatingRows: action.payload,
+            }
+        }
         case Actions.UPDATE_BADGE_IS_COLLECTED: {
             const data = action.payload;
             const isCollected = state.isCollected.map((item, index) => {
-                if (item.badgeId === data.badgeId) {
-                    return {
-                        ...item,
-                        isCollected: data.isCollected,
-                    }
-                }
-                return item;
+                const check = data.filter(el => el.badgeId === item.badgeId);
+                return (check.length > 0) ? check[0] : item;
             });
+
+            console.log('here in reducer: ', data);
 
             return {
                 ...state,
