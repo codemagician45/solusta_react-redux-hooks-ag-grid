@@ -56,7 +56,7 @@ function FakeServer(allData) {
 
 // Action cell renderer
 function ActionCellRenderer(props) {
-	console.log("badgeIds",props)
+	console.log("badgeIds", props)
 	const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
@@ -191,6 +191,16 @@ function BadgeTable(props) {
 				'padding': '15px',
 				'font-size': '14px',
 				'font-family': 'sans-serif',
+			},
+			checkboxSelection: true,
+		},
+		{
+			headerName: 'Printed(Count)',
+			field: 'printCount',
+			cellStyle: {
+				'padding': '15px',
+				'font-size': '14px',
+				'font-family': 'sans-serif',
 			}
 		},
 		{
@@ -202,15 +212,6 @@ function BadgeTable(props) {
 			},
 			sortable: false,
 			filter: false
-		},
-		{
-			headerName: 'Printed(Count)',
-			field: 'printCount',
-			cellStyle: {
-				'padding': '15px',
-				'font-size': '14px',
-				'font-family': 'sans-serif',
-			}
 		},
 		{
 			headerName: 'First Name',
@@ -284,19 +285,19 @@ function BadgeTable(props) {
 		setGridApi(gridApi)
 	}
 	const exportExcel = () => {
-        // const columnWidth :100;
-        const params = {
-            columnWidth: 100,
-            sheetName: '',
-            exportMode: undefined,
-            // suppressTextAsCDATA: ,
-            rowHeight: 30,
-            headerRowHeight: 40,
-            // customHeader: []
-        };
+		// const columnWidth :100;
+		const params = {
+			columnWidth: 100,
+			sheetName: '',
+			exportMode: undefined,
+			// suppressTextAsCDATA: ,
+			rowHeight: 30,
+			headerRowHeight: 40,
+			// customHeader: []
+		};
 		console.log(gridApi)
-        gridApi.exportDataAsExcel(params);
-    }
+		gridApi.exportDataAsExcel(params);
+	}
 	const frameworkComponents = {
 		actionCellRenderer: ActionCellRenderer
 	};
@@ -337,7 +338,7 @@ function BadgeTable(props) {
 					onSelectionChanged={onSelectionChanged}
 
 					onGridReady={onGridReady}
-					modules = {defs.modules}
+					modules={defs.modules}
 				>
 				</AgGridReact>
 			</div>

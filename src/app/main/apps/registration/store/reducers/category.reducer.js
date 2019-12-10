@@ -1,5 +1,6 @@
 import * as Actions from '../actions';
 
+// TODO: use Objects in redux store not Array
 const initialState = {
     categories: [],
     attendee: {},
@@ -9,15 +10,14 @@ const initialState = {
 };
 
 const categoryReducer = function (state = initialState, action) {
-    switch ( action.type )
-    {
+    switch (action.type) {
         case Actions.GET_CATEGORY:
-        {
-            return {
-                ...state,
-                categories: action.payload
-            };
-        }
+            {
+                return {
+                    ...state,
+                    categories: action.payload
+                };
+            }
         case Actions.SAVE_ATTENDEE: {
             return {
                 ...state,
@@ -40,9 +40,9 @@ const categoryReducer = function (state = initialState, action) {
             }
         }
         default:
-        {
-            return state;
-        }
+            {
+                return state;
+            }
     }
 };
 

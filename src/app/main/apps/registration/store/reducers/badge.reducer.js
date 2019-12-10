@@ -1,5 +1,6 @@
 import * as Actions from '../actions';
 
+// TODO: use Objects in redux store not Array
 const initialState = {
     attendees: [],
     badgeIDs: [],
