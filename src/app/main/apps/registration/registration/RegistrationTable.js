@@ -36,26 +36,65 @@ function LoadingRenderer(props) {
 
 // Image cell renderer
 function ImageCellRender(props) {
-    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // console.log(props)
     const id = props.data && props.data.id;
-    // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
-    const attendee = props.data && props.data;
+    const attendee = attendees.filter((attendee) => { return attendee.id === parseInt(id) });
+    // const attendee = props.data && props.data;
 
     const style = {
         height: '48px',
         width: '48px',
         padding: '5px'
     };
-
-    if (attendee && attendee.mainPhoto === '')
+    if (attendee[0] && attendee[0].mainPhoto === '')
         return (
             <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
         );
     else {
         return (
             <Link to={`/app/registration/registration/${id}`}>
-                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
+                <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} />
             </Link>
+        );
+    }
+}
+
+// Action cell renderer
+function ActionCellRendererPrint(props) {
+    const dispatch = useDispatch();
+    const printHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityPrint(data));
+        console.log('here print button click event: ', data);
+    }
+    console.log("print", props)
+    if (props.data.printCount >= 1) {
+        return (
+            <Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
+        );
+    } else {
+        return (
+            <Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
+        );
+    }
+}
+
+function ActionCellRendererCollection(props) {
+    const dispatch = useDispatch();
+    const collectionHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityCollection(data));
+        console.log('here collection button click event: ', data);
+    }
+
+    if (props.data.isCollected === 'true') {
+        return (
+            <Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
+        );
+    } else {
+        return (
+            <Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
         );
     }
 }
@@ -64,6 +103,9 @@ function RegistrationTable(props) {
     const dispatch = useDispatch();
     const mount = useRef(false);
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
+    const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
+    // const attendeeCount = useSelector(({ registerApp }) => registerApp.badge.count);
     const [gridApi, setGridApi] = useState(null);
     const [lazyLoadingResult, setLazyLoadingResult] = useState(null);
 
@@ -73,6 +115,110 @@ function RegistrationTable(props) {
             mount.current = false;
         }
     })
+
+    useEffect(() => {
+        getBadgeIdArr();
+    }, [attendees]);
+
+    useEffect(() => {
+        getPrintCountArr();
+    }, [badgeIDs]);
+
+    const getBadgeIdArr = () => {
+        const promiseArr = attendees && attendees.map((attendee, index) => {
+            return getBadgeId(attendee);
+        });
+        Promise.all(promiseArr).then(values => {
+            let badgeIdArr = [];
+            values.map((value, index) => {
+                if (value) {
+                    badgeIdArr.push({
+                        badgeFriendlyID: value.badgeFriendlyID,
+                        badgeActivitySAId: value.badgeActivitySAId,
+                        attendeeSAId: value.attendeeSAId,
+                        badgeId: value.id,
+                    });
+                } else {
+                    badgeIdArr.push({
+                        badgeFriendlyID: 0,
+                        badgeActivitySAId: 0,
+                        attendeeSAId: 0,
+                        badgeId: 0,
+                    });
+                }
+            });
+            dispatch(Actions.getRegBadgeIDs(badgeIdArr));
+        }).catch(error => {
+            console.log('here error in get badge id error: ', error);
+        });
+    };
+
+
+    const getBadgeId = (item) => {
+        return new Promise((resolve, reject) => {
+            const header = {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                }
+            };
+            axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
+                .then((res) => {
+                    // console.log('here in friend id: ', res);
+                    resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    };
+
+    const getPrintCountArr = () => {
+        const promiseArr = badgeIDs && badgeIDs.map((badgeID, index) => {
+            return getPrintCount(badgeID);
+        });
+        Promise.all(promiseArr).then(values => {
+            let printCountArr = [];
+            values.map((value, index) => {
+                // return attendeeID and badgeFriendlyID
+                if (value) {
+                    printCountArr.push({
+                        badgeActivityId: value.id,
+                        printedCount: value.printedCount,
+                        isCollected: value.isCollected,
+                        badgeId: badgeIDs[index].badgeId,
+                    });
+                } else {
+                    printCountArr.push({
+                        badgeActivityId: 0,
+                        printedCount: 0,
+                        isCollected: false,
+                        badgeId: badgeIDs[index].badgeId,
+                    });
+                }
+            });
+            dispatch(Actions.getRegPrintCounts(printCountArr));
+        }).catch(error => {
+            console.log('here error in get print count error: ', error);
+        });
+    };
+
+    const getPrintCount = (item) => {
+        return new Promise((resolve, reject) => {
+            const header = {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                }
+            };
+            axios.get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
+                .then((res) => {
+                    console.log('here in print count: ', res);
+                    resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
 
     const columnDefs = [
         {
@@ -127,6 +273,26 @@ function RegistrationTable(props) {
                 suppressAndOrCondition: true
             }
         },
+        {
+            headerName: 'Print Action',
+            cellRenderer: "actionCellRendererPrint",
+            field: 'printCount',
+            cellStyle: {
+                'margin-top': '5px',
+            },
+            sortable: false,
+            filter: false
+        },
+        {
+            headerName: 'Collection Action',
+            cellRenderer: "actionCellRendererCollection",
+            field: 'action',
+            cellStyle: {
+                'margin-top': '5px',
+            },
+            sortable: false,
+            filter: false
+        },
     ];
 
     const defs = {
@@ -143,14 +309,36 @@ function RegistrationTable(props) {
         overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
 
-    const rowData = attendees && attendees.map((attendee) => ({
-        id: attendee.id,
-        category: (attendee.attendeeCategorySAS && attendee.attendeeCategorySAS[0]) ? attendee.attendeeCategorySAS[0].categoryName : '',
-        firstName: attendee.firstName,
-        lastName: attendee.lastName,
-        email: attendee.email,
-        companyName: attendee.companyName,
-    }));
+    const rowData = attendees && attendees.map((attendee) => {
+        const badgeFriendId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === attendee.id)) ? badgeIDs.find(el => el.attendeeSAId === attendee.id).badgeFriendlyID : -1;
+        const badgeId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === attendee.id)) ? badgeIDs.find(el => el.attendeeSAId === attendee.id).badgeId : 0;
+        const printCount = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).printedCount : -1;
+        const isCollected = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).isCollected : 0;
+        const badgeActivityId = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
+        console.log('here in registration table: ', badgeId, printCount, badgeActivityId)
+        const temp = {
+            id: attendee.id,
+            category: (attendee.attendeeCategorySAS && attendee.attendeeCategorySAS[0]) ? attendee.attendeeCategorySAS[0].categoryName : '',
+            firstName: attendee.firstName,
+            lastName: attendee.lastName,
+            email: attendee.email,
+            companyName: attendee.companyName,
+            badgeActivityId: badgeActivityId,
+            printCount: printCount,
+            badgeId: badgeId,
+            isCollected: isCollected ? 'true' : 'false',
+        }
+        return temp;
+    });
+
+    const frameworkComponents = {
+        loadingRenderer: LoadingRenderer,
+        imageCellRender: ImageCellRender,
+        actionCellRendererPrint: ActionCellRendererPrint,
+        actionCellRendererCollection: ActionCellRendererCollection
+    };
+
+
 
     // lazyloading parameter
     const rowHeight = 48;
@@ -198,19 +386,24 @@ function RegistrationTable(props) {
                 'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
             }
         };
-        axios.get(`${SERVER_LINK}/api/attendee-sas?page=${params.endRow / 15}&size=${20}`, null, header).then(
-            res => {
-                console.log("res", res);
-                mount.current && setLazyLoadingResult(res.data);
-                const value = res.data.map((item, index) => {
-                    return {
-                        ...item,
-                        category: item.attendeeCategorySAS[0].categoryName,
+        axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header).then(
+            response => {
+                axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${response.data}`, null, header).then(
+                    res => {
+                        console.log("res", res);
+                        mount.current && setLazyLoadingResult(res.data);
+                        const value = res.data.map((item, index) => {
+                            return {
+                                ...item,
+                                category: item.attendeeCategorySAS[0].categoryName,
+                            }
+                        });
+                        updateData(value);
                     }
-                });
-                updateData(value);
+                );
             }
         );
+
     };
 
     const ServerSideDatasource = (server) => {
@@ -371,10 +564,7 @@ function RegistrationTable(props) {
 
 
 
-    const frameworkComponents = {
-        loadingRenderer: LoadingRenderer,
-        imageCellRender: ImageCellRender,
-    };
+
 
     const getRowHeight = () => { return 48; };
     const headerHeight = () => { return 32; };
@@ -401,16 +591,18 @@ function RegistrationTable(props) {
                     rowDeselection={true}
                     rowData={rowData}
                     frameworkComponents={frameworkComponents}
+                    getRowHeight={getRowHeight}
+                    headerHeight={headerHeight}
 
-                    onGridReady={onGridReady}
-                    rowBuffer={rowBuffer}
-                    rowModelType={rowModelType}
-                    // cacheOverflowSize={cacheOverflowSize}
-                    // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
-                    // infiniteInitialRowCount={infiniteInitialRowCount}
-                    maxBlocksInCache={maxBlocksInCache}
-                    cacheBlockSize={cacheBlockSize}
-                    rowHeight={rowHeight}
+                    // onGridReady={onGridReady}
+                    // rowBuffer={rowBuffer}
+                    // rowModelType={rowModelType}
+                    // // cacheOverflowSize={cacheOverflowSize}
+                    // // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
+                    // // infiniteInitialRowCount={infiniteInitialRowCount}
+                    // maxBlocksInCache={maxBlocksInCache}
+                    // cacheBlockSize={cacheBlockSize}
+                    // rowHeight={rowHeight}
 
                     // components = {components}
                     pagination={true}
