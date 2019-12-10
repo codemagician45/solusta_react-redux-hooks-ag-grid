@@ -33,6 +33,7 @@ export function getBadgeAttendees(page = null, size = null) {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
 	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
 	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
 
@@ -53,6 +54,7 @@ export function setBadgeAttendeeSelectRow(data) {
 }
 
 export function getBadgeIDs(data) {
+	console.log("badgId",data)
 	return {
 		type: GET_BADGE_IDS,
 		payload: data,

@@ -3,6 +3,8 @@ import * as Actions from '../actions';
 const initialState = {
     attendees: [],
     rows: [],
+    badgeIDs: [],
+    printedCounts: [],
 };
 
 const productsReducer = function (state = initialState, action) {
@@ -22,6 +24,52 @@ const productsReducer = function (state = initialState, action) {
                 ...state,
                 rows: action.payload,
             }   
+        }
+        case Actions.GET_REG_BADGE_IDS: {
+            return {
+                ...state,
+                badgeIDs: action.payload,
+            };
+        }
+        case Actions.GET_REG_PRINT_COUNTS: {
+            return {
+                ...state,
+                printedCounts: action.payload,
+            };
+        }
+        case Actions.UPDATE_REG_BADGE_ACTIVITY_PRINT: {
+            const data = action.payload;
+            const printedCounts = state.printedCounts.map((item, index) => {
+                if (item.badgeId === data.badgeId) {
+                    return {
+                        ...item,
+                        printedCount: data.printedCount,
+                    }
+                }
+                return item;
+            });
+
+            return {
+                ...state,
+                printedCounts: printedCounts,
+            }
+        }
+        case Actions.UPDATE_REG_BADGE_ACTIVITY_COLLECTION: {
+            const data = action.payload;
+            const printedCounts = state.printedCounts.map((item, index) => {
+                if (item.badgeId === data.badgeId) {
+                    return {
+                        ...item,
+                        isCollected: data.isCollected,
+                    }
+                }
+                return item;
+            });
+
+            return {
+                ...state,
+                printedCounts: printedCounts,
+            }
         }
         default:
         {

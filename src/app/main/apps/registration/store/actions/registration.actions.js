@@ -7,6 +7,10 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 export const GET_REGISTRATION_ATTENDEES = '[REGISTRATION] GET_REGISTRATION_ATTENDEES';
 export const SET_REGISTRATION_ROWS = '[REGISTRATION] SET_REGISTRATION_ROWS';
 export const GET_FRIENDLYIDS = '[REGISTRATION] GET_FRIENDLYIDS';
+export const GET_REG_BADGE_IDS = '[REGISTRATION] GET_REG_BADGE_IDS';
+export const GET_REG_PRINT_COUNTS = '[REGISTRATION] GET_REG_PRINT_COUNTS';
+export const UPDATE_REG_BADGE_ACTIVITY_PRINT = '[REGISTRATION] UPDATE_REG_BADGE_ACTIVITY_PRINT';
+export const UPDATE_REG_BADGE_ACTIVITY_COLLECTION = '[REGISTRATION] UPDATE_REG_BADGE_ACTIVITY_COLLECTION';
 
 export function getRegistrationAttendees() {
 	const header = {
@@ -14,9 +18,9 @@ export function getRegistrationAttendees() {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
 	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
-
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
 	return (dispatch) =>
 		request.then((response) =>
 			dispatch({
@@ -31,4 +35,67 @@ export function setRegistrationRows(data) {
 		type: SET_REGISTRATION_ROWS,
 		payload: data,
 	}
+}
+
+export function getRegBadgeIDs(data) {
+	console.log("badgId",data)
+	return {
+		type: GET_REG_BADGE_IDS,
+		payload: data,
+	};
+}
+
+export function getRegPrintCounts(data) {
+	return {
+		type: GET_REG_PRINT_COUNTS,
+		payload: data,
+	};
+}
+
+export function updateRegBadgeActivityPrint(data) {
+	const header = {
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+		}
+	};
+	const body = {
+		id: data.badgeActivityId,
+		printedCount: data.printCount + 1,
+	};
+	const request = axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header);
+
+	return (dispatch) =>
+		request.then((response) =>
+			dispatch({
+				type: UPDATE_REG_BADGE_ACTIVITY_PRINT,
+				payload: {
+					...response.data,
+					badgeId: data.badgeId,
+				},
+			})
+		);
+}
+
+export function updateRegBadgeActivityCollection(data) {
+	const header = {
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+		}
+	};
+	const body = {
+		id: data.badgeActivityId,
+		isCollected: true,
+	};
+	const request = axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header);
+
+	return (dispatch) =>
+		request.then((response) =>
+			dispatch({
+				type: UPDATE_REG_BADGE_ACTIVITY_COLLECTION,
+				payload: {
+					...response.data,
+					badgeId: data.badgeId,
+				},
+			})
+		);
 }
