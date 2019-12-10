@@ -550,10 +550,6 @@ function RegistrationTable(props) {
 		gridApi.exportDataAsExcel(params);
 	}
 
-
-
-
-
 	const getRowHeight = () => { return 48; };
 	const headerHeight = () => { return 32; };
 	const onSelectionChanged = (params) => {
@@ -561,8 +557,6 @@ function RegistrationTable(props) {
 		const selectedRow = gridApi.getSelectedRows();
 		dispatch(Actions.setRegistrationRows(selectedRow));
 	};
-
-	// console.log('here in registration table: ', attendees);
 
 	return (
 		<React.Fragment>
