@@ -25,13 +25,13 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 
 // Lazy loading cell renderer
 function LoadingRenderer(props) {
-    if (props.value !== undefined) {
-        return props.value;
-    } else {
-        return (
-            <img src="../assets/images/loading.gif" alt={'loading'} />
-        );
-    }
+	if (props.value !== undefined) {
+		return props.value;
+	} else {
+		return (
+			<img src="../assets/images/loading.gif" alt={'loading'} />
+		);
+	}
 }
 
 // Image cell renderer

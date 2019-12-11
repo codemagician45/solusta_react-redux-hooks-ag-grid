@@ -7,60 +7,59 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 export const GET_COLLECTION_ATTENDEES = '[REGISTRATION] GET_COLLECTION_ATTENDEES';
 export const GET_COLLECTION_BADGE_IDS = '[REGISTRATION] GET_COLLECTION_BADGE_IDS';
 export const GET_IS_COLLECTED = '[REGISTRATION] GET_IS_COLLECTED';
+export const SET_COLLECTION_UPDATING_ROWS = '[REGISTRATION] SET_COLLECTION_UPDATING_ROWS';
 export const UPDATE_BADGE_IS_COLLECTED = '[REGISTRATION] UPDATE_BADGE_IS_COLLECTED';
+export const UPDATE_BADGE_ACTIVITIES = '[REGISTRATION] UPDATE_BADGE_ACTIVITIES';
 
 export function getCollectionAttendees() {
-    const header = {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-        }
-    };
-    // const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
-    const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${20}`, null, header);
+	const header = {
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+		}
+	};
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${20}`, null, header);
 
-    return (dispatch) =>
-        request.then((response) =>
-            dispatch({
-                type: GET_COLLECTION_ATTENDEES,
-                payload: response.data
-            })
-        );
+	return (dispatch) =>
+		request.then((response) =>
+			dispatch({
+				type: GET_COLLECTION_ATTENDEES,
+				payload: response.data
+			})
+		);
 }
 
 export function getCollectionBadgeIds(data) {
-    return {
-        type: GET_COLLECTION_BADGE_IDS,
-        payload: data,
-    }
+	return {
+		type: GET_COLLECTION_BADGE_IDS,
+		payload: data,
+	}
 }
 
 export function getIsCollected(data) {
-    return {
-        type: GET_IS_COLLECTED,
-        payload: data,
-    }
+	return {
+		type: GET_IS_COLLECTED,
+		payload: data,
+	}
+}
+
+export function setCollectionUpdatingRows(data) {
+	return {
+		type: SET_COLLECTION_UPDATING_ROWS,
+		payload: data,
+	};
 }
 
 export function updateBadgeIsCollected(data) {
-    const header = {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-        }
-    };
-    const body = {
-        id: data.badgeActivityId,
-        isCollected: true,
-    };
-    const request = axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header);
+	return {
+		type: UPDATE_BADGE_IS_COLLECTED,
+		payload: data,
+	};
+}
 
-    return (dispatch) =>
-        request.then((response) =>
-            dispatch({
-                type: UPDATE_BADGE_IS_COLLECTED,
-                payload: {
-                    ...response.data,
-                    badgeId: data.badgeId,
-                },
-            })
-        );
+export function updateBadgeActivities(data) {
+	return {
+		type: UPDATE_BADGE_ACTIVITIES,
+		payload: data,
+	};
 }
