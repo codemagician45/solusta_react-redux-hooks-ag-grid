@@ -11,6 +11,7 @@ export const GET_REG_BADGE_IDS = '[REGISTRATION] GET_REG_BADGE_IDS';
 export const GET_REG_PRINT_COUNTS = '[REGISTRATION] GET_REG_PRINT_COUNTS';
 export const UPDATE_REG_BADGE_ACTIVITY_PRINT = '[REGISTRATION] UPDATE_REG_BADGE_ACTIVITY_PRINT';
 export const UPDATE_REG_BADGE_ACTIVITY_COLLECTION = '[REGISTRATION] UPDATE_REG_BADGE_ACTIVITY_COLLECTION';
+export const GET_REG_COUNT = '[REGISTRATION] GET_REG_COUNT';
 
 export function getRegistrationAttendees() {
 	const header = {
@@ -18,8 +19,8 @@ export function getRegistrationAttendees() {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
+	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
 	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
 	return (dispatch) =>
 		request.then((response) =>
@@ -38,7 +39,6 @@ export function setRegistrationRows(data) {
 }
 
 export function getRegBadgeIDs(data) {
-	console.log("badgId",data)
 	return {
 		type: GET_REG_BADGE_IDS,
 		payload: data,
@@ -96,6 +96,21 @@ export function updateRegBadgeActivityCollection(data) {
 					...response.data,
 					badgeId: data.badgeId,
 				},
+			})
+		);
+}
+export function getAttendeeCount() {
+	const header = {
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+		}
+	};
+	const request = axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header);
+	return (dispatch) =>
+		request.then((response) =>
+			dispatch({
+				type: GET_REG_COUNT,
+				payload: response.data
 			})
 		);
 }

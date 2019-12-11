@@ -36,25 +36,27 @@ function LoadingRenderer(props) {
 
 // Image cell renderer
 function ImageCellRender(props) {
-    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     // console.log(props)
     const id = props.data && props.data.id;
-    const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
-    // const attendee = props.data && props.data;
+    // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
+    const attendee = props.data && props.data;
 
     const style = {
         height: '48px',
         width: '48px',
         padding: '5px'
     };
-    if (attendee[0] && attendee[0].mainPhoto === '')
+    // if (attendee[0] && attendee[0].mainPhoto === '')
+    if (attendee && attendee.mainPhoto === '')
         return (
             <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
         );
     else {
         return (
             <Link to={`/app/registration/registration/${id}`}>
-                <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} />
+                {/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
+                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
             </Link>
         );
     }
@@ -62,22 +64,22 @@ function ImageCellRender(props) {
 
 // Action cell renderer
 function ActionCellRendererPrint(props) {
-	const dispatch = useDispatch();
-	const printHandler = () => {
-		const { data } = props;
-		dispatch(Actions.updateRegBadgeActivityPrint(data));
-		console.log('here print button click event: ', data);
-	}
-    console.log("print",props)
-	if (props.data.printCount >= 1) {
-		return (
-			<Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
-		);
-	} else {
-		return (
-			<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
-		);
-	}
+    const dispatch = useDispatch();
+    const printHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityPrint(data));
+        // console.log('here print button click event: ', data);
+    }
+    // console.log("print", props)
+    if (props.data.printCount >= 1) {
+        return (
+            <Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
+        );
+    } else {
+        return (
+            <Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
+        );
+    }
 }
 
 function ActionCellRendererCollection(props) {
@@ -85,7 +87,7 @@ function ActionCellRendererCollection(props) {
     const collectionHandler = () => {
         const { data } = props;
         dispatch(Actions.updateRegBadgeActivityCollection(data));
-        console.log('here collection button click event: ', data);
+        // console.log('here collection button click event: ', data);
     }
 
     if (props.data.isCollected === 'true') {
@@ -99,15 +101,24 @@ function ActionCellRendererCollection(props) {
     }
 }
 
+var resultCount=0;
+
 function RegistrationTable(props) {
     const dispatch = useDispatch();
     const mount = useRef(false);
+    const count = useSelector(({ registerApp }) => registerApp.registration.count);
+
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
     const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
-    // const attendeeCount = useSelector(({ registerApp }) => registerApp.badge.count);
+
+    useEffect(() => {
+        dispatch(Actions.getAttendeeCount());
+    })
+    resultCount = count;
+
     const [gridApi, setGridApi] = useState(null);
-    const [lazyLoadingResult, setLazyLoadingResult] = useState(null);
+    const [idFilter, setIDFilter] = useState(null);
 
     useEffect(() => {
         mount.current = true;
@@ -121,104 +132,104 @@ function RegistrationTable(props) {
     }, [attendees]);
 
     useEffect(() => {
-		getPrintCountArr();
+        getPrintCountArr();
     }, [badgeIDs]);
-    
+
     const getBadgeIdArr = () => {
-		const promiseArr = attendees && attendees.map((attendee, index) => {
-			return getBadgeId(attendee);
-		});
-		Promise.all(promiseArr).then(values => {
-			let badgeIdArr = [];
-			values.map((value, index) => {
-				if (value) {
-					badgeIdArr.push({
-						badgeFriendlyID: value.badgeFriendlyID,
-						badgeActivitySAId: value.badgeActivitySAId,
-						attendeeSAId: value.attendeeSAId,
-						badgeId: value.id,
-					});
-				} else {
-					badgeIdArr.push({
-						badgeFriendlyID: 0,
-						badgeActivitySAId: 0,
-						attendeeSAId: 0,
-						badgeId: 0,
-					});
-				}
-			});
-			dispatch(Actions.getRegBadgeIDs(badgeIdArr));
-		}).catch(error => {
-			console.log('here error in get badge id error: ', error);
-		});
-	};
+        const promiseArr = attendees && attendees.map((attendee, index) => {
+            return getBadgeId(attendee);
+        });
+        Promise.all(promiseArr).then(values => {
+            let badgeIdArr = [];
+            values.map((value, index) => {
+                if (value) {
+                    badgeIdArr.push({
+                        badgeFriendlyID: value.badgeFriendlyID,
+                        badgeActivitySAId: value.badgeActivitySAId,
+                        attendeeSAId: value.attendeeSAId,
+                        badgeId: value.id,
+                    });
+                } else {
+                    badgeIdArr.push({
+                        badgeFriendlyID: 0,
+                        badgeActivitySAId: 0,
+                        attendeeSAId: 0,
+                        badgeId: 0,
+                    });
+                }
+            });
+            dispatch(Actions.getRegBadgeIDs(badgeIdArr));
+        }).catch(error => {
+            console.log('here error in get badge id error: ', error);
+        });
+    };
 
 
     const getBadgeId = (item) => {
-		return new Promise((resolve, reject) => {
-			const header = {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-				}
-			};
-			axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
-				.then((res) => {
-					// console.log('here in friend id: ', res);
-					resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		});
+        return new Promise((resolve, reject) => {
+            const header = {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                }
+            };
+            axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
+                .then((res) => {
+                    // console.log('here in friend id: ', res);
+                    resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
     };
 
     const getPrintCountArr = () => {
-		const promiseArr = badgeIDs && badgeIDs.map((badgeID, index) => {
-			return getPrintCount(badgeID);
-		});
-		Promise.all(promiseArr).then(values => {
-			let printCountArr = [];
-			values.map((value, index) => {
-				// return attendeeID and badgeFriendlyID
-				if (value) {
-					printCountArr.push({
-						badgeActivityId: value.id,
+        const promiseArr = badgeIDs && badgeIDs.map((badgeID, index) => {
+            return getPrintCount(badgeID);
+        });
+        Promise.all(promiseArr).then(values => {
+            let printCountArr = [];
+            values.map((value, index) => {
+                // return attendeeID and badgeFriendlyID
+                if (value) {
+                    printCountArr.push({
+                        badgeActivityId: value.id,
                         printedCount: value.printedCount,
                         isCollected: value.isCollected,
-						badgeId: badgeIDs[index].badgeId,
-					});
-				} else {
-					printCountArr.push({
-						badgeActivityId: 0,
+                        badgeId: badgeIDs[index].badgeId,
+                    });
+                } else {
+                    printCountArr.push({
+                        badgeActivityId: 0,
                         printedCount: 0,
                         isCollected: false,
-						badgeId: badgeIDs[index].badgeId,
-					});
-				}
-			});
-			dispatch(Actions.getRegPrintCounts(printCountArr));
-		}).catch(error => {
-			console.log('here error in get print count error: ', error);
-		});
-	};
+                        badgeId: badgeIDs[index].badgeId,
+                    });
+                }
+            });
+            dispatch(Actions.getRegPrintCounts(printCountArr));
+        }).catch(error => {
+            console.log('here error in get print count error: ', error);
+        });
+    };
 
     const getPrintCount = (item) => {
-		return new Promise((resolve, reject) => {
-			const header = {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-				}
-			};
-			axios.get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
-				.then((res) => {
-					console.log('here in print count: ', res);
-					resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		});
-	}
+        return new Promise((resolve, reject) => {
+            const header = {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                }
+            };
+            axios.get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
+                .then((res) => {
+                    // console.log('here in print count: ', res);
+                    resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
 
     const columnDefs = [
         {
@@ -273,26 +284,26 @@ function RegistrationTable(props) {
                 suppressAndOrCondition: true
             }
         },
-        {
-			headerName: 'Print Action',
-			cellRenderer: "actionCellRendererPrint",
-			field: 'printCount',
-			cellStyle: {
-				'margin-top': '5px',
-			},
-			sortable: false,
-			filter: false
-        },
-        {
-			headerName: 'Collection Action',
-			cellRenderer: "actionCellRendererCollection",
-			field: 'action',
-			cellStyle: {
-				'margin-top': '5px',
-			},
-			sortable: false,
-			filter: false
-		},
+        // {
+        //     headerName: 'Print Action',
+        //     cellRenderer: "actionCellRendererPrint",
+        //     field: 'printCount',
+        //     cellStyle: {
+        //         'margin-top': '5px',
+        //     },
+        //     sortable: false,
+        //     filter: false
+        // },
+        // {
+        //     headerName: 'Collection Action',
+        //     cellRenderer: "actionCellRendererCollection",
+        //     field: 'action',
+        //     cellStyle: {
+        //         'margin-top': '5px',
+        //     },
+        //     sortable: false,
+        //     filter: false
+        // },
     ];
 
     const defs = {
@@ -304,231 +315,117 @@ function RegistrationTable(props) {
         sideBar: "columns",
         rowData: [],
         modules: AllModules,
-        // modules:ExcelExportModule,
         overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
         overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
     };
 
-    const rowData = attendees && attendees.map((attendee) => {
-        const badgeFriendId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === attendee.id)) ? badgeIDs.find(el => el.attendeeSAId === attendee.id).badgeFriendlyID : -1;
-		const badgeId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === attendee.id)) ? badgeIDs.find(el => el.attendeeSAId === attendee.id).badgeId : 0;
-        const printCount = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).printedCount : -1;
-        const isCollected = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).isCollected : 0;
-        const badgeActivityId = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
-        // console.log('here in registration table: ', badgeId, printCount, badgeActivityId)
-        const temp = {
-            id: attendee.id,
-            category: (attendee.attendeeCategorySAS && attendee.attendeeCategorySAS[0]) ? attendee.attendeeCategorySAS[0].categoryName : '',
-            firstName: attendee.firstName,
-            lastName: attendee.lastName,
-            email: attendee.email,
-            companyName: attendee.companyName,
-            badgeActivityId: badgeActivityId,
-            printCount: printCount,
-            badgeId: badgeId,
-            isCollected: isCollected ? 'true' : 'false',
-        }
-        return temp;
-    });
+    // const rowData = attendees && attendees.map((attendee) => {
+    //     const badgeFriendId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === attendee.id)) ? badgeIDs.find(el => el.attendeeSAId === attendee.id).badgeFriendlyID : -1;
+    //     const badgeId = (badgeIDs.length > 0 && badgeIDs.find(el => el.attendeeSAId === attendee.id)) ? badgeIDs.find(el => el.attendeeSAId === attendee.id).badgeId : 0;
+    //     const printCount = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).printedCount : -1;
+    //     const isCollected = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).isCollected : 0;
+    //     const badgeActivityId = (printedCounts.length > 0 && printedCounts.find(el => el.badgeId === badgeId)) ? printedCounts.find(el => el.badgeId === badgeId).badgeActivityId : 0;
+    //     // console.log('here in registration table: ', badgeId, printCount, badgeActivityId)
+    //     const temp = {
+    //         id: attendee.id,
+    //         category: (attendee.attendeeCategorySAS && attendee.attendeeCategorySAS[0]) ? attendee.attendeeCategorySAS[0].categoryName : '',
+    //         firstName: attendee.firstName,
+    //         lastName: attendee.lastName,
+    //         email: attendee.email,
+    //         companyName: attendee.companyName,
+    //         badgeActivityId: badgeActivityId,
+    //         printCount: printCount,
+    //         badgeId: badgeId,
+    //         isCollected: isCollected ? 'true' : 'false',
+    //     }
+    //     return temp;
+    // });
 
     const frameworkComponents = {
         loadingRenderer: LoadingRenderer,
         imageCellRender: ImageCellRender,
-        actionCellRendererPrint: ActionCellRendererPrint,
-        actionCellRendererCollection: ActionCellRendererCollection
+        // actionCellRendererPrint: ActionCellRendererPrint,
+        // actionCellRendererCollection: ActionCellRendererCollection
     };
 
-    
-    
+
+
     // lazyloading parameter
     const rowHeight = 48;
-    const rowBuffer = 0;
     const rowModelType = "serverSide";
-    // const rowModelType = "infinite";
-    // const cacheOverflowSize = 2;
-    // const maxConcurrentDatasourceRequests = 1;
-    // const infiniteInitialRowCount = 1;
     const maxBlocksInCache = 2;
-    const cacheBlockSize = 100;
-    const paginationPageSize = 15;
+    const cacheBlockSize = 15;
 
     const onGridReady = params => {
         const gridApi = params.api;
-        mount.current && setGridApi(gridApi)
-        const gridColumnApi = params.columnApi;
-        // const updateData = data => {
-        //     const server = new FakeServer(data);
-        //     const dataSource = new ServerSideDatasource(server);
-        //     params.api.setServerSideDatasource(dataSource);
-        // };
-
-        // const header = {
-        //     headers: {
-        //         'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-        //     }
-        // };
-        // axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header).then(
-        //     response => {
-        //         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${response.data}`, null, header).then(
-        //             res => {
-        //                 console.log("res", res);
-        //                 mount.current && setLazyLoadingResult(res.data);
-        //                 const value = res.data.map((item, index) => {
-        //                     return {
-        //                         ...item,
-        //                         category: item.attendeeCategorySAS[0].categoryName,
-        //                     }
-        //                 });
-        //                 updateData(value);
-        //             }
-        //         );
-        //     }
-        // );
+        // mount.current && setGridApi(gridApi);
+        // const gridColumnApi = params.columnApi;
+    
+        const server = new FakeServer();
+        const dataSource = new ServerSideDatasource(server);
+        params.api.setServerSideDatasource(dataSource);
         
+        var idFilterComponent = gridApi.getFilterInstance("id");
+        idFilterComponent.applyModel();
+        console.log(idFilterComponent)
+        console.log("filter Input value", idFilterComponent)
+        gridApi.onFilterChanged();
     };
 
     const ServerSideDatasource = (server) => {
         return {
-            getRows: function(params) {
-                setTimeout(function() {
-                  var response = server.getResponse(params.request);
-                  if (response.success) {
-                    params.successCallback(response.rows, response.lastRow);
-                  } else {
-                    params.failCallback();
-                  }
+            getRows: function (params) {
+                setTimeout(async function () {
+                    var response = await server.getResponse(params.request);
+                    if (response.success) {
+                        params.successCallback(response.rows, response.lastRow);
+                    } else {
+                        params.failCallback();
+                    }
                 }, 500);
-              }
+            }
         };
     }
 
-    const FakeServer = (allData) => {
+    const FakeServer = () => {
         return {
-          getResponse: function(request) {
-            console.log("asking for rows: " + request.startRow + " to " + request.endRow);
-            let dataAfterSortingAndFiltering = sortAndFilter(allData, request.sortModel, request.filterModel);
-            let rowsThisPage = dataAfterSortingAndFiltering.slice(request.startRow, request.endRow);
-            let lastRow = dataAfterSortingAndFiltering.length <= request.endRow ? dataAfterSortingAndFiltering.length : -1;
-            return {
-              success: true,
-              rows: rowsThisPage,
-              lastRow: lastRow
-            };
-          }
+            getResponse: function (request) {
+                return new Promise((resolve, reject) => {
+                    console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+                    const header = {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
+                        }
+                    };
+                    axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
+                        res => {
+                            let lastRow = request.endRow <= resultCount ? -1 : resultCount;
+                            const rowData = res.data && res.data.map(data => {
+                                const temp = {
+                                    id:data.id,
+                                    category:data.attendeeCategorySAS[0].categoryName,
+                                    firstName:data.firstName,
+                                    lastName:data.lastName,
+                                    companyName:data.companyName,
+                                    email:data.email,
+                                    mainPhoto:data.mainPhoto,
+                                    mainPhotoContentType:data.mainPhotoContentType
+                                }
+                                return temp;
+                            })
+                            let result = {
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
+                            }
+                            resolve(result)
+                        });
+
+                });
+            }
         };
-      }
-
-    const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
-        return sortData(sortModel, filterData(filterModel, allOfTheData));
     }
-
-    const sortData = (sortModel, data) => {
-        var sortPresent = sortModel && sortModel.length > 0;
-        if (!sortPresent) {
-            return data;
-        }
-        var resultOfSort = data.slice();
-        resultOfSort.sort(function (a, b) {
-            for (var k = 0; k < sortModel.length; k++) {
-                var sortColModel = sortModel[k];
-                var valueA = a[sortColModel.colId];
-                var valueB = b[sortColModel.colId];
-                if (valueA == valueB) {
-                    continue;
-                }
-                var sortDirection = sortColModel.sort === "asc" ? 1 : -1;
-                if (valueA > valueB) {
-                    return sortDirection;
-                } else {
-                    return sortDirection * -1;
-                }
-            }
-            return 0;
-        });
-        return resultOfSort;
-    }
-
-    const filterData = (filterModel, data) => {
-        var filterPresent = filterModel && Object.keys(filterModel).length > 0;
-        if (!filterPresent) {
-            return data;
-        }
-        var resultOfFilter = [];
-
-        for (var i = 0; i < data.length; i++) {
-            var item = data[i];
-
-            // ID filter
-            if (filterModel.id) {
-                var id = item.id;
-                var allowedId = parseInt(filterModel.id.filter);
-                if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
-                    if (id !== allowedId) {
-                        continue;
-                    }
-                }
-            }
-
-            // Category filter
-            if (filterModel.category) {
-                var category = item.category;
-                var allowedCategory = filterModel.category.filter;
-                if (filterModel.category.type == "contains" || filterModel.category.type == "equals") {
-                    if (!category.toUpperCase().includes(allowedCategory.toUpperCase())) {
-                        continue;
-                    }
-                }
-            }
-
-            //   First Name Filter
-            if (filterModel.firstName) {
-                var firstName = item.firstName;
-                var allowedFirstName = filterModel.firstName.filter;
-                if (filterModel.firstName.type == "contains" || filterModel.firstName.type == "equals") {
-                    if (!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())) {
-                        continue;
-                    }
-                }
-            }
-
-            //   Last Name Filter
-            if (filterModel.lastName) {
-                var lastName = item.lastName;
-                var allowedLastName = filterModel.lastName.filter;
-                if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
-                    if (!lastName.toUpperCase().includes(allowedLastName.toUpperCase())) {
-                        continue;
-                    }
-                }
-            }
-
-            //  Company Name Filter
-            if (filterModel.companyName) {
-                var companyName = item.companyName;
-                var allowedCompanyName = filterModel.companyName.filter;
-                if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
-                    if (!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())) {
-                        continue;
-                    }
-                }
-            }
-
-            // Email Filter
-            if (filterModel.email) {
-                var email = item.email;
-                var allowedEmail = filterModel.email.filter;
-                if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
-                    if (!email.toUpperCase().includes(allowedEmail.toUpperCase())) {
-                        continue;
-                    }
-                }
-            }
-            resultOfFilter.push(item);
-        }
-        return resultOfFilter;
-    }
-
-
+  
     const exportExcel = () => {
         // const columnWidth :100;
         const params = {
@@ -544,19 +441,13 @@ function RegistrationTable(props) {
         gridApi.exportDataAsExcel(params);
     }
 
-
-
-    
-
-    const getRowHeight = () => { return 48; };
-    const headerHeight = () => { return 32; };
+    // const getRowHeight = () => { return 48; };
+    // const headerHeight = () => { return 32; };
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
         const selectedRow = gridApi.getSelectedRows();
         dispatch(Actions.setRegistrationRows(selectedRow));
     };
-
-    // console.log('here in registration table: ', attendees);
 
     return (
         <React.Fragment>
@@ -571,20 +462,16 @@ function RegistrationTable(props) {
                     defaultColDef={defs.defaultColDef}
                     rowSelection='multiple'
                     rowDeselection={true}
-                    rowData={rowData}
+                    // rowData={rowData}
                     frameworkComponents={frameworkComponents}
-                    getRowHeight={getRowHeight}
-					headerHeight={headerHeight}
+                    // getRowHeight={getRowHeight}
+                    // headerHeight={headerHeight}
 
                     onGridReady={onGridReady}
-                    // rowBuffer={rowBuffer}
-                    // rowModelType={rowModelType}
-                    // // cacheOverflowSize={cacheOverflowSize}
-                    // // maxConcurrentDatasourceRequests={maxConcurrentDatasourceRequests}
-                    // // infiniteInitialRowCount={infiniteInitialRowCount}
-                    // maxBlocksInCache={maxBlocksInCache}
-                    // cacheBlockSize={cacheBlockSize}
-                    // rowHeight={rowHeight}
+                    rowModelType={rowModelType}
+                    maxBlocksInCache={maxBlocksInCache}
+                    cacheBlockSize={cacheBlockSize}
+                    rowHeight={rowHeight}
 
                     // components = {components}
                     pagination={true}

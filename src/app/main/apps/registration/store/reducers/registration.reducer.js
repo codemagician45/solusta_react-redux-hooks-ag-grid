@@ -5,6 +5,7 @@ const initialState = {
     rows: [],
     badgeIDs: [],
     printedCounts: [],
+    count:null
 };
 
 const productsReducer = function (state = initialState, action) {
@@ -70,6 +71,12 @@ const productsReducer = function (state = initialState, action) {
                 ...state,
                 printedCounts: printedCounts,
             }
+        }
+        case Actions.GET_REG_COUNT: {
+            return {
+                ...state,
+                count: action.payload,
+            };
         }
         default:
         {
