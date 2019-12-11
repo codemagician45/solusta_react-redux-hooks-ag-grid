@@ -6,35 +6,41 @@ const navigationConfig = [
         'icon': 'apps',
         'children': [
             {
-                'id': 'registration',
-                'title': 'Registration',
+                'id': 'attendees',
+                'title': 'Attendees',
                 'type': 'collapse',
                 'icon': 'how_to_reg',
                 'children': [
                     {
                         'id': 'registration',
-                        'title': 'Registration Forms',
+                        'title': 'Registration',
                         'type': 'item',
-                        'url': '/app/registration/registration'
+                        'url': '/app/attendees/registration'
                     },
                     {
                         'id': 'badges',
                         'title': 'Badges',
                         'type': 'item',
-                        'url': '/app/registration/badges'
+                        'url': '/app/attendees/badges'
                     },
                     {
                         'id': 'collection',
                         'title': 'Collection',
                         'type': 'item',
-                        'url': '/app/registration/collection'
+                        'url': '/app/attendees/collection'
+                    },
+                    {
+                        'id': 'security-approval',
+                        'title': 'Security Approval',
+                        'type': 'item',
+                        'url': '/app/attendees/security-approval'
                     },
                     {
                         'id': 'category',
-                        'title': 'Add New',
+                        'title': 'Create New Attendee',
                         'type': 'item',
-                        'url': '/app/registration/category'
-                    }
+                        'url': '/app/attendees/category'
+                    },
                 ]
             },
             {
