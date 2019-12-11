@@ -4,24 +4,28 @@ import { useDispatch, useSelector } from 'react-redux';
 // import @material-ui components
 import { Button } from '@material-ui/core';
 
+// import api
+import { xapi } from '../../../../utils/api';
+
 // import Redux
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
-// import components
+// import utils
+import * as Utils from '../../../../utils';
+
+// import core components
 import { FusePageCarded } from '@fuse';
+
+// import components
 import SecurityApprovalTable from './SecurityApprovalTable';
 
-const objectToArray = (obj) => {
-  return Object.keys(obj).map((key, index) => {
-    return obj[key];
-  });
-};
 
 function SecurityApproval() {
   const dispatch = useDispatch();
-  const selectedRows = objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.selectedRows))
+  const attendees = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.attendees));
+  const selectedRows = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.selectedRows))
 
   useEffect(() => {
     dispatch(Actions.getSecAttendees());
@@ -29,7 +33,40 @@ function SecurityApproval() {
   }, [dispatch]);
 
   const approveMassSecurity = () => {
-    console.log('here approve mass security button clicked: ');
+    const realArr = attendees.filter(attendee => {
+      return selectedRows.some(row => {
+        return row.attendeeId === attendee.id;
+      });
+    });
+
+    const promiseArr = realArr.map(item => updateIndividualAttendeeSec(item));
+    Promise.all(promiseArr)
+      .then(values => {
+        const updateArr = [];
+        values.map(value => {
+          updateArr.push({
+            ...value,
+            isSecurityChanged: false,
+          });
+        });
+        dispatch(Actions.updateSecMassAttendee(updateArr))
+      })
+      .catch(error => {
+        console.log('here promise all error: ', error);
+      })
+    console.log('here approve mass security button clicked: ', attendees, selectedRows, realArr);
+  }
+
+  const updateIndividualAttendeeSec = (item) => {
+    return new Promise((resolve, reject) => {
+      Utils.xapi().put('/attendee-sas', { ...item })
+        .then(response => {
+          resolve(response.data);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    })
   }
 
   return (
