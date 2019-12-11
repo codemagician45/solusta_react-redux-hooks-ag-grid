@@ -25,13 +25,13 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 
 // Lazy loading cell renderer
 function LoadingRenderer(props) {
-	if (props.value !== undefined) {
-		return props.value;
-	} else {
-		return (
-			<img src="../assets/images/loading.gif" alt={'loading'} />
-		);
-	}
+    if (props.value !== undefined) {
+        return props.value;
+    } else {
+        return (
+            <img src="../assets/images/loading.gif" alt={'loading'} />
+        );
+    }
 }
 
 // Image cell renderer
@@ -101,7 +101,7 @@ function ActionCellRendererCollection(props) {
     }
 }
 
-var resultCount=0;
+var resultCount = 0;
 
 function RegistrationTable(props) {
     const dispatch = useDispatch();
@@ -361,11 +361,11 @@ function RegistrationTable(props) {
         // console.log(idFilter)
         mount.current && setGridApi(gridApi);
         // const gridColumnApi = params.columnApi;
-    
+
         const server = new FakeServer();
         const dataSource = new ServerSideDatasource(server);
         params.api.setServerSideDatasource(dataSource);
-        
+
         // var idFilterComponent = gridApi.getFilterInstance("id");
         // idFilterComponent.applyModel();
         // console.log(idFilterComponent)
@@ -393,38 +393,38 @@ function RegistrationTable(props) {
             getResponse: function (request) {
                 return new Promise((resolve, reject) => {
                     console.log("asking for rows: " + request.startRow + " to " + request.endRow);
-                    
+
                     let filterPresent = request.filterModel && Object.keys(request.filterModel).length > 0;
                     const header = {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                         }
                     };
-                    if(!filterPresent) {
+                    if (!filterPresent) {
                         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                             res => {
                                 let lastRow = request.endRow <= resultCount ? -1 : resultCount;
                                 const rowData = res.data && res.data.map(data => {
                                     const temp = {
-                                        id:data.id,
-                                        category:data.attendeeCategorySAS[0].categoryName,
-                                        firstName:data.firstName,
-                                        lastName:data.lastName,
-                                        companyName:data.companyName,
-                                        email:data.email,
-                                        mainPhoto:data.mainPhoto,
-                                        mainPhotoContentType:data.mainPhotoContentType
+                                        id: data.id,
+                                        category: data.attendeeCategorySAS[0].categoryName,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
                                     }
                                     return temp;
                                 })
                                 let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow: lastRow
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
                                 }
                                 resolve(result)
-                        });
-                        
+                            });
+
                     }
                     else {
                         console.log(request.filterModel);
@@ -434,159 +434,159 @@ function RegistrationTable(props) {
                         const lastNameFilterValue = request.filterModel.lastName && request.filterModel.lastName.filter;
                         const companyNameFilterValue = request.filterModel.companyName && request.filterModel.companyName.filter;
 
-                        if(idFilterValue){
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${idFilterValue}&size=${cacheBlockSize}&sort=id&sort=desc`, null, header).then(
+                        if (idFilterValue) {
+                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${idFilterValue}&size=${cacheBlockSize}&sort=id&sort=desc`, null, header).then(
                                 res => {
                                     console.log(res.data);
-                                    console.log("page",request.endRow/cacheBlockSize -1);
-                                    console.log("size",cacheBlockSize);
+                                    console.log("page", request.endRow / cacheBlockSize - 1);
+                                    console.log("size", cacheBlockSize);
                                     // let lastRow = res.data.length<request.endRow? res.data.length:-1
-                                    let lastRow = res.data.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+res.data.length:-1
-                                    console.log("lastRow",lastRow)
+                                    let lastRow = res.data.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + res.data.length : -1
+                                    console.log("lastRow", lastRow)
                                     const rowData = res.data && res.data.map(data => {
                                         const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
+                                            id: data.id,
+                                            category: data.attendeeCategorySAS[0].categoryName,
+                                            firstName: data.firstName,
+                                            lastName: data.lastName,
+                                            companyName: data.companyName,
+                                            email: data.email,
+                                            mainPhoto: data.mainPhoto,
+                                            mainPhotoContentType: data.mainPhotoContentType
                                         }
                                         return temp;
                                     });
                                     let result = {
                                         success: true,
                                         rows: rowData,
-                                        lastRow:lastRow
+                                        lastRow: lastRow
                                     }
-                                resolve(result)
-                            });
+                                    resolve(result)
+                                });
                         }
 
-                        else if(categoryFilterValue){
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${categoryFilterValue}&size=${cacheBlockSize}`, null, header).then(
+                        else if (categoryFilterValue) {
+                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${categoryFilterValue}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
                                     console.log(res.data);
-                                    console.log("page",request.endRow/cacheBlockSize -1);
-                                    console.log("size",cacheBlockSize);
+                                    console.log("page", request.endRow / cacheBlockSize - 1);
+                                    console.log("size", cacheBlockSize);
                                     // let lastRow = res.data.length<request.endRow? res.data.length:-1
-                                    let lastRow = res.data.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+res.data.length:-1
-                                    console.log("lastRow",lastRow)
+                                    let lastRow = res.data.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + res.data.length : -1
+                                    console.log("lastRow", lastRow)
                                     const rowData = res.data && res.data.map(data => {
                                         const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
+                                            id: data.id,
+                                            category: data.attendeeCategorySAS[0].categoryName,
+                                            firstName: data.firstName,
+                                            lastName: data.lastName,
+                                            companyName: data.companyName,
+                                            email: data.email,
+                                            mainPhoto: data.mainPhoto,
+                                            mainPhotoContentType: data.mainPhotoContentType
                                         }
                                         return temp;
                                     });
                                     let result = {
                                         success: true,
                                         rows: rowData,
-                                        lastRow:lastRow
+                                        lastRow: lastRow
                                     }
-                                resolve(result)
-                            });
+                                    resolve(result)
+                                });
                         }
 
-                        else if(firstNameFilterValue){
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${firstNameFilterValue}&size=${cacheBlockSize}`, null, header).then(
+                        else if (firstNameFilterValue) {
+                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${firstNameFilterValue}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
                                     console.log(res.data);
-                                    console.log("page",request.endRow/cacheBlockSize -1);
-                                    console.log("size",cacheBlockSize);
+                                    console.log("page", request.endRow / cacheBlockSize - 1);
+                                    console.log("size", cacheBlockSize);
                                     // let lastRow = res.data.length<request.endRow? res.data.length:-1
-                                    let lastRow = res.data.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+res.data.length:-1
-                                    console.log("lastRow",lastRow)
+                                    let lastRow = res.data.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + res.data.length : -1
+                                    console.log("lastRow", lastRow)
                                     const rowData = res.data && res.data.map(data => {
                                         const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
+                                            id: data.id,
+                                            category: data.attendeeCategorySAS[0].categoryName,
+                                            firstName: data.firstName,
+                                            lastName: data.lastName,
+                                            companyName: data.companyName,
+                                            email: data.email,
+                                            mainPhoto: data.mainPhoto,
+                                            mainPhotoContentType: data.mainPhotoContentType
                                         }
                                         return temp;
                                     });
                                     let result = {
                                         success: true,
                                         rows: rowData,
-                                        lastRow:lastRow
+                                        lastRow: lastRow
                                     }
-                                resolve(result)
-                            });
+                                    resolve(result)
+                                });
                         }
 
-                        else if(lastNameFilterValue){
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${lastNameFilterValue}&size=${cacheBlockSize}`, null, header).then(
+                        else if (lastNameFilterValue) {
+                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${lastNameFilterValue}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
                                     console.log(res.data);
-                                    console.log("page",request.endRow/cacheBlockSize -1);
-                                    console.log("size",cacheBlockSize);
+                                    console.log("page", request.endRow / cacheBlockSize - 1);
+                                    console.log("size", cacheBlockSize);
                                     // let lastRow = res.data.length<request.endRow? res.data.length:-1
-                                    let lastRow = res.data.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+res.data.length:-1
-                                    console.log("lastRow",lastRow)
+                                    let lastRow = res.data.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + res.data.length : -1
+                                    console.log("lastRow", lastRow)
                                     const rowData = res.data && res.data.map(data => {
                                         const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
+                                            id: data.id,
+                                            category: data.attendeeCategorySAS[0].categoryName,
+                                            firstName: data.firstName,
+                                            lastName: data.lastName,
+                                            companyName: data.companyName,
+                                            email: data.email,
+                                            mainPhoto: data.mainPhoto,
+                                            mainPhotoContentType: data.mainPhotoContentType
                                         }
                                         return temp;
                                     });
                                     let result = {
                                         success: true,
                                         rows: rowData,
-                                        lastRow:lastRow
+                                        lastRow: lastRow
                                     }
-                                resolve(result)
-                            });
+                                    resolve(result)
+                                });
                         }
 
-                        else if(companyNameFilterValue){
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${companyNameFilterValue}&size=${cacheBlockSize}`, null, header).then(
+                        else if (companyNameFilterValue) {
+                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${companyNameFilterValue}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
                                     console.log(res.data);
-                                    console.log("page",request.endRow/cacheBlockSize -1);
-                                    console.log("size",cacheBlockSize);
+                                    console.log("page", request.endRow / cacheBlockSize - 1);
+                                    console.log("size", cacheBlockSize);
                                     // let lastRow = res.data.length<request.endRow? res.data.length:-1
-                                    let lastRow = res.data.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+res.data.length:-1
-                                    console.log("lastRow",lastRow)
+                                    let lastRow = res.data.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + res.data.length : -1
+                                    console.log("lastRow", lastRow)
                                     const rowData = res.data && res.data.map(data => {
                                         const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
+                                            id: data.id,
+                                            category: data.attendeeCategorySAS[0].categoryName,
+                                            firstName: data.firstName,
+                                            lastName: data.lastName,
+                                            companyName: data.companyName,
+                                            email: data.email,
+                                            mainPhoto: data.mainPhoto,
+                                            mainPhotoContentType: data.mainPhotoContentType
                                         }
                                         return temp;
                                     });
                                     let result = {
                                         success: true,
                                         rows: rowData,
-                                        lastRow:lastRow
+                                        lastRow: lastRow
                                     }
-                                resolve(result)
-                            });
+                                    resolve(result)
+                                });
                         }
 
                     }
@@ -595,7 +595,7 @@ function RegistrationTable(props) {
             }
         };
     }
-  
+
     const exportExcel = () => {
         const params = {
             columnWidth: 100,
