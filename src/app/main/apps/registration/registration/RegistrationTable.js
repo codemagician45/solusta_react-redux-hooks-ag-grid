@@ -468,7 +468,7 @@ function RegistrationTable(props) {
 			if (filterModel.id) {
 				var id = item.id;
 				var allowedId = parseInt(filterModel.id.filter);
-				if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
+				if (filterModel.id.type === "contains" || filterModel.id.type === "equals") {
 					if (id !== allowedId) {
 						continue;
 					}
@@ -479,7 +479,7 @@ function RegistrationTable(props) {
 			if (filterModel.category) {
 				var category = item.category;
 				var allowedCategory = filterModel.category.filter;
-				if (filterModel.category.type == "contains" || filterModel.category.type == "equals") {
+				if (filterModel.category.type === "contains" || filterModel.category.type === "equals") {
 					if (!category.toUpperCase().includes(allowedCategory.toUpperCase())) {
 						continue;
 					}
@@ -490,7 +490,7 @@ function RegistrationTable(props) {
 			if (filterModel.firstName) {
 				var firstName = item.firstName;
 				var allowedFirstName = filterModel.firstName.filter;
-				if (filterModel.firstName.type == "contains" || filterModel.firstName.type == "equals") {
+				if (filterModel.firstName.type === "contains" || filterModel.firstName.type === "equals") {
 					if (!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())) {
 						continue;
 					}
@@ -501,7 +501,7 @@ function RegistrationTable(props) {
 			if (filterModel.lastName) {
 				var lastName = item.lastName;
 				var allowedLastName = filterModel.lastName.filter;
-				if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
+				if (filterModel.lastName.type === "contains" || filterModel.lastName.type === "equals") {
 					if (!lastName.toUpperCase().includes(allowedLastName.toUpperCase())) {
 						continue;
 					}
@@ -512,7 +512,7 @@ function RegistrationTable(props) {
 			if (filterModel.companyName) {
 				var companyName = item.companyName;
 				var allowedCompanyName = filterModel.companyName.filter;
-				if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
+				if (filterModel.companyName.type === "contains" || filterModel.companyName.type === "equals") {
 					if (!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())) {
 						continue;
 					}
@@ -523,7 +523,7 @@ function RegistrationTable(props) {
 			if (filterModel.email) {
 				var email = item.email;
 				var allowedEmail = filterModel.email.filter;
-				if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
+				if (filterModel.email.type === "contains" || filterModel.email.type === "equals") {
 					if (!email.toUpperCase().includes(allowedEmail.toUpperCase())) {
 						continue;
 					}
