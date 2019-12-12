@@ -8,54 +8,58 @@ export const RegistrationConfig = {
 	},
 	routes: [
 		{
-			path: '/app/registration/registration',
+			path: '/app/attendees/registration',
 			exact: true,
 			component: React.lazy(() => import('./registration/Registration')),
 		},
 		{
-			path: '/app/registration/registration/:id',
-			component: React.lazy(() => import('./registration/RegistrationPhotoEditor')),
+			path: '/app/attendees/registration/:id',
+			component: React.lazy(() => import('./registration/PhotoEditor')),
 		},
 		{
-			path: '/app/registration/category',
+			path: '/app/attendees/badges',
+			component: React.lazy(() => import('./badge/Badge')),
+		},
+		{
+			path: '/app/attendees/collection',
+			component: React.lazy(() => import('./collection/Collection')),
+		},
+		{
+			path: '/app/attendees/security-approval',
+			component: React.lazy(() => import('./security-approval/SecurityApproval')),
+		},
+		{
+			path: '/app/attendees/category',
 			exact: true,
 			component: React.lazy(() => import('./category/Category')),
 		},
 		{
-			path: '/app/registration/category/speaker',
+			path: '/app/attendees/category/speaker',
 			component: React.lazy(() => import('./category/NewCategory'))
 		},
 		{
-			path: '/app/registration/category/organizer',
+			path: '/app/attendees/category/organizer',
 			component: React.lazy(() => import('./category/NewCategory'))
 		},
 		{
-			path: '/app/registration/category/participant',
+			path: '/app/attendees/category/participant',
 			component: React.lazy(() => import('./category/NewCategory'))
 		},
 		{
-			path: '/app/registration/category/event-crew',
+			path: '/app/attendees/category/event-crew',
 			component: React.lazy(() => import('./category/NewCategory'))
 		},
 		{
-			path: '/app/registration/category/media',
+			path: '/app/attendees/category/media',
 			component: React.lazy(() => import('./category/NewCategory'))
 		},
 		{
-			path: '/app/registration/category/security',
+			path: '/app/attendees/category/security',
 			component: React.lazy(() => import('./category/NewCategory'))
 		},
 		{
-			path: '/app/registration/category/contractor',
+			path: '/app/attendees/category/contractor',
 			component: React.lazy(() => import('./category/NewCategory'))
-		},
-		{
-			path: '/app/registration/badges',
-			component: React.lazy(() => import('./badge/Badge')),
-		},
-		{
-			path: '/app/registration/collection',
-			component: React.lazy(() => import('./collection/Collection')),
 		},
 	]
 };

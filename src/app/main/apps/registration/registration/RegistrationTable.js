@@ -25,13 +25,13 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 
 // Lazy loading cell renderer
 function LoadingRenderer(props) {
-	if (props.value !== undefined) {
-		return props.value;
-	} else {
-		return (
-			<img src="../assets/images/loading.gif" alt={'loading'} />
-		);
-	}
+    if (props.value !== undefined) {
+        return props.value;
+    } else {
+        return (
+            <img src="../assets/images/loading.gif" alt={'loading'} />
+        );
+    }
 }
 
 // Image cell renderer
@@ -412,9 +412,9 @@ function RegistrationTable(props) {
                                     return temp;
                                 })
                                 let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow: lastRow
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
                                 }
                                 resolve(result)
                         });
@@ -563,7 +563,7 @@ function RegistrationTable(props) {
         }
         return resultOfFilter;
     }
-  
+
     const exportExcel = () => {
         const params = {
             columnWidth: 100,
