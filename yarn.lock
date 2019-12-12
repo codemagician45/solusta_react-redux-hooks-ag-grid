@@ -14909,10 +14909,10 @@ tui-color-picker@^2.2.0:
   dependencies:
     tui-code-snippet "^1.5.0"
 
-tui-image-editor@^3.4.0:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/tui-image-editor/-/tui-image-editor-3.7.0.tgz#9585d5a9f26ad2c53213894729f027fcbc05911e"
-  integrity sha512-IrHvIWSAq1ejeiLpSC8i9sGbD0UGCq4wkuh8XADipaH+4LJ2ZQ/IICCM8i1OtLVzmOAsJYPYp5QU/OMl3qkQLQ==
+tui-image-editor@^3.4.0, tui-image-editor@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/tui-image-editor/-/tui-image-editor-3.7.2.tgz#17f321fcf49fbe4ed4d202645a017f91a380e29f"
+  integrity sha512-LdIycLHnzWah0lZOPX7mmxFyPNzdJlnLurI18gNAXQaS+2NMf8vx4ax3FKduWIASoWtfbT6CnS/0He/yhU1pGA==
   dependencies:
     core-js "2.4.1"
     tui-code-snippet "^1.5.0"
