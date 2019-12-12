@@ -54,7 +54,7 @@ function ImageCellRender(props) {
         );
     else {
         return (
-            <Link to={`/app/registration/registration/${id}`}>
+            <Link to={`/app/attendees/registration/${id}`}>
                 {/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
                 <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
             </Link>
@@ -105,7 +105,7 @@ var resultCount = 0;
 var searchText = '';
 
 function RegistrationTable(props) {
-    
+
     const dispatch = useDispatch();
     const mount = useRef(false);
     const count = useSelector(({ registerApp }) => registerApp.registration.count);
@@ -390,9 +390,8 @@ function RegistrationTable(props) {
                         }
                     };
                     let searchText = localStorage.getItem('search_text');
-                    console.log("searchText",searchText)
-                    if(!filterPresent)
-                    {
+                    console.log("searchText", searchText)
+                    if (!filterPresent) {
                         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                             res => {
                                 console.log(res.data)
@@ -400,14 +399,14 @@ function RegistrationTable(props) {
                                 let lastRow = request.endRow <= resultCount ? -1 : resultCount;
                                 const rowData = res.data && res.data.map(data => {
                                     const temp = {
-                                        id:data.id,
+                                        id: data.id,
                                         // category:data.attendeeCategorySAS[0].categoryName,
-                                        firstName:data.firstName,
-                                        lastName:data.lastName,
-                                        companyName:data.companyName,
-                                        email:data.email,
-                                        mainPhoto:data.mainPhoto,
-                                        mainPhotoContentType:data.mainPhotoContentType  
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
                                     }
                                     return temp;
                                 })
@@ -417,10 +416,10 @@ function RegistrationTable(props) {
                                     lastRow: lastRow
                                 }
                                 resolve(result)
-                        });
+                            });
 
                     }
-                    else{
+                    else {
                         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                             res => {
                                 let dataAfterSortingAndFiltering = sortAndFilter(res.data, request.sortModel, request.filterModel);
@@ -428,24 +427,24 @@ function RegistrationTable(props) {
                                 let lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
                                 const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
                                     const temp = {
-                                        id:data.id,
-                                        category:data.attendeeCategorySAS[0].categoryName,
-                                        firstName:data.firstName,
-                                        lastName:data.lastName,
-                                        companyName:data.companyName,
-                                        email:data.email,
-                                        mainPhoto:data.mainPhoto,
-                                        mainPhotoContentType:data.mainPhotoContentType
+                                        id: data.id,
+                                        category: data.attendeeCategorySAS[0].categoryName,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
                                     }
                                     return temp;
                                 })
                                 let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow: lastRow
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
                                 }
                                 resolve(result)
-                        });
+                            });
                     }
                 });
             }
