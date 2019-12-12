@@ -54,7 +54,7 @@ function ImageCellRender(props) {
         );
     else {
         return (
-            <Link to={`/app/registration/registration/${id}`}>
+            <Link to={`/app/attendees/registration/${id}`}>
                 {/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
                 <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
             </Link>

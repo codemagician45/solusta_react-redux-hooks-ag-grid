@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 // import @material-ui components
 import { makeStyles } from '@material-ui/core/styles';
 
 // import reducer
 import withReducer from 'app/store/withReducer';
-import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
+
+// import utils
+import * as Utils from '../../../../utils';
 
 // import component
 import PhotoEditor from './PhotoEditor';
@@ -26,7 +29,7 @@ const useStyles = makeStyles(theme => ({
         height: '180px',
         right: '0',
         top: '15%',
-        display:'block'
+        display: 'block'
     },
     backGround: {
         width: '100%'
@@ -34,25 +37,25 @@ const useStyles = makeStyles(theme => ({
     nameStyle: {
         position: 'absolute',
         top: '57%',
-        width:'100%',
-        textAlign:'center',
+        width: '100%',
+        textAlign: 'center',
         color: 'midnightblue',
         textTransform: 'uppercase'
     },
     companyNameStyle: {
         position: 'absolute',
         top: '64%',
-        width:'100%',
-        textAlign:'center',
-        textTransform:'uppercase'
+        width: '100%',
+        textAlign: 'center',
+        textTransform: 'uppercase'
     },
     photoImg: {
         width: '100%',
-        margin:'auto'
+        margin: 'auto'
     },
     modal_print: {
-        position:'relative',
-        display:'block'
+        position: 'relative',
+        display: 'block'
     },
     friendly: {
         position: 'absolute',
@@ -63,40 +66,39 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function PhotoBeforePrint(props) {
+function RegistrationPhotoEditor(props) {
+    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const attendeeId = props.match.params.id;
+    const [attendee, setAttendee] = useState(null);
+    const [image, setImage] = useState('');
 
-    const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
-    const attendeeId = props.match.params.id;           
     useEffect(() => {
-        const temp = attendees && attendees.find(attendee => attendee.id === parseInt(attendeeId));
-        setAttendee(temp);
+        const [temp] = (attendees.length > 0) ? attendees.filter(item => item.id === parseInt(attendeeId)) : [];
+        setImage(`data:${temp && temp.mainPhotoContentType};base64, ${temp && temp.mainPhoto}`);
+        setAttendee(JSON.parse(JSON.stringify(temp)));
     }, [attendees]);
 
-    const [image, setImage] = useState(null);
-    const [attendee, setAttendee] = useState();
-    
-    const setCropppedIamge = (data) => {
+    const setCroppedImage = (data) => {
         setImage(data);
+        console.log('image crop data in parent component: ', data);
+        const requestData = {
+            ...attendee,
+            mainPhotoContentType: data.slice(5, 14),
+            mainPhoto: data.slice(22),
+        }
+        Utils.xapi().put('/attendee-sas', requestData)
+            .then(response => {
+                console.log('update photo success: ', response.data);
+                props.history.push('/app/attendees/registration');
+            })
+            .catch(error => {
+                console.log('update photo error: ', error);
+            })
     }
 
-    console.log('here in image edito: ', attendee, attendees);
     return (
-        <PhotoEditor attendee={attendee} onCrop={setCropppedIamge} />
+        <PhotoEditor image={image} attendee={attendee} attendeeId={attendeeId} onCrop={setCroppedImage} />
     )
 }
 
-export default withReducer('registerApp', reducer)(PhotoBeforePrint);
-
-    // const requestData = props.requestData;
-    // requestData['mainPhoto'] = data.split(',')[1];
-    // requestData['mainPhotoContentType'] = data.slice(5, 14);
-    // const header = {
-    //   headers: {
-    //     'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-    //   }
-    // };
-    // const body = {
-    //   ...requestData,
-    // };
-    // axios.put(`${SERVER_LINK}/api/attendee-sas`, body, header)
-    //   .then(res => console.log('here in crop image action: ', res.data));
+export default withRouter(withReducer('registerApp', reducer)(RegistrationPhotoEditor));
