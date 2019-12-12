@@ -50,7 +50,7 @@ function PhotoEditor(props) {
     props.onCrop(data);
   };
 
-  console.log('here in photo editor component in true: ', image, props);
+  // console.log('here in photo editor component in true: ', image);
   if (image) {
     return (
       <React.Fragment>

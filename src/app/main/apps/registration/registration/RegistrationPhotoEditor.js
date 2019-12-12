@@ -70,7 +70,7 @@ function RegistrationPhotoEditor(props) {
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     const attendeeId = props.match.params.id;
     const [attendee, setAttendee] = useState(null);
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState(null);
 
     useEffect(() => {
         const [temp] = (attendees.length > 0) ? attendees.filter(item => item.id === parseInt(attendeeId)) : [];
@@ -86,6 +86,7 @@ function RegistrationPhotoEditor(props) {
             mainPhotoContentType: data.slice(5, 14),
             mainPhoto: data.slice(22),
         }
+        console.log("request",requestData)
         Utils.xapi().put('/attendee-sas', requestData)
             .then(response => {
                 console.log('update photo success: ', response.data);

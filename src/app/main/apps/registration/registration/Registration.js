@@ -26,16 +26,9 @@ function Registration() {
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     const rows = useSelector(({ registerApp }) => registerApp.registration.rows);
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
-    const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
-    localStorage.setItem('search_text', searchText);
-
+    // const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
+    const [textChange, changeText] = useState('');
     // console.log("attendees",attendees)
-
-    // useEffect(() => {
-    //     dispatch(Actions.getRegistrationAttendees());
-    // }, [dispatch]);
-
-    // console.log('here in registration: ', rows);
     return (
         <FusePageCarded
             classes={{
@@ -56,11 +49,23 @@ function Registration() {
                                     className="flex flex-1"
                                     disableUnderline
                                     fullWidth
-                                    value={searchText}
+                                    value={textChange}
                                     inputProps={{
                                         'aria-label': 'Search'
                                     }}
-                                    onChange={ev => dispatch(Actions.setSearchText(ev))}
+                                    onChange={ev => {
+                                        if (ev.target.value == '') {
+                                            dispatch(Actions.setSearchText(ev));
+                                            changeText('');
+                                        }
+                                        else 
+                                            changeText(ev.target.value)
+                                    }}
+                                    onKeyDown = {ev =>{
+                                        if (ev.key === 'Enter'){
+                                            dispatch(Actions.setSearchText(ev))
+                                        }
+                                    }}
                                 />
                             </Paper>
                         </FuseAnimate>
