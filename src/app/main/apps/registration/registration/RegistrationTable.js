@@ -400,7 +400,7 @@ function RegistrationTable(props) {
                                 const rowData = res.data && res.data.map(data => {
                                     const temp = {
                                         id: data.id,
-                                        category:data.attendeeCategorySAS[0].categoryName,
+                                        category:data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
                                         firstName: data.firstName,
                                         lastName: data.lastName,
                                         companyName: data.companyName,
@@ -428,7 +428,7 @@ function RegistrationTable(props) {
                                 const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
                                     const temp = {
                                         id: data.id,
-                                        category: data.attendeeCategorySAS[0].categoryName,
+                                        category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
                                         firstName: data.firstName,
                                         lastName: data.lastName,
                                         companyName: data.companyName,
