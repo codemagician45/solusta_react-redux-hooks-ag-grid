@@ -41,41 +41,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PhotoEditor(props) {
-  // console.log("props",props)
-  const [image, setImage] = useState(null);
-  const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
-  console.log(attendees)
   const imageEditor = React.createRef();
-  const attendeeId = props.match.params.id;
   const classes = useStyles();
 
+  const [image, setImage] = useState(`data:${props.attendee && props.attendee.mainPhotoContentType};base64, ${props.attendee && props.attendee.mainPhoto}`)
+
   useEffect(() => {
-    const attendee = attendees.find(item => item.id === parseInt(attendeeId));
-    const attendeeImg = `data:${attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`
+    const attendeeImg = `data:${props.attendee && props.attendee.mainPhotoContentType};base64, ${props.attendee && props.attendee.mainPhoto}`;
     setImage(attendeeImg);
-  }, [attendees, attendeeId]);
+  }, [props, props.attendee]);
 
   const saveCroppedImage = () => {
     const { imageEditorInst } = imageEditor.current;
     const data = imageEditorInst.toDataURL();
     setImage(data);
-    
-    // const requestData = props.requestData;
-    // requestData['mainPhoto'] = data.split(',')[1];
-    // requestData['mainPhotoContentType'] = data.slice(5, 14);
-    // const header = {
-    //   headers: {
-    //     'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-    //   }
-    // };
-    // const body = {
-    //   ...requestData,
-    // };
-    // axios.put(`${SERVER_LINK}/api/attendee-sas`, body, header)
-    //   .then(res => console.log('here in crop image action: ', res.data));
   };
+  
+  // const test = 'data:null;base64,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'
+  // console.log(test)
+  console.log("photoImage",image);
 
-	console.log('here in photo editor component: ', attendees, attendeeId);  
   return (
     <React.Fragment>
       <Button variant="contained" color="secondary" onClick={saveCroppedImage} className={classes.saveBtn}>Save Cropped Result</Button>

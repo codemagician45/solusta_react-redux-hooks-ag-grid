@@ -64,24 +64,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PhotoBeforePrint(props) {
-    const [image, setImage] = useState(null);
 
     const attendees = useSelector(({registerApp}) => registerApp.registration.attendees);
-    const attendeeId = props.match.params.id;
-    const attendee = attendees && attendees.find(attendee => attendee.id === parseInt(attendeeId));
-
+    const attendeeId = props.match.params.id;           
     useEffect(() => {
-        setImage(attendee && (`data:${attendee.mainPhotoContentType};base64,${attendee.mainPhoto}`));
-    }, [attendee, attendees]);
+        const temp = attendees && attendees.find(attendee => attendee.id === parseInt(attendeeId));
+        setAttendee(temp);
+    }, [attendees]);
+
+    const [image, setImage] = useState(null);
+    const [attendee, setAttendee] = useState();
     
     const setCropppedIamge = (data) => {
         setImage(data);
     }
 
-    console.log('here in image edito: ', attendee);
-
+    console.log('here in image edito: ', attendee, attendees);
     return (
-        <PhotoEditor image={image} onCrop={setCropppedIamge} />
+        <PhotoEditor attendee={attendee} onCrop={setCropppedIamge} />
     )
 }
 

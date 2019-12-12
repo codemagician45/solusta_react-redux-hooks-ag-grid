@@ -5,14 +5,22 @@ const initialState = {
     rows: [],
     badgeIDs: [],
     printedCounts: [],
-    count:null
+    count:null,
+    searchText:''
 };
 
 const productsReducer = function (state = initialState, action) {
 
     switch ( action.type )
     {
-        case Actions.GET_REGISTRATION_ATTENDEES:
+        // case Actions.GET_REGISTRATION_ATTENDEES:
+        // {
+        //     return {
+        //         ...state,
+        //         attendees: action.payload,
+        //     };
+        // }
+        case Actions.UPDATE_REGISTRATION_ATTENDEES:
         {
             return {
                 ...state,
@@ -76,6 +84,12 @@ const productsReducer = function (state = initialState, action) {
             return {
                 ...state,
                 count: action.payload,
+            };
+        }
+        case Actions.SET_REG_SEARCH_TEXT:{
+            return {
+                ...state,
+                searchText:action.searchText,
             };
         }
         default:
