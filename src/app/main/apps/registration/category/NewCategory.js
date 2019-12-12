@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
@@ -23,6 +23,9 @@ import DateFnsUtils from '@date-io/date-fns';
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
+
+// import utils
+import * as Utils from '../../../../utils';
 
 // import env server link
 const environment = require('../RegistrationEnv');
@@ -120,7 +123,7 @@ const useStyles = makeStyles(theme => ({
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-    
+
     return (
         <Typography
             component="div"
@@ -143,8 +146,8 @@ TabPanel.propTypes = {
 
 function a11yProps(index) {
     return {
-      id: `nav-tab-${index}`,
-      'aria-controls': `nav-tabpanel-${index}`,
+        id: `nav-tab-${index}`,
+        'aria-controls': `nav-tabpanel-${index}`,
     };
 }
 
@@ -189,11 +192,11 @@ function NewCategory(props) {
 
     const classes = useStyles();
     const dispatch = useDispatch();
-    const categories = useSelector(({registration}) => registration.category.categories);
-    const attendee = useSelector(({registration}) => registration.category.attendee);
-    const success = useSelector(({registration}) => registration.category.success);
-    const loading = useSelector(({registration}) => registration.category.loading);
-    const fail = useSelector(({registration}) => registration.category.fail);
+    const categories = useSelector(({ registration }) => registration.category.categories);
+    const attendee = useSelector(({ registration }) => registration.category.attendee);
+    const success = useSelector(({ registration }) => registration.category.success);
+    const loading = useSelector(({ registration }) => registration.category.loading);
+    const fail = useSelector(({ registration }) => registration.category.fail);
     let category = (props.match.path).split('/')[4];
 
     useEffect(() => {
@@ -214,7 +217,7 @@ function NewCategory(props) {
     };
 
     const saveAttendee = async () => {
-        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender && (qId || (passportNum && nationality))) {
+        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender) {
             if (tabIndex === 0) {
                 if (qId) {
                     setError(false);
@@ -231,19 +234,14 @@ function NewCategory(props) {
                         mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
                         mainPhotoContentType: profile ? profile.type : null,
                     };
-                    const header = {
-                        headers: {
-                            'content-type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-                        }
-                    };
                     dispatch(Actions.saveAttendee());
+                    console.log('here save attendee: ', data);
 
-                    axios.post(`${SERVER_LINK}/api/attendee-sas`, data, header)
+                    Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
                         .then(response => {
                             console.log('here save attendee response: ', response);
                             dispatch(Actions.saveAttendeeSuccess(response.data));
-                            props.history.push('/app/registration/category');
+                            props.history.push('/app/attendees/category');
                         })
                         .catch(error => {
                             dispatch(Actions.saveAttendeeFail());
@@ -268,6 +266,16 @@ function NewCategory(props) {
                         mainPhotoContentType: profile ? profile.type : null,
                     };
                     dispatch(Actions.saveAttendee(data));
+                    console.log('here save attendee: ', data);
+                    Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
+                        .then(response => {
+                            console.log('here save attendee response: ', response);
+                            dispatch(Actions.saveAttendeeSuccess(response.data));
+                            props.history.push('/app/attendees/category');
+                        })
+                        .catch(error => {
+                            dispatch(Actions.saveAttendeeFail());
+                        });
                 } else {
                     setError(true);
                 }
@@ -278,7 +286,7 @@ function NewCategory(props) {
     };
     // console.log('here inside the New Category: ', categories, categoryInFo, attendee);
 
-    return(
+    return (
         <React.Fragment>
             <div className={classes.root}>
                 {loading && (
@@ -291,7 +299,7 @@ function NewCategory(props) {
                         <Grid container spacing={0} className={classes.profileItem}>
                             <Grid item xs={12} md={12} className={classes.imageItem}>
                                 <div className="relative">
-                                    <img src={(profile && URL.createObjectURL(profile)) || 'assets/images/avatars/profile.jpg'} className={classes.img} alt="note"/>
+                                    <img src={(profile && URL.createObjectURL(profile)) || 'assets/images/avatars/profile.jpg'} className={classes.img} alt="note" />
                                     {/* <Fab
                                         className="absolute right-0 bottom-0 m-8"
                                         variant="extended"
