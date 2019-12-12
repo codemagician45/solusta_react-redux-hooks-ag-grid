@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // import axios from 'axios';
 
@@ -23,11 +23,8 @@ import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
-const objectToArray = (obj) => {
-  return Object.keys(obj).map((key, index) => {
-    return obj[key];
-  });
-};
+// import utils
+import * as Utils from '../../../../utils';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -45,7 +42,7 @@ function SecApprovalCellRenderer(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const prevSecApproval = useRef(data.secApproval);
-  const secApprovals = objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.secApprovals));
+  const secApprovals = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.secApprovals));
   const [secApproval, setSecApproval] = useState(data.secApproval);
 
   const changeSecApproval = (e) => {
@@ -54,15 +51,12 @@ function SecApprovalCellRenderer(props) {
       console.log('security approval is changed: ', data);
       dispatch(Actions.changeAttendeeIsSecurityChanged({
         attendeeId: data.attendeeId,
+        secApproval: e.target.value,
+        secApprovalText: secApprovals.filter(item => item.id === e.target.value)[0].approvalText,
         isSecurityChanged: true,
       }));
-    } else {
-      dispatch(Actions.changeAttendeeIsSecurityChanged({
-        attendeeId: data.attendeeId,
-        isSecurityChanged: false,
-      }));
-      console.log('security approval is not changed: ', data);
     }
+    console.log('security approval is not changed: ', data);
   }
 
   return (
@@ -87,11 +81,25 @@ function SecApprovalCellRenderer(props) {
 
 // Action cell renderer
 function ActionCellRenderer(props) {
-  const classes = useStyles();
   const { data } = props;
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const attendees = useSelector(({ registerApp }) => registerApp.securityApproval.attendees);
 
   const approveSecurity = () => {
-    console.log('here approve security button clicked: ');
+    const requestData = {
+      ...attendees[data.attendeeId],
+      attendeeSecApprovalSAId: data.secApproval,
+      attendeeSecApprovalSAApprovalText: data.secApprovalText,
+    };
+    Utils.xapi().put('/attendee-sas', requestData)
+      .then(response => {
+        dispatch(Actions.updateSecAttendee(response.data));
+        console.log('here update attendee security response: ', response);
+      })
+      .catch(error => {
+        console.log('here update attendee security error: ', error);
+      });
   };
 
   if (data.isSecurityChanged) {
@@ -107,7 +115,7 @@ function ActionCellRenderer(props) {
 
 function SecurityApprovalTable(props) {
   const dispatch = useDispatch();
-  const attendees = objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.attendees));
+  const attendees = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.attendees));
 
   const columnDefs = [
     {

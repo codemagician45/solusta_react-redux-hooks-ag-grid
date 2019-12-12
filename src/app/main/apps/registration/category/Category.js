@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 
 function Category(props) {
     const classes = useStyles();
-    const success = useSelector(({registration}) => registration.category.success);
+    const success = useSelector(({ registration }) => registration.category.success);
     const [openSnack, setOpenSnack] = useState(success);
 
     useEffect(() => {
@@ -50,38 +50,38 @@ function Category(props) {
     }, [success]);
 
     const addSpeaker = () => {
-        props.history.push('/app/registration/category/speaker');
+        props.history.push('/app/attendees/category/speaker');
     }
 
     const addOrganizer = () => {
-        props.history.push('/app/registration/category/organizer');
+        props.history.push('/app/attendees/category/organizer');
     }
 
     const addParticipant = () => {
-        props.history.push('/app/registration/category/participant');
+        props.history.push('/app/attendees/category/participant');
     }
 
     const addEventCrew = () => {
-        props.history.push('/app/registration/category/event-crew');
+        props.history.push('/app/attendees/category/event-crew');
     }
 
     const addMedia = () => {
-        props.history.push('/app/registration/category/media');
+        props.history.push('/app/attendees/category/media');
     }
 
     const addSecurity = () => {
-        props.history.push('/app/registration/category/security');
+        props.history.push('/app/attendees/category/security');
     }
 
     const addContractor = () => {
-        props.history.push('/app/registration/category/contractor');
+        props.history.push('/app/attendees/category/contractor');
     }
 
     const closeSnack = () => {
         setOpenSnack(false);
     };
 
-    return(
+    return (
         <React.Fragment>
             <div className={classes.root}>
                 <Grid container spacing={3} className={classes.container}>
