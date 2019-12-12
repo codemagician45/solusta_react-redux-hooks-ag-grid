@@ -14,7 +14,7 @@ export const RegistrationConfig = {
 		},
 		{
 			path: '/app/registration/registration/:id',
-			component: React.lazy(() => import('./registration/PhotoEditor')),
+			component: React.lazy(() => import('./registration/RegistrationPhotoEditor')),
 		},
 		{
 			path: '/app/registration/category',
