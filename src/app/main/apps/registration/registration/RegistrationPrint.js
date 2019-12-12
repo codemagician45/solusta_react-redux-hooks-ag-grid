@@ -30,9 +30,9 @@ const styles = (theme) => ({
         margin: '0 auto'
     },
     modal_print: {
-        position:'relative',
-        display:'block',
-        margin:'0',
+        position: 'relative',
+        display: 'block',
+        margin: '0',
         padding: '0',
         width: '90mm',
         height: '140mm',
@@ -45,7 +45,7 @@ const styles = (theme) => ({
         height: '44mm',
         right: '0',
         top: '17mm',
-        overflow:'hidden'
+        overflow: 'hidden'
     },
 
     backGround: {
@@ -55,7 +55,7 @@ const styles = (theme) => ({
 
     photoImg: {
         position: 'relative',
-        margin:'0 auto',
+        margin: '0 auto',
     },
     friendly: {
         fontFamily: '"Times New Roman", Times, serif',
@@ -74,7 +74,7 @@ const styles = (theme) => ({
         paddingRight: '2mm',
         top: '78mm',
         width: '90mm',
-        textAlign:'center',
+        textAlign: 'center',
         color: '#174883',
         whiteSpace: 'nowrap',
     },
@@ -83,8 +83,8 @@ const styles = (theme) => ({
         fontFamily: '"Times New Roman", Times, serif',
         position: 'absolute',
         top: '88mm',
-        width:'100%',
-        textAlign:'center',
+        width: '100%',
+        textAlign: 'center',
         color: '#4d4d4d'
     },
 
@@ -93,45 +93,45 @@ const styles = (theme) => ({
 });
 
 const ImagePart = ({ item }) => {
-    switch (item.attendeeCategorySAS[0].categoryName.toUpperCase()) {
+    switch (item.attendeeCategorySAS[0] && item.attendeeCategorySAS[0].categoryName.toUpperCase()) {
         case "SPEAKER": {
             return (
-                <img src={BG3} alt="background"/>
+                <img src={BG3} alt="background" />
             );
         }
         case "ORGANIZER": {
             return (
-                <img src={BG5} alt="background"/>
+                <img src={BG5} alt="background" />
             );
         }
         case "PARTICIPANT": {
             return (
-                <img src={BG1} alt="background"/>
+                <img src={BG1} alt="background" />
             );
         }
-        case "EVENT CREW" : {
+        case "EVENT CREW": {
             return (
-                <img src={BG6} alt="background"/>
+                <img src={BG6} alt="background" />
             );
         }
         case "MEDIA": {
             return (
-                <img src={BG2} alt="background"/>
+                <img src={BG2} alt="background" />
             );
         }
         case "SECURITY": {
             return (
-                <img src={BG4} alt="background"/>
+                <img src={BG4} alt="background" />
             );
         }
         case "CONTRACTOR": {
             return (
-                <img src={BG7} alt="background"/>
+                <img src={BG7} alt="background" />
             );
         }
         default: {
             return (
-                <img src={BG7} alt="background"/>
+                <img src={BG7} alt="background" />
             );
         }
     }
@@ -142,7 +142,7 @@ class RegistrationPrint extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            attendees : props.attendees,
+            attendees: props.attendees,
             rows: props.rows,
             displayData: [],
             friendlyIdArr: [],
@@ -154,11 +154,11 @@ class RegistrationPrint extends React.Component {
         if (this._isMounted) {
             const { attendees, rows } = this.state;
             const displayData = attendees && rows && attendees
-                                .filter((item) => {
-                                    return rows.some((row) => {
-                                        return row.id === item.id;
-                                    })
-                                });
+                .filter((item) => {
+                    return rows.some((row) => {
+                        return row.id === item.id;
+                    })
+                });
             this.setState({ displayData: displayData }, () => {
                 this.getFriendlyIdArr();
             });
@@ -181,11 +181,11 @@ class RegistrationPrint extends React.Component {
             if ((prevState.attendees !== this.state.attendees) || (prevState.rows !== this.state.rows)) {
                 const { attendees, rows } = this.state;
                 const displayData = attendees && attendees
-                                    .filter((item) => {
-                                        return rows.some((row) => {
-                                            return row.id === item.id;
-                                        })
-                                    });
+                    .filter((item) => {
+                        return rows.some((row) => {
+                            return row.id === item.id;
+                        })
+                    });
                 this.setState({ displayData: displayData }, () => {
                     this.getFriendlyIdArr();
                 });
@@ -199,7 +199,7 @@ class RegistrationPrint extends React.Component {
 
     getFriendlyIdArr = () => {
         const { displayData } = this.state;
-        const promiseArr =  displayData.map((item, index) => {
+        const promiseArr = displayData.map((item, index) => {
             return this.getFriendlyId(item);
         });
         Promise.all(promiseArr).then(values => {
@@ -239,25 +239,26 @@ class RegistrationPrint extends React.Component {
         const { friendlyIdArr, displayData } = this.state;
         const { classes } = this.props;
         // console.log('print component selected row: ', this.state.rows)
-        
+
         return (
             <div className={classes.paper}>
                 {displayData && displayData
                     .map((item, index) => {
                         const fId = friendlyIdArr.filter(fItem => fItem.id === item.id);
                         return (
-                        <Box className={classes.outerBox} display="none" displayPrint="block" m={1} key={index.toString()}>
-                            <div id="modal-print" className={classes.modal_print}>
-                                <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
-                                <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
-                                {(fId && fId[0]) && <h2 className={classes.friendly}>{fId[0].fId}</h2>}
-                                <ImagePart item={item} />
-                                <div className={classes.photoContainer}>
-                                    <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge"/>
+                            <Box className={classes.outerBox} display="none" displayPrint="block" m={1} key={index.toString()}>
+                                <div id="modal-print" className={classes.modal_print}>
+                                    <h1 className={classes.nameStyle}>{item.firstName + ' ' + item.lastName}</h1>
+                                    <h2 className={classes.companyNameStyle}>{item.companyName}</h2>
+                                    {(fId && fId[0]) && <h2 className={classes.friendly}>{fId[0].fId}</h2>}
+                                    <ImagePart item={item} />
+                                    <div className={classes.photoContainer}>
+                                        <img className={classes.photoImg} src={`data:${item.mainPhotoContentType};base64, ${item.mainPhoto}`} alt="badge" />
+                                    </div>
                                 </div>
-                            </div>
-                        </Box>
-                )})}
+                            </Box>
+                        )
+                    })}
             </div>
         );
     }
