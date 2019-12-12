@@ -4,9 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 // import @material-ui components
 import { Button } from '@material-ui/core';
 
-// import api
-import { xapi } from '../../../../utils/api';
-
 // import Redux
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
