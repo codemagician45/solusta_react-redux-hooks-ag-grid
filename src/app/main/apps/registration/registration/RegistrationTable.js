@@ -389,6 +389,8 @@ function RegistrationTable(props) {
                             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                         }
                     };
+                    let searchText = localStorage.getItem('search_text');
+                    console.log("searchText", searchText)
                     if (!filterPresent) {
                         axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                             res => {
@@ -398,7 +400,7 @@ function RegistrationTable(props) {
                                 const rowData = res.data && res.data.map(data => {
                                     const temp = {
                                         id: data.id,
-                                        // category:data.attendeeCategorySAS[0].categoryName,
+                                        category:data.attendeeCategorySAS[0].categoryName,
                                         firstName: data.firstName,
                                         lastName: data.lastName,
                                         companyName: data.companyName,
