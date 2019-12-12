@@ -1,60 +1,46 @@
 import axios from 'axios';
 
+// import utils
+import * as Utils from '../../../../../utils';
+
 // import env server link
 const environment = require('../../RegistrationEnv');
 const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
-export const GET_COUNT = '[REGISTRATION] GET_COUNT';
+export const GET_BADGE_ATTENDEE_COUNT = '[REGISTRATION] GET_BADGE_ATTENDEE_COUNT';
 export const GET_BADGE_ATTENDEES = '[REGISTRATION] GET_BADGE_ATTENDEES';
-export const SET_BADGE_ATTENDEE_SELECT_ROW = '[REGISTRATION] SET_BADGE_ATTENDEE_SELECT_ROW';
+export const SET_BADGE_ATTENDEE_SELECTED_ROWS = '[REGISTRATION] SET_BADGE_ATTENDEE_SELECTED_ROWS';
 export const GET_BADGE_IDS = '[REGISTRATION] GET_BADGE_IDS';
 export const GET_PRINT_COUNTS = '[REGISTRATION] GET_PRINT_COUNTS';
 export const UPDATE_BADGE_ACTIVITY = '[REGISTRATION] UPDATE_BADGE_ACTIVITY';
 
-export function getCount() {
-	const header = {
-		headers: {
-			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-		}
-	};
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header);
+export function getBadgeTotalAttendeeCount() {
+	const request = Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`);
 	return (dispatch) =>
 		request.then((response) =>
 			dispatch({
-				type: GET_COUNT,
+				type: GET_BADGE_ATTENDEE_COUNT,
 				payload: response.data
 			})
 		);
 }
 
-export function getBadgeAttendees(page = null, size = null) {
-	const header = {
-		headers: {
-			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-		}
-	};
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas`, null, header);
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${100}`, null, header);
-
-	return (dispatch) =>
-		request.then((response) =>
-			dispatch({
-				type: GET_BADGE_ATTENDEES,
-				payload: response.data
-			})
-		);
-}
-
-export function setBadgeAttendeeSelectRow(data) {
+export function getBadgeAttendees(data) {
 	return {
-		type: SET_BADGE_ATTENDEE_SELECT_ROW,
+		type: GET_BADGE_ATTENDEES,
+		payload: data,
+	};
+}
+
+export function setBadgeAttendeeSelectedRows(data) {
+	return {
+		type: SET_BADGE_ATTENDEE_SELECTED_ROWS,
 		payload: data,
 	};
 }
 
 export function getBadgeIDs(data) {
-	console.log("badgId",data)
+	console.log("badgId", data)
 	return {
 		type: GET_BADGE_IDS,
 		payload: data,

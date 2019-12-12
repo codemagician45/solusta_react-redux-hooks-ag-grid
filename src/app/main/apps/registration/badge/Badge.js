@@ -20,7 +20,7 @@ function Badge() {
 	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
 
 	useEffect(() => {
-		dispatch(Actions.getBadgeAttendees());
+		dispatch(Actions.getBadgeTotalAttendeeCount());
 	}, [dispatch]);
 
 	return (
@@ -33,7 +33,17 @@ function Badge() {
 				<div className="flex flex-1 w-full items-center justify-between">
 					<Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{ visibility: 'hidden' }}>Print Before</Button>
 					<ReactToPrint
-						trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
+						trigger={() => {
+							if (selectedRows.length > 0) {
+								return (
+									<Button color="secondary" variant="contained">Print Badges</Button>
+								);
+							} else {
+								return (
+									<Button color="secondary" disabled={true} variant="contained">Print Badges</Button>
+								);
+							}
+						}}
 						content={() => printRef.current}
 					/>
 					<BadgePrintComponent attendees={attendees} selectedRows={selectedRows} ref={printRef} />
