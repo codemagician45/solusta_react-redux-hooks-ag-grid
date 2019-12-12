@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, Icon, Typography } from '@material-ui/core';
 // import {Button} from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import "tui-image-editor/dist/tui-image-editor.css";
 import ImageEditor from "@toast-ui/react-image-editor";
 
-import { Link } from 'react-router-dom';
+// import redux
 import withReducer from 'app/store/withReducer';
 import reducer from '../store/reducers';
-import * as Actions from '../store/actions';
 
 const icona = require("tui-image-editor/dist/svg/icon-a.svg");
 const iconb = require("tui-image-editor/dist/svg/icon-b.svg");
