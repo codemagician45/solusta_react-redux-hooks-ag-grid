@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
@@ -27,7 +26,7 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 
 const getLazyLoadingDataSet = (endRow, startRow) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 20 - 1}&size=${20}`)
+		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
 				console.log('here lazy loading data set function: ', response.data);
 				resolve(response.data);
@@ -197,7 +196,7 @@ function BadgeTable(props) {
 				'font-size': '14px',
 				'font-family': 'sans-serif',
 			}
-		}
+		},
 	];
 	const defs = {
 		defaultColDef: {
@@ -249,7 +248,7 @@ function BadgeTable(props) {
 					paginationPageSize={20}
 					onSelectionChanged={onSelectionChanged}
 					rowModelType={'serverSide'}
-					cacheBlockSize={20}
+					cacheBlockSize={50}
 					maxBlocksInCache={10}
 					animateRows={true}
 					onGridReady={onGridReady}
@@ -291,7 +290,7 @@ function FakeServer(totalAttendeeCount, dispatch) {
 					...attendee,
 					badgeFriendId: 0,
 					printedCount: 0,
-					category: attendee.attendeeCategorySAS[0].categoryName,
+					category: (attendee.attendeeCategorySAS[0] && attendee.attendeeCategorySAS[0].categoryName) || '',
 				};
 			});
 			return {
