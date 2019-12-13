@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
@@ -106,9 +106,20 @@ const getBadgeActivities = (badges, dispatch) => {
 	});
 };
 
+const getAttendsCount = () => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+			.then(response => {
+				resolve(response.data);
+			})
+			.catch(error => {
+				reject(error);
+			})
+	})
+}
+
 function CollectionTable(props) {
 	const dispatch = useDispatch();
-	const attendeesCount = useSelector(({ registerApp }) => registerApp.collection.attendeesCount);
 
 	// Ag-Grid options
 	const columnDefs = [
@@ -201,8 +212,9 @@ function CollectionTable(props) {
 		console.log('here in selected row data in ag-grid: ', selectedRow);
 		dispatch(Actions.setCollectionUpdateBadges(selectedRow));
 	};
-	const onGridReady = params => {
-		const server = new FakeServer(attendeesCount, dispatch);
+	const onGridReady = async (params) => {
+		let count = await getAttendsCount();
+		const server = new FakeServer(count, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
 	}

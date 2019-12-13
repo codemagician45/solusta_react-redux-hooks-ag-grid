@@ -100,7 +100,8 @@ function ActionCellRendererCollection(props) {
 		);
 	}
 }
-
+var tableDataUnsearch = [];
+var tableDataSearch = [];
 var resultCount = 0;
 var searchText = '';
 var GridReadyInstance = null;

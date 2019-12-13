@@ -1,4 +1,5 @@
-import axios from 'axios';
+// import Utils
+import * as Utils from '../../../../../utils';
 
 // import env server link
 const environment = require('../../RegistrationEnv');
@@ -11,35 +12,15 @@ export const CHANGE_ATTENDEE_IS_SECURITY_CHANGED = '[REGISTRATION] CHANGE_ATTEND
 export const UPDATE_SEC_ATTENDEE = '[REGISTRATION] UPDATE_SEC_ATTENDEE';
 export const UPDATE_SEC_MASS_ATTENDEE = '[REGISTRATION] UPDATE_SEC_MASS_ATTENDEE';
 
-export function getSecAttendees() {
-  const header = {
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-    }
+export function getSecAttendees(data) {
+  return {
+    type: GET_SEC_ATTENDEES,
+    payload: data,
   };
-  const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${20}`, null, header);
-
-  return (dispatch) =>
-    request.then((response) => {
-      const data = response.data.map(item => ({
-        ...item,
-        isSecurityChanged: false,
-      }))
-      return dispatch({
-        type: GET_SEC_ATTENDEES,
-        payload: data,
-      })
-    }
-    );
 }
 
 export function getSecApprovals() {
-  const header = {
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-    }
-  };
-  const request = axios.get(`${SERVER_LINK}/api/attendee-sec-approval-sas`, null, header);
+  const request = Utils.xapi().get(`${SERVER_LINK}/api/attendee-sec-approval-sas`);
 
   return (dispatch) =>
     request.then((response) =>

@@ -4,19 +4,12 @@ import * as Actions from '../actions';
 const initialState = {
 	attendees: [],
 	selectedRows: [],
-	totalAttendeesCount: 200,
 	badges: [],
 	badgeActivities: [],
 };
 
 const badgeReducer = function (state = initialState, action) {
 	switch (action.type) {
-		case Actions.GET_BADGE_ATTENDEE_COUNT: {
-			return {
-				...state,
-				totalAttendeesCount: action.payload,
-			};
-		}
 		case Actions.GET_BADGE_ATTENDEES:
 			{
 				return {

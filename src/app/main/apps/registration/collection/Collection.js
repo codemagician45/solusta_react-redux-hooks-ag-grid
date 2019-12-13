@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // import @material-ui components
@@ -62,10 +62,6 @@ const updateBadgeActivities = (badges, dispatch) => {
 function Collection() {
 	const dispatch = useDispatch();
 	const selectedBadges = useSelector(({ registerApp }) => registerApp.collection.selectedBadges);
-
-	useEffect(() => {
-		dispatch(Actions.getCollectionAttendeesCount());
-	}, [dispatch]);
 
 	return (
 		<FusePageCarded

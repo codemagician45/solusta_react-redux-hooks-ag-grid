@@ -1,12 +1,11 @@
 // import Utils
-import * as Utils from '../../../../../utils';
+// import * as Utils from '../../../../../utils';
 
 // import env server link
-const environment = require('../../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
+// const environment = require('../../RegistrationEnv');
+// const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 export const GET_COLLECTION_ATTENDEES = '[REGISTRATION] GET_COLLECTION_ATTENDEES';
-export const GET_COLLECTION_ATTENDEES_COUNT = '[REGISTRATION] GET_COLLECTION_ATTENDEES_COUNT';
 export const GET_COLLECTION_BADGES = '[REGISTRATION] GET_COLLECTION_BADGES';
 export const GET_COLLECTION_BADGE_ACTIVITIES = '[REGISTRATION] GET_COLLECTION_BADGE_ACTIVITIES';
 export const SET_COLLECTION_UPDATE_BADGES = '[REGISTRATION] SET_COLLECTION_UPDATE_BADGES';
@@ -18,17 +17,6 @@ export function getCollectionAttendees(data) {
 		type: GET_COLLECTION_ATTENDEES,
 		payload: data,
 	};
-}
-
-export function getCollectionAttendeesCount() {
-	const request = Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`);
-	return (dispatch) =>
-		request.then((response) =>
-			dispatch({
-				type: GET_COLLECTION_ATTENDEES_COUNT,
-				payload: response.data
-			})
-		);
 }
 
 export function getCollectionBadges(data) {
