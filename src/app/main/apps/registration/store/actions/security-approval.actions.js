@@ -21,7 +21,6 @@ export function getSecAttendees(data) {
 
 export function getSecApprovals() {
   const request = Utils.xapi().get(`${SERVER_LINK}/api/attendee-sec-approval-sas`);
-
   return (dispatch) =>
     request.then((response) =>
       dispatch({
