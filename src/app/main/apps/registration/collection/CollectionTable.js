@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
