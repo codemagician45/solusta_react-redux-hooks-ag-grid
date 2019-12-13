@@ -28,7 +28,7 @@ function Registration() {
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
     // const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
     const [textChange, changeText] = useState('');
-    // console.log("attendees",attendees)
+    console.log("total attendees",attendees)
     return (
         <FusePageCarded
             classes={{
@@ -55,7 +55,7 @@ function Registration() {
                                     }}
                                     onChange={ev => {
                                         if (ev.target.value == '') {
-                                            dispatch(Actions.setSearchText(ev));
+                                            dispatch(Actions.setSearchText(ev.target.value));
                                             changeText('');
                                         }
                                         else 
@@ -63,7 +63,7 @@ function Registration() {
                                     }}
                                     onKeyDown = {ev =>{
                                         if (ev.key === 'Enter'){
-                                            dispatch(Actions.setSearchText(ev))
+                                            dispatch(Actions.setSearchText(ev.target.value))
                                         }
                                     }}
                                 />

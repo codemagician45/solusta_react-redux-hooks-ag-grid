@@ -126,10 +126,10 @@ export function getAttendeeCount() {
 		);
 }
 
-export function setSearchText (e)
+export function setSearchText (value)
 {
 	return {
 		type:SET_REG_SEARCH_TEXT,
-		searchText:e.target.value
+		searchText:value
 	}
 }
