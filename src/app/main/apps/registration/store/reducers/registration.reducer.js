@@ -43,6 +43,7 @@ const productsReducer = function (state = initialState, action) {
         }
         case Actions.UPDATE_REGISTRATION_ATTENDEES_SEARCH:
         {
+            console.log("action.payload in search reducer",action.payload)
             let indexId = action.payload[0] && action.payload[0].id;
                 const index = state.attendeesSearch.filter(attendee => attendee.id === indexId);
                 if(index.length > 0){
