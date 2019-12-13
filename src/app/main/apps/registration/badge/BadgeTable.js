@@ -125,11 +125,11 @@ const getPrintCountArr = (badges, dispatch) => {
 function BadgeTable(props) {
 	const dispatch = useDispatch();
 	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
-	const totalAttendeeCount = useSelector(({ registerApp }) => registerApp.badge.totalAttendeeCount);
+	const totalAttendeesCount = useSelector(({ registerApp }) => registerApp.badge.totalAttendeesCount);
 	const badges = useSelector(({ registerApp }) => registerApp.badge.badges);
 	const badgeActivities = useSelector(({ registerApp }) => registerApp.badge.badgeActivities);
 
-	console.log('here in badge table: ', attendees, totalAttendeeCount, badges, badgeActivities);
+	console.log('here in badge table: ', attendees, totalAttendeesCount, badges, badgeActivities);
 
 	const columnDefs = [
 		{
@@ -227,7 +227,7 @@ function BadgeTable(props) {
 	};
 
 	const onGridReady = params => {
-		const server = new FakeServer(totalAttendeeCount, dispatch);
+		const server = new FakeServer(totalAttendeesCount, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
 	}
@@ -278,12 +278,12 @@ function ServerSideDataSource(server) {
 }
 
 // Ag-Grid Fake server
-function FakeServer(totalAttendeeCount, dispatch) {
+function FakeServer(totalAttendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
 			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
-			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, totalAttendeeCount);
-			let lastRow = request.endRow <= totalAttendeeCount ? -1 : totalAttendeeCount;
+			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, totalAttendeesCount);
+			let lastRow = request.endRow <= totalAttendeesCount ? -1 : totalAttendeesCount;
 			dispatch(Actions.getBadgeAttendees(lazyLoadingSet));
 			const rows = lazyLoadingSet.map(attendee => {
 				return {

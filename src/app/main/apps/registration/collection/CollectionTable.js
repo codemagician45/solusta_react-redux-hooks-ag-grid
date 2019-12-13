@@ -17,7 +17,7 @@ import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
-// import Utils
+// import utils
 import * as Utils from '../../../../utils';
 
 // import env server link
@@ -178,7 +178,7 @@ function CollectionTable(props) {
 			}
 		},
 	];
-	const defaultDefs = {
+	const defs = {
 		defaultColDef: {
 			resizable: true,
 			sortable: true,
@@ -188,26 +188,24 @@ function CollectionTable(props) {
 		rowData: [],
 		modules: AllModules,
 		overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
-		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>",
+		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
 	};
-	const frameworkComponents = {
-		actionCellRenderer: ActionCellRenderer
-	};
-	const getRowHeight = () => (48);
-	const headerHeight = () => (32);
+	const frameworkComponents = { actionCellRenderer: ActionCellRenderer };
+	const getRowHeight = () => 48;
+	const headerHeight = () => 32;
 
-	// Ag-Grid event handler 
+	// Ag-Grid event handler
 	const onSelectionChanged = (params) => {
 		const gridApi = params.api;
-		const selectedRows = gridApi.getSelectedRows();
-		console.log('here in selected row data in collection ag-grid: ', selectedRows);
-		dispatch(Actions.setCollectionUpdateBadges(selectedRows));
+		const selectedRow = gridApi.getSelectedRows();
+		console.log('here in selected row data in ag-grid: ', selectedRow);
+		dispatch(Actions.setCollectionUpdateBadges(selectedRow));
 	};
-	const onGridReady = (params) => {
+	const onGridReady = params => {
 		const server = new FakeServer(attendeesCount, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
-	};
+	}
 
 	return (
 		<React.Fragment>
@@ -216,9 +214,9 @@ function CollectionTable(props) {
 				style={{ height: '100%', width: '100%', fontSize: '16px' }}
 			>
 				<AgGridReact
-					modules={defaultDefs.modules}
+					modules={defs.modules}
 					columnDefs={columnDefs}
-					defaultColDef={defaultDefs.defaultColDef}
+					defaultColDef={defs.defaultColDef}
 					frameworkComponents={frameworkComponents}
 					rowSelection={'multiple'}
 					pagination={true}
@@ -231,8 +229,8 @@ function CollectionTable(props) {
 					onGridReady={onGridReady}
 					getRowHeight={getRowHeight}
 					headerHeight={headerHeight}
-					overlayLoadingTemplate={defaultDefs.overlayLoadingTemplate}
-					overlayNoRowsTemplate={defaultDefs.overlayNoRowsTemplate}
+					overlayLoadingTemplate={defs.overlayLoadingTemplate}
+					overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
 				>
 				</AgGridReact>
 			</div>
@@ -255,12 +253,12 @@ function ServerSideDataSource(server) {
 }
 
 // Ag-Grid Fake server
-function FakeServer(totalAttendeeCount, dispatch) {
+function FakeServer(attendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
 			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
-			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, totalAttendeeCount);
-			let lastRow = request.endRow <= totalAttendeeCount ? -1 : totalAttendeeCount;
+			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, attendeesCount);
+			let lastRow = request.endRow <= attendeesCount ? -1 : attendeesCount;
 			dispatch(Actions.getCollectionAttendees(lazyLoadingSet));
 			const rows = lazyLoadingSet.map(attendee => {
 				return {
@@ -270,7 +268,6 @@ function FakeServer(totalAttendeeCount, dispatch) {
 					category: (attendee.attendeeCategorySAS[0] && attendee.attendeeCategorySAS[0].categoryName) || '',
 				};
 			});
-			console.log("lazy loading set rows: ", rows);
 			return {
 				success: true,
 				rows,
@@ -284,7 +281,6 @@ function FakeServer(totalAttendeeCount, dispatch) {
 function ActionCellRenderer(props) {
 	const dispatch = useDispatch();
 	const { data } = props;
-
 	const updateBadgeActivity = () => {
 		console.log('here update button click: ', data);
 		const body = {

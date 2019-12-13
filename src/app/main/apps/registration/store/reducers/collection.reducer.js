@@ -4,7 +4,7 @@ import * as Actions from '../actions';
 // TODO: use Objects in redux store not Array
 const initialState = {
 	attendees: [],
-	attendeesCount: 0,
+	attendeesCount: 200,
 	badges: [],
 	badgeActivities: [],
 	selectedBadges: [],
