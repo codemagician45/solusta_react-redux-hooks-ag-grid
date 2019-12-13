@@ -4,7 +4,7 @@ import * as Actions from '../actions';
 const initialState = {
 	attendees: [],
 	selectedRows: [],
-	totalAttendeesCount: 0,
+	totalAttendeesCount: 200,
 	badges: [],
 	badgeActivities: [],
 };
@@ -14,7 +14,7 @@ const badgeReducer = function (state = initialState, action) {
 		case Actions.GET_BADGE_ATTENDEE_COUNT: {
 			return {
 				...state,
-				totalAttendeeCount: action.payload,
+				totalAttendeesCount: action.payload,
 			};
 		}
 		case Actions.GET_BADGE_ATTENDEES:

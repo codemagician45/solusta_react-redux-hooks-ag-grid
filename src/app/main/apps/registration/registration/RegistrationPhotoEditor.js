@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 // import @material-ui components
@@ -8,96 +8,142 @@ import { makeStyles } from '@material-ui/core/styles';
 // import reducer
 import withReducer from 'app/store/withReducer';
 import reducer from '../store/reducers';
+import * as Actions from '../store/actions';
 
 // import utils
 import * as Utils from '../../../../utils';
 
 // import component
 import PhotoEditor from './PhotoEditor';
+import { dispatch } from 'rxjs/internal/observable/pairs';
+
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+
 
 const useStyles = makeStyles(theme => ({
-    paper: {
-        position: 'absolute',
-        width: 400,
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
+    success:{
+        color:'green',
+        fontWeight:'500'
     },
-    photo: {
-        position: 'absolute',
-        left: '62%',
-        width: '120px',
-        height: '180px',
-        right: '0',
-        top: '15%',
-        display: 'block'
-    },
-    backGround: {
-        width: '100%'
-    },
-    nameStyle: {
-        position: 'absolute',
-        top: '57%',
-        width: '100%',
-        textAlign: 'center',
-        color: 'midnightblue',
-        textTransform: 'uppercase'
-    },
-    companyNameStyle: {
-        position: 'absolute',
-        top: '64%',
-        width: '100%',
-        textAlign: 'center',
-        textTransform: 'uppercase'
-    },
-    photoImg: {
-        width: '100%',
-        margin: 'auto'
-    },
-    modal_print: {
-        position: 'relative',
-        display: 'block'
-    },
-    friendly: {
-        position: 'absolute',
-        top: '45%',
-        right: '16%',
-        fontSize: '24px',
-        color: 'darkblue'
+    fail:{
+        color:'red',
+        fontWeight:'500'
     }
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+
+
+
+
 function RegistrationPhotoEditor(props) {
+    const dispatch = useDispatch();
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch );
+    const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
+    const printData = (searchText == '') ? (attendees) : (attendeesSearch);
+
     const attendeeId = props.match.params.id;
     const [attendee, setAttendee] = useState(null);
-    const [image, setImage] = useState('');
-
+    const [image, setImage] = useState(null);
+    const [openSucess, setOpenSucess] = React.useState(false);
+    const [openFail, setOpenFail] = React.useState(false);
+    const classes = useStyles();
     useEffect(() => {
-        const [temp] = (attendees.length > 0) ? attendees.filter(item => item.id === parseInt(attendeeId)) : [];
+        const [temp] = (printData && printData.length > 0) ? printData.filter(item => item.id === parseInt(attendeeId)) : [];
         setImage(`data:${temp && temp.mainPhotoContentType};base64, ${temp && temp.mainPhoto}`);
-        setAttendee(JSON.parse(JSON.stringify(temp)));
-    }, [attendees]);
+        // setAttendee(JSON.parse(JSON.stringify(temp)));
+        setAttendee(temp)
+    }, [printData]);
+
+
+    const handleCloseSucess = () => {
+        setOpenSucess(false);
+        props.history.push('/app/attendees/registration');
+    };
+
+    
+    const handleCloseFail = () => {
+        setOpenFail(false);
+        props.history.push('/app/attendees/registration');
+    };
 
     const setCroppedImage = (data) => {
-        setImage(data);
+        // setImage(data);
         console.log('image crop data in parent component: ', data);
         const requestData = {
             ...attendee,
             mainPhotoContentType: data.slice(5, 14),
             mainPhoto: data.slice(22),
         }
+        console.log("request",requestData)
         Utils.xapi().put('/attendee-sas', requestData)
             .then(response => {
                 console.log('update photo success: ', response.data);
-                props.history.push('/app/attendees/registration');
+                setOpenSucess(true);
+                dispatch(Actions.setSearchText(''));
             })
             .catch(error => {
                 console.log('update photo error: ', error);
+                setOpenFail(true);
+                dispatch(Actions.setSearchText(''));
+
             })
     }
 
     return (
-        <PhotoEditor image={image} attendee={attendee} attendeeId={attendeeId} onCrop={setCroppedImage} />
+        <React.Fragment>
+            <PhotoEditor image={image} onCrop={setCroppedImage} />
+            <Dialog
+                open={openSucess}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseSucess}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Photo Edit Result"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Photo Update <span className={classes.success}>Successed</span>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseSucess} color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={openFail}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseFail}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Photo Edit Result"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Photo Update <span className={classes.fail}>Failed</span>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseFail} color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
     )
 }
 

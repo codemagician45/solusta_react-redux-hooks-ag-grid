@@ -1,65 +1,67 @@
-import axios from 'axios';
+// import Utils
+import * as Utils from '../../../../../utils';
 
 // import env server link
 const environment = require('../../RegistrationEnv');
 const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 export const GET_COLLECTION_ATTENDEES = '[REGISTRATION] GET_COLLECTION_ATTENDEES';
-export const GET_COLLECTION_BADGE_IDS = '[REGISTRATION] GET_COLLECTION_BADGE_IDS';
-export const GET_IS_COLLECTED = '[REGISTRATION] GET_IS_COLLECTED';
-export const SET_COLLECTION_UPDATING_ROWS = '[REGISTRATION] SET_COLLECTION_UPDATING_ROWS';
-export const UPDATE_BADGE_IS_COLLECTED = '[REGISTRATION] UPDATE_BADGE_IS_COLLECTED';
-export const UPDATE_BADGE_ACTIVITIES = '[REGISTRATION] UPDATE_BADGE_ACTIVITIES';
+export const GET_COLLECTION_ATTENDEES_COUNT = '[REGISTRATION] GET_COLLECTION_ATTENDEES_COUNT';
+export const GET_COLLECTION_BADGES = '[REGISTRATION] GET_COLLECTION_BADGES';
+export const GET_COLLECTION_BADGE_ACTIVITIES = '[REGISTRATION] GET_COLLECTION_BADGE_ACTIVITIES';
+export const SET_COLLECTION_UPDATE_BADGES = '[REGISTRATION] SET_COLLECTION_UPDATE_BADGES';
+export const UPDATE_COLLECTION_BADGE_ACTIVITY = '[REGISTRATION] UPDATE_COLLECTION_BADGE_ACTIVITY';
+export const UPDATE_COLLECTION_BADGE_ACTIVITIES = '[REGISTRATION] UPDATE_COLLECTION_BADGE_ACTIVITIES';
 
-export function getCollectionAttendees() {
-	const header = {
-		headers: {
-			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-		}
+export function getCollectionAttendees(data) {
+	return {
+		type: GET_COLLECTION_ATTENDEES,
+		payload: data,
 	};
-	// const request = axios.get(`${SERVER_LINK}/api/attendee-sas-no-page`, null, header);
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas?page=${0}&size=${20}`, null, header);
+}
 
+export function getCollectionAttendeesCount() {
+	const request = Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`);
 	return (dispatch) =>
 		request.then((response) =>
 			dispatch({
-				type: GET_COLLECTION_ATTENDEES,
+				type: GET_COLLECTION_ATTENDEES_COUNT,
 				payload: response.data
 			})
 		);
 }
 
-export function getCollectionBadgeIds(data) {
+export function getCollectionBadges(data) {
 	return {
-		type: GET_COLLECTION_BADGE_IDS,
+		type: GET_COLLECTION_BADGES,
 		payload: data,
 	}
 }
 
-export function getIsCollected(data) {
+export function getCollectionBadgeActivities(data) {
 	return {
-		type: GET_IS_COLLECTED,
+		type: GET_COLLECTION_BADGE_ACTIVITIES,
 		payload: data,
 	}
 }
 
-export function setCollectionUpdatingRows(data) {
+export function setCollectionUpdateBadges(data) {
 	return {
-		type: SET_COLLECTION_UPDATING_ROWS,
+		type: SET_COLLECTION_UPDATE_BADGES,
 		payload: data,
 	};
 }
 
-export function updateBadgeIsCollected(data) {
+export function updateCollectionBadgeActivity(data) {
 	return {
-		type: UPDATE_BADGE_IS_COLLECTED,
+		type: UPDATE_COLLECTION_BADGE_ACTIVITY,
 		payload: data,
 	};
 }
 
-export function updateBadgeActivities(data) {
+export function updateCollectionBadgeActivities(data) {
 	return {
-		type: UPDATE_BADGE_ACTIVITIES,
+		type: UPDATE_COLLECTION_BADGE_ACTIVITIES,
 		payload: data,
 	};
 }

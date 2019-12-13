@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
@@ -18,160 +17,100 @@ import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
+// import utils
+import * as Utils from '../../../../utils';
+
 // import env server link
 const environment = require('../RegistrationEnv');
 const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
-// Action cell renderer
-function ActionCellRenderer(props) {
-	const dispatch = useDispatch();
-	const { data } = props;
-
-	const updateBadgeActivity = () => {
-		console.log('here update button click: ', data);
-		const header = {
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-			}
-		};
-		const body = {
-			id: data.badgeActivityId,
-			isCollected: true,
-		};
-		axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header)
+const getLazyLoadingDataSet = (endRow, startRow) => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
-				console.log('here update button click response: ', response);
-				const updateData = {
-					badgeActivityId: response.data.id,
-					isCollected: response.data.isCollected,
-					badgeId: data.badgeId,
-				};
-				dispatch(Actions.updateBadgeIsCollected(updateData));
+				console.log('here lazy loading data set function: ', response.data);
+				resolve(response.data);
 			})
 			.catch(error => {
-				console.log('update badge activity isCollected error: ', error);
+				reject(error);
 			});
-	}
+	});
+};
 
-	if (props.data.isCollected === 'true') {
-		return (
-			<Button disabled={true} variant="contained" color="secondary">Collected</Button>
-		);
-	} else {
-		return (
-			<Button onClick={updateBadgeActivity} variant="contained" color="secondary">Collected</Button>
-		);
-	}
+const getBadge = (item) => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`)
+			.then((res) => {
+				console.log('here in badge request: ', res);
+				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
+			})
+			.catch((err) => {
+				reject(err);
+			});
+	});
+};
+
+const getBadgeActivity = (item) => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.id}`)
+			.then((res) => {
+				console.log('here in badge activity request: ', res);
+				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
+			})
+			.catch((err) => {
+				reject(err);
+			});
+	});
 }
+
+const getBadges = (attendees, dispatch) => {
+	const promiseArr = attendees && attendees.map((attendee, index) => (
+		getBadge(attendee)
+	));
+
+	Promise.all(promiseArr).then(values => {
+		const badgeArr = values.map((value, index) => {
+			if (!!value) {
+				return {
+					...value,
+				};
+			} else {
+				return {};
+			}
+		});
+		dispatch(Actions.getCollectionBadges(badgeArr));
+	}).catch(error => {
+		console.log('here error in get badge id error: ', error);
+	});
+};
+
+const getBadgeActivities = (badges, dispatch) => {
+	const promiseArr = badges && badges.map((badge, index) => (
+		getBadgeActivity(badge)
+	));
+
+	Promise.all(promiseArr).then(values => {
+		const badgeActivityArr = values.map((value, index) => {
+			if (!!value) {
+				return {
+					...value,
+					badgeId: badges[index].badgeId,
+				};
+			} else {
+				return {};
+			}
+		});
+		dispatch(Actions.getCollectionBadgeActivities(badgeActivityArr));
+	}).catch(error => {
+		console.log('here error in get print count error: ', error);
+	});
+};
 
 function CollectionTable(props) {
 	const dispatch = useDispatch();
-	const attendees = useSelector(({ registerApp }) => registerApp.collection.attendees);
-	const badgeIds = useSelector(({ registerApp }) => registerApp.collection.badgeIds);
-	const badgeActivities = useSelector(({ registerApp }) => registerApp.collection.isCollected);
+	const attendeesCount = useSelector(({ registerApp }) => registerApp.collection.attendeesCount);
 
-	useEffect(() => {
-		getBadgeIdArr();
-	}, [attendees]);
-
-	useEffect(() => {
-		getBadgeActivityArr();
-	}, [badgeIds]);
-
-	const getBadgeIdArr = () => {
-		const promiseArr = attendees && attendees.map((attendee, index) => {
-			return getBadgeId(attendee);
-		});
-
-		Promise.all(promiseArr).then(values => {
-			let badgeIdArr = [];
-			values.map((value, index) => {
-				if (value) {
-					badgeIdArr.push({
-						badgeFriendlyID: value.badgeFriendlyID,
-						badgeActivitySAId: value.badgeActivitySAId,
-						attendeeSAId: value.attendeeSAId,
-						badgeId: value.id,
-					});
-				} else {
-					badgeIdArr.push({
-						badgeFriendlyID: 0,
-						badgeActivitySAId: 0,
-						attendeeSAId: 0,
-						badgeId: 0,
-					});
-				}
-			});
-			dispatch(Actions.getCollectionBadgeIds(badgeIdArr));
-		}).catch(error => {
-			console.log('here error in get badge id error: ', error);
-		});
-	};
-
-	const getBadgeActivityArr = () => {
-		const promiseArr = badgeIds && badgeIds.map((badgeID, index) => {
-			return getBadgeActivity(badgeID);
-		});
-		Promise.all(promiseArr).then(values => {
-			let isCollectedArr = [];
-			values.map((value, index) => {
-				// return attendeeID and badgeFriendlyID
-				if (value) {
-					isCollectedArr.push({
-						badgeActivityId: value.id,
-						isCollected: value.isCollected,
-						badgeId: badgeIds[index].badgeId,
-					});
-				} else {
-					isCollectedArr.push({
-						badgeActivityId: 0,
-						isCollected: false,
-						badgeId: badgeIds[index].badgeId,
-					});
-				}
-			});
-			dispatch(Actions.getIsCollected(isCollectedArr));
-		}).catch(error => {
-			console.log('here error in get print count error: ', error);
-		});
-	};
-
-	const getBadgeId = (item) => {
-		return new Promise((resolve, reject) => {
-			const header = {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-				}
-			};
-			axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
-				.then((res) => {
-					// console.log('here in friend id: ', res);
-					resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		});
-	};
-
-	const getBadgeActivity = (item) => {
-		return new Promise((resolve, reject) => {
-			const header = {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-				}
-			};
-			axios.get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
-				.then((res) => {
-					console.log('here in print count: ', res);
-					resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		});
-	}
-
+	// Ag-Grid options
 	const columnDefs = [
 		{
 			headerName: 'Badge ID',
@@ -190,7 +129,7 @@ function CollectionTable(props) {
 				'padding': '15px',
 				'font-size': '14px',
 				'font-family': 'sans-serif',
-			},
+			}
 		},
 		{
 			headerName: 'Action',
@@ -237,7 +176,7 @@ function CollectionTable(props) {
 				'font-size': '14px',
 				'font-family': 'sans-serif',
 			}
-		}
+		},
 	];
 	const defs = {
 		defaultColDef: {
@@ -251,40 +190,22 @@ function CollectionTable(props) {
 		overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
 		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
 	};
-	const rowData = attendees.map((item) => {
-		const badgeFriendId = (badgeIds.length > 0 && badgeIds.find(el => el.attendeeSAId === item.id)) ? badgeIds.find(el => el.attendeeSAId === item.id).badgeFriendlyID : -1;
-		const badgeId = (badgeIds.length > 0 && badgeIds.find(el => el.attendeeSAId === item.id)) ? badgeIds.find(el => el.attendeeSAId === item.id).badgeId : 0;
-		const isCollected = (badgeActivities.length > 0 && badgeActivities.find(el => el.badgeId === badgeId)) ? badgeActivities.find(el => el.badgeId === badgeId).isCollected : -1;
-		const badgeActivityId = (badgeActivities.length > 0 && badgeActivities.find(el => el.badgeId === badgeId)) ? badgeActivities.find(el => el.badgeId === badgeId).badgeActivityId : 0;
-		const temp = {
-			id: item.id,
-			badgeId: badgeId,
-			badgeFriendId: badgeFriendId,
-			badgeActivityId: badgeActivityId,
-			isCollected: isCollected ? 'true' : 'false',
-			category: (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) ? item.attendeeCategorySAS[0].categoryName : '',
-			firstName: item.firstName,
-			lastName: item.lastName,
-			companyName: item.companyName,
-		};
-		return temp;
-	});
-	const frameworkComponents = {
-		actionCellRenderer: ActionCellRenderer
-	};
-	const getRowHeight = () => {
-		return 48;
-	};
-	const headerHeight = () => {
-		return 32;
-	};
+	const frameworkComponents = { actionCellRenderer: ActionCellRenderer };
+	const getRowHeight = () => 48;
+	const headerHeight = () => 32;
+
+	// Ag-Grid event handler
 	const onSelectionChanged = (params) => {
 		const gridApi = params.api;
-		const selectedRows = gridApi.getSelectedRows();
-		console.log('here in selected row data in collection ag-grid: ', selectedRows);
-		dispatch(Actions.setCollectionUpdatingRows(selectedRows));
+		const selectedRow = gridApi.getSelectedRows();
+		console.log('here in selected row data in ag-grid: ', selectedRow);
+		dispatch(Actions.setCollectionUpdateBadges(selectedRow));
 	};
-	console.log('here is print count: ', badgeActivities, badgeIds);
+	const onGridReady = params => {
+		const server = new FakeServer(attendeesCount, dispatch);
+		const dataSource = new ServerSideDataSource(server);
+		params.api.setServerSideDatasource(dataSource);
+	}
 
 	return (
 		<React.Fragment>
@@ -293,26 +214,103 @@ function CollectionTable(props) {
 				style={{ height: '100%', width: '100%', fontSize: '16px' }}
 			>
 				<AgGridReact
-					modules={AllModules}
+					modules={defs.modules}
 					columnDefs={columnDefs}
 					defaultColDef={defs.defaultColDef}
-					rowSelection={'multiple'}
-					suppressRowClickSelection={true}
-					rowData={rowData}
 					frameworkComponents={frameworkComponents}
+					rowSelection={'multiple'}
 					pagination={true}
-					paginationPageSize={100}
+					paginationPageSize={20}
+					onSelectionChanged={onSelectionChanged}
+					rowModelType={'serverSide'}
+					cacheBlockSize={50}
+					maxBlocksInCache={10}
+					animateRows={true}
+					onGridReady={onGridReady}
 					getRowHeight={getRowHeight}
 					headerHeight={headerHeight}
-					floatingFilter={true}
 					overlayLoadingTemplate={defs.overlayLoadingTemplate}
 					overlayNoRowsTemplate={defs.overlayNoRowsTemplate}
-					onSelectionChanged={onSelectionChanged}
 				>
 				</AgGridReact>
 			</div>
 		</React.Fragment>
 	);
+}
+
+// Ag-Grid Server Side Data source
+function ServerSideDataSource(server) {
+	return {
+		getRows: async function (params) {
+			var response = await server.getResponse(params.request);
+			if (response.success) {
+				params.successCallback(response.rows, response.lastRow);
+			} else {
+				params.failCallback();
+			}
+		}
+	};
+}
+
+// Ag-Grid Fake server
+function FakeServer(attendeesCount, dispatch) {
+	return {
+		getResponse: async function (request) {
+			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, attendeesCount);
+			let lastRow = request.endRow <= attendeesCount ? -1 : attendeesCount;
+			dispatch(Actions.getCollectionAttendees(lazyLoadingSet));
+			const rows = lazyLoadingSet.map(attendee => {
+				return {
+					...attendee,
+					badgeFriendId: 0,
+					isCollected: 0,
+					category: (attendee.attendeeCategorySAS[0] && attendee.attendeeCategorySAS[0].categoryName) || '',
+				};
+			});
+			return {
+				success: true,
+				rows,
+				lastRow,
+			};
+		}
+	};
+}
+
+// Action cell renderer
+function ActionCellRenderer(props) {
+	const dispatch = useDispatch();
+	const { data } = props;
+	const updateBadgeActivity = () => {
+		console.log('here update button click: ', data);
+		const body = {
+			id: data.badgeActivityId,
+			isCollected: true,
+		};
+		Utils.xapi().put(`${SERVER_LINK}/api/badge-activity-sas`, body)
+			.then(response => {
+				console.log('here update button click response: ', response);
+				const updateData = {
+					badgeActivityId: response.data.id,
+					isCollected: response.data.isCollected,
+					badgeId: data.badgeId,
+				};
+				dispatch(Actions.updateCollectionBadgeActivity(updateData));
+			})
+			.catch(error => {
+				console.log('update badge activity isCollected error: ', error);
+			});
+	}
+
+	if (!props.data.isCollected) {
+		return (
+			<Button disabled={true} variant="contained" color="secondary">Collected</Button>
+		);
+	} else {
+		return (
+			<Button onClick={updateBadgeActivity} variant="contained" color="secondary">Collected</Button>
+		);
+	}
 }
 
 export default withReducer('registerApp', reducer)(CollectionTable);

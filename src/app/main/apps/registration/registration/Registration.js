@@ -24,18 +24,13 @@ function Registration() {
     const printRef = useRef();
     const dispatch = useDispatch();
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch );
     const rows = useSelector(({ registerApp }) => registerApp.registration.rows);
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
     const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
-    localStorage.setItem('search_text', searchText);
-
-    // console.log("attendees",attendees)
-
-    // useEffect(() => {
-    //     dispatch(Actions.getRegistrationAttendees());
-    // }, [dispatch]);
-
-    // console.log('here in registration: ', rows);
+    const [textChange, changeText] = useState('');
+    const printData = (searchText == '') ? (attendees) : (attendeesSearch);
+    console.log("total attendees",printData);
     return (
         <FusePageCarded
             classes={{
@@ -56,11 +51,23 @@ function Registration() {
                                     className="flex flex-1"
                                     disableUnderline
                                     fullWidth
-                                    value={searchText}
+                                    value={textChange}
                                     inputProps={{
                                         'aria-label': 'Search'
                                     }}
-                                    onChange={ev => dispatch(Actions.setSearchText(ev))}
+                                    onChange={ev => {
+                                        if (ev.target.value == '') {
+                                            dispatch(Actions.setSearchText(ev.target.value));
+                                            changeText('');
+                                        }
+                                        else 
+                                            changeText(ev.target.value)
+                                    }}
+                                    onKeyDown = {ev =>{
+                                        if (ev.key === 'Enter'){
+                                            dispatch(Actions.setSearchText(ev.target.value))
+                                        }
+                                    }}
                                 />
                             </Paper>
                         </FuseAnimate>
@@ -69,7 +76,7 @@ function Registration() {
                         trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
                         content={() => printRef.current}
                     />
-                    <RegistrationPrint attendees={attendees} rows={rows} ref={printRef} />
+                    <RegistrationPrint attendees={printData} rows={rows} ref={printRef} />
                 </div>
             }
             content={
