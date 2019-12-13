@@ -22,10 +22,32 @@ const productsReducer = function (state = initialState, action) {
         // }
         case Actions.UPDATE_REGISTRATION_ATTENDEES:
         {
-            return {
-                ...state,
-                attendees: action.payload,
-            };
+            if(!state.searchText){
+                let indexId = action.payload[0] && action.payload[0].id;
+                const index = state.attendees.filter(attendee => attendee.id === indexId);
+                if(index.length > 0){
+                    // console.log("include")
+                    return {
+                        ...state,
+                        attendees: state.attendees,
+                    };
+                }
+                else {
+                    // console.log("not include")
+                    return {
+                        ...state,
+                        attendees: state.attendees.concat(action.payload),
+                    };
+                
+                }
+            }
+            else {
+                return {
+                    ...state,
+                    attendees:action.payload
+                }
+            }
+            
         }
         case Actions.SET_REGISTRATION_ROWS:
         {
