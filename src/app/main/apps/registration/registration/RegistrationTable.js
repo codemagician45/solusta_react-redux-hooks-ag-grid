@@ -110,7 +110,6 @@ function RegistrationTable(props) {
     const dispatch = useDispatch();
     const mount = useRef(false);
     const count = useSelector(({ registerApp }) => registerApp.registration.count);
-
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
     const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
@@ -118,18 +117,29 @@ function RegistrationTable(props) {
     const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
      
     const [gridApi, setGridApi] = useState(null);
-    // const [tableData, setTableData] = useState([]);
-
-    // useEffect(() => {
-    //     setTableData(attendees);
-    // },[attendees]);
-
+    
     tableDataUnsearch = attendees;
     tableDataSearch = attendeesSearch;
+    resultCount = count;
     
-    
-    // console.log("1111111111111111111 table",tableData);
-    // console.log("111111111111111111 count", resultCount);
+    useEffect(() => {
+        dispatch(Actions.getAttendeeCount());
+    });
+
+    useEffect(() => {
+        mount.current = true;
+        return () => {
+            mount.current = false;
+        }
+    });
+
+    useEffect(() => {
+        getBadgeIdArr();
+    }, [attendees]);
+
+    useEffect(() => {
+        getPrintCountArr();
+    }, [badgeIDs]);
 
     const ServerSideDatasource = (server) => {
         return {
@@ -147,35 +157,26 @@ function RegistrationTable(props) {
     }
     
     const FakeServer = (_searchText = "") => {
-        // if(_searchText) console.log("FakeServerFun_Renderrr", _searchText)
         return {
             getResponse: function (request) {
                 return new Promise((resolve, reject) => {
-                    console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+                    // console.log("asking for rows: " + request.startRow + " to " + request.endRow);
                     let filterPresent = request.filterModel && Object.keys(request.filterModel).length > 0;
                     const header = {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                         }
                     };
-                    console.log(_searchText);
                     if(_searchText == ''){
                             axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
-                                    
                                     dispatch(Actions.updateRegistrationAttendees(res.data));
-                                    // console.log("22222222222222222222 table",tableData);
-                                    // console.log("22222222222222222222 count",resultCount);
-
                                     let dataAfterSortingAndFiltering = sortAndFilter(tableDataUnsearch, request.sortModel, request.filterModel);
-                                    console.log("filter result", dataAfterSortingAndFiltering);
                                     let lastRow = -1;
-                                    
                                     if (!filterPresent)
                                          lastRow = request.endRow <= resultCount ? -1 : resultCount;
                                     else 
                                          lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
-                                    console.log(lastRow);
                                     const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
                                         const temp = {
                                             id: data.id,
@@ -200,9 +201,7 @@ function RegistrationTable(props) {
                     else {
                             axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}`, null, header).then(
                                 res => {
-
                                     dispatch(Actions.updateRegistrationAttendeesSearch(res.data))
-                                    console.log(tableDataSearch);
                                     let dataAfterSortingAndFiltering = sortAndFilter(tableDataSearch, request.sortModel, request.filterModel);
                                     let lastRow = dataAfterSortingAndFiltering.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+dataAfterSortingAndFiltering.length:-1
                                     const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
@@ -226,7 +225,6 @@ function RegistrationTable(props) {
                                 resolve(result)
                             });
                         }
-                    // }
                 });
             }
         };
@@ -235,36 +233,16 @@ function RegistrationTable(props) {
         if(!GridReadyInstance) return;
         const gridApi = GridReadyInstance.api;
         mount.current && setGridApi(gridApi);
-        // const gridColumnApi = params.columnApi;
         const server = FakeServer(_searchText);
         const dataSource = ServerSideDatasource(server);
         GridReadyInstance.api.setServerSideDatasource(dataSource);
     };
+
     if( _tempSearchText != searchText )
     {
         searchText = _tempSearchText;
         const result = onSearchFun(searchText);
     }
-    useEffect(() => {
-        dispatch(Actions.getAttendeeCount());
-    })
-
-    resultCount = count;
-
-    useEffect(() => {
-        mount.current = true;
-        return () => {
-            mount.current = false;
-        }
-    })
-
-    useEffect(() => {
-        getBadgeIdArr();
-    }, [attendees]);
-
-    useEffect(() => {
-        getPrintCountArr();
-    }, [badgeIDs]);
 
     const getBadgeIdArr = () => {
         const promiseArr = attendees && attendees.map((attendee, index) => {
@@ -291,7 +269,7 @@ function RegistrationTable(props) {
             });
             dispatch(Actions.getRegBadgeIDs(badgeIdArr));
         }).catch(error => {
-            console.log('here error in get badge id error: ', error);
+            // console.log('here error in get badge id error: ', error);
         });
     };
 
@@ -339,7 +317,7 @@ function RegistrationTable(props) {
             });
             dispatch(Actions.getRegPrintCounts(printCountArr));
         }).catch(error => {
-            console.log('here error in get print count error: ', error);
+            // console.log('here error in get print count error: ', error);
         });
     };
 
@@ -492,9 +470,6 @@ function RegistrationTable(props) {
         const dataSource = ServerSideDatasource(server);
         params.api.setServerSideDatasource(dataSource);
     };
-    
-    
-
  
     const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
         return sortData(sortModel, filterData(filterModel, allOfTheData));
@@ -538,7 +513,7 @@ function RegistrationTable(props) {
 
             // ID filter
             if (filterModel.id) {
-                console.log(filterModel.id)
+                // console.log(filterModel.id)
                 var id = item.id;
                 var allowedId = parseInt(filterModel.id.filter);
                 if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
@@ -624,6 +599,7 @@ function RegistrationTable(props) {
 
     // const getRowHeight = () => { return 48; };
     // const headerHeight = () => { return 32; };
+
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
         const selectedRow = gridApi.getSelectedRows();
@@ -643,18 +619,15 @@ function RegistrationTable(props) {
                     defaultColDef={defs.defaultColDef}
                     rowSelection='multiple'
                     rowDeselection={true}
-                    // rowData={rowData}
                     frameworkComponents={frameworkComponents}
                     // getRowHeight={getRowHeight}
                     // headerHeight={headerHeight}
-
                     onGridReady={onGridReady}
                     rowModelType={rowModelType}
                     maxBlocksInCache={maxBlocksInCache}
                     cacheBlockSize={cacheBlockSize}
                     rowHeight={rowHeight}
 
-                    // components = {components}
                     pagination={true}
                     // paginationAutoPageSize={true}
                     paginationPageSize={15}
