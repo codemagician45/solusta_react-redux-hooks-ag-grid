@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
 import { AllModules } from '@ag-grid-enterprise/all-modules';
-import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
+
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
@@ -37,7 +37,6 @@ function LoadingRenderer(props) {
 // Image cell renderer
 function ImageCellRender(props) {
     // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    // console.log(props)
     const id = props.data && props.data.id;
     // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
     const attendee = props.data && props.data;
@@ -133,7 +132,7 @@ function RegistrationTable(props) {
     }
     
     const FakeServer = (_searchText = "") => {
-        if(_searchText) console.log("FakeServerFun_Renderrr", _searchText)
+        // if(_searchText) console.log("FakeServerFun_Renderrr", _searchText)
         return {
             getResponse: function (request) {
                 return new Promise((resolve, reject) => {
@@ -147,13 +146,15 @@ function RegistrationTable(props) {
                     if(_searchText == ''){
                             axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
+                                    console.log("In not search",res.data);
                                     let dataAfterSortingAndFiltering = sortAndFilter(res.data, request.sortModel, request.filterModel);
                                     let lastRow = -1;
-                                    dispatch(Actions.updateRegistrationAttendees(dataAfterSortingAndFiltering))
+                                    dispatch(Actions.updateRegistrationAttendees(dataAfterSortingAndFiltering));
                                     if (!filterPresent)
                                          lastRow = request.endRow <= resultCount ? -1 : resultCount;
                                     else 
                                          lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
+                                    console.log(lastRow);
                                     const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
                                         const temp = {
                                             id: data.id,
@@ -176,38 +177,11 @@ function RegistrationTable(props) {
                                 });
                     }
                     else {
-                        // axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}&size=${cacheBlockSize}&sort=id&sort=desc`, null, header).then(
-                        // if(!filterPresent) {
-                        //     axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}`, null, header).then(
-                        //         res => {
-                        //             dispatch(Actions.updateRegistrationAttendees(res.data))
-                        //             let lastRow = res.data.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+res.data.length:-1
-                        //             const rowData = res.data && res.data.map(data => {
-                        //                 const temp = {
-                        //                     id:data.id,
-                        //                     category:data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
-                        //                     firstName:data.firstName,
-                        //                     lastName:data.lastName,
-                        //                     companyName:data.companyName,
-                        //                     email:data.email,
-                        //                     mainPhoto:data.mainPhoto,
-                        //                     mainPhotoContentType:data.mainPhotoContentType
-                        //                 }
-                        //                 return temp;
-                        //             });
-                        //             let result = {
-                        //                 success: true,
-                        //                 rows: rowData,
-                        //                 lastRow:lastRow
-                        //             }
-                        //         resolve(result)
-                        //     });
-                        // }   
-                        // else{
                             axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}`, null, header).then(
                                 res => {
+                                    console.log("In search",res.data)
                                     let dataAfterSortingAndFiltering = sortAndFilter(res.data, request.sortModel, request.filterModel);
-                                    dispatch(Actions.updateRegistrationAttendees(dataAfterSortingAndFiltering))
+                                    dispatch(Actions.updateRegistrationAttendeesSearch(dataAfterSortingAndFiltering))
                                     let lastRow = dataAfterSortingAndFiltering.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+dataAfterSortingAndFiltering.length:-1
                                     const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
                                         const temp = {

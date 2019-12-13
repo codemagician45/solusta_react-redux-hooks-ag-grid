@@ -7,6 +7,7 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 export const SET_REGISTRATION_ROWS = '[REGISTRATION] SET_REGISTRATION_ROWS';
 // export const GET_REGISTRATION_ATTENDEES = '[REGISTRATION] GET_REGISTRATION_ATTENDEES';
 export const UPDATE_REGISTRATION_ATTENDEES = '[REGISTRATION] UPDATE_REGISTRATION_ATTENDEES';
+export const UPDATE_REGISTRATION_ATTENDEES_SEARCH = '[REGISTRATION] UPDATE_REGISTRATION_ATTENDEES_SEARCH';
 export const GET_FRIENDLYIDS = '[REGISTRATION] GET_FRIENDLYIDS';
 export const GET_REG_BADGE_IDS = '[REGISTRATION] GET_REG_BADGE_IDS';
 export const GET_REG_PRINT_COUNTS = '[REGISTRATION] GET_REG_PRINT_COUNTS';
@@ -32,11 +33,16 @@ export const SET_REG_SEARCH_TEXT = '[REGISTRATION] SET REG_SEARCH TEXT';
 // 			})
 // 		);
 // }
-
 export function updateRegistrationAttendees(data) {
-	// console.log("updating attendee data",data)
 	return {
 		type: UPDATE_REGISTRATION_ATTENDEES,
+		payload:data
+	}
+
+}
+export function updateRegistrationAttendeesSearch(data) {
+	return {
+		type: UPDATE_REGISTRATION_ATTENDEES_SEARCH,
 		payload:data
 	}
 

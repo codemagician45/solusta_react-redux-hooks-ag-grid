@@ -41,12 +41,12 @@ function PhotoEditor(props) {
 
   useEffect(() => {
     setImage(props.image);
-  }, [props, props.attendee, props.attendeeId, props.image]);
+  }, [props.image]);
 
   const saveCroppedImage = () => {
     const { imageEditorInst } = imageEditor.current;
     const data = imageEditorInst.toDataURL();
-    setImage(data);
+    // setImage(data);
     props.onCrop(data);
   };
 
