@@ -2,6 +2,7 @@ import * as Actions from '../actions';
 
 const initialState = {
     attendees: [],
+    attendeesSearch: [],
     rows: [],
     badgeIDs: [],
     printedCounts: [],
@@ -22,7 +23,6 @@ const productsReducer = function (state = initialState, action) {
         // }
         case Actions.UPDATE_REGISTRATION_ATTENDEES:
         {
-            if(!state.searchText){
                 let indexId = action.payload[0] && action.payload[0].id;
                 const index = state.attendees.filter(attendee => attendee.id === indexId);
                 if(index.length > 0){
@@ -40,14 +40,26 @@ const productsReducer = function (state = initialState, action) {
                     };
                 
                 }
-            }
-            else {
-                return {
-                    ...state,
-                    attendees:action.payload
+        }
+        case Actions.UPDATE_REGISTRATION_ATTENDEES_SEARCH:
+        {
+            let indexId = action.payload[0] && action.payload[0].id;
+                const index = state.attendeesSearch.filter(attendee => attendee.id === indexId);
+                if(index.length > 0){
+                    // console.log("include")
+                    return {
+                        ...state,
+                        attendeesSearch: state.attendeesSearch,
+                    };
                 }
-            }
-            
+                else {
+                    // console.log("not include")
+                    return {
+                        ...state,
+                        attendeesSearch: state.attendeesSearch.concat(action.payload),
+                    };
+                
+                }
         }
         case Actions.SET_REGISTRATION_ROWS:
         {
