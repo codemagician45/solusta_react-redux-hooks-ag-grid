@@ -24,7 +24,10 @@ const securityApprovalReducer = function (state = initialState, action) {
     case Actions.GET_SEC_ATTENDEES: {
       return {
         ...state,
-        attendees: Utils.arrayToObject(action.payload),
+        attendees: {
+          ...state.attendees,
+          ...Utils.arrayToObject(action.payload),
+        }
       };
     }
     case Actions.GET_SEC_APPROVALS: {

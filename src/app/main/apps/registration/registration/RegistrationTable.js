@@ -25,79 +25,80 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 
 // Lazy loading cell renderer
 function LoadingRenderer(props) {
-    if (props.value !== undefined) {
-        return props.value;
-    } else {
-        return (
-            <img src="../assets/images/loading.gif" alt={'loading'} />
-        );
-    }
+	if (props.value !== undefined) {
+		return props.value;
+	} else {
+		return (
+			<img src="../assets/images/loading.gif" alt={'loading'} />
+		);
+	}
 }
 
 // Image cell renderer
 function ImageCellRender(props) {
-    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    const id = props.data && props.data.id;
-    // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
-    const attendee = props.data && props.data;
+	// const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+	// console.log(props)
+	const id = props.data && props.data.id;
+	// const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
+	const attendee = props.data && props.data;
 
-    const style = {
-        height: '48px',
-        width: '48px',
-        padding: '5px'
-    };
-    // if (attendee[0] && attendee[0].mainPhoto === '')
-    if (attendee && attendee.mainPhoto === '')
-        return (
-            <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
-        );
-    else {
-        return (
-            <Link to={`/app/attendees/registration/${id}`}>
-                {/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
-                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
-            </Link>
-        );
-    }
+	const style = {
+		height: '48px',
+		width: '48px',
+		padding: '5px'
+	};
+	// if (attendee[0] && attendee[0].mainPhoto === '')
+	if (attendee && attendee.mainPhoto === '')
+		return (
+			<img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
+		);
+	else {
+		return (
+			<Link to={`/app/attendees/registration/${id}`}>
+				{/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
+				<img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
+			</Link>
+		);
+	}
 }
 
 // Action cell renderer
 function ActionCellRendererPrint(props) {
-    const dispatch = useDispatch();
-    const printHandler = () => {
-        const { data } = props;
-        dispatch(Actions.updateRegBadgeActivityPrint(data));
-        // console.log('here print button click event: ', data);
-    }
-    // console.log("print", props)
-    if (props.data.printCount >= 1) {
-        return (
-            <Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
-        );
-    } else {
-        return (
-            <Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
-        );
-    }
+	const dispatch = useDispatch();
+	const printHandler = () => {
+		const { data } = props;
+		dispatch(Actions.updateRegBadgeActivityPrint(data));
+		// console.log('here print button click event: ', data);
+	}
+	// console.log("print", props)
+	if (props.data.printCount >= 1) {
+		return (
+			<Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
+		);
+	} else {
+		return (
+			<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
+		);
+	}
 }
 
 function ActionCellRendererCollection(props) {
-    const dispatch = useDispatch();
-    const collectionHandler = () => {
-        const { data } = props;
-        dispatch(Actions.updateRegBadgeActivityCollection(data));
-        // console.log('here collection button click event: ', data);
-    }
+	const dispatch = useDispatch();
+	const collectionHandler = () => {
+		const { data } = props;
+		dispatch(Actions.updateRegBadgeActivityCollection(data));
+		// console.log('here collection button click event: ', data);
+	}
 
-    if (props.data.isCollected === 'true') {
-        return (
-            <Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
-        );
-    } else {
-        return (
-            <Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
-        );
-    }
+	if (props.data.isCollected === 'true') {
+		return (
+			<Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
+		);
+	} else {
+		return (
+			<Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
+		);
+	}
 }
 var tableDataUnsearch = [];
 var tableDataSearch = [];
