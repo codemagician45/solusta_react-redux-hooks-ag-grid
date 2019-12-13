@@ -99,7 +99,8 @@ function ActionCellRendererCollection(props) {
         );
     }
 }
-
+var tableDataUnsearch = [];
+var tableDataSearch = [];
 var resultCount = 0;
 var searchText = '';
 var GridReadyInstance = null;
@@ -111,11 +112,25 @@ function RegistrationTable(props) {
     const count = useSelector(({ registerApp }) => registerApp.registration.count);
 
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
     const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
     const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
+    const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
      
     const [gridApi, setGridApi] = useState(null);
-    const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
+    // const [tableData, setTableData] = useState([]);
+
+    // useEffect(() => {
+    //     setTableData(attendees);
+    // },[attendees]);
+
+    tableDataUnsearch = attendees;
+    tableDataSearch = attendeesSearch;
+    
+    
+    // console.log("1111111111111111111 table",tableData);
+    // console.log("111111111111111111 count", resultCount);
+
     const ServerSideDatasource = (server) => {
         return {
             getRows: function (params) {
@@ -143,13 +158,19 @@ function RegistrationTable(props) {
                             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                         }
                     };
+                    console.log(_searchText);
                     if(_searchText == ''){
                             axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
                                 res => {
-                                    console.log("In not search",res.data);
-                                    let dataAfterSortingAndFiltering = sortAndFilter(res.data, request.sortModel, request.filterModel);
+                                    
+                                    dispatch(Actions.updateRegistrationAttendees(res.data));
+                                    // console.log("22222222222222222222 table",tableData);
+                                    // console.log("22222222222222222222 count",resultCount);
+
+                                    let dataAfterSortingAndFiltering = sortAndFilter(tableDataUnsearch, request.sortModel, request.filterModel);
+                                    console.log("filter result", dataAfterSortingAndFiltering);
                                     let lastRow = -1;
-                                    dispatch(Actions.updateRegistrationAttendees(dataAfterSortingAndFiltering));
+                                    
                                     if (!filterPresent)
                                          lastRow = request.endRow <= resultCount ? -1 : resultCount;
                                     else 
@@ -179,9 +200,10 @@ function RegistrationTable(props) {
                     else {
                             axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}`, null, header).then(
                                 res => {
-                                    console.log("In search",res.data)
-                                    let dataAfterSortingAndFiltering = sortAndFilter(res.data, request.sortModel, request.filterModel);
-                                    dispatch(Actions.updateRegistrationAttendeesSearch(dataAfterSortingAndFiltering))
+
+                                    dispatch(Actions.updateRegistrationAttendeesSearch(res.data))
+                                    console.log(tableDataSearch);
+                                    let dataAfterSortingAndFiltering = sortAndFilter(tableDataSearch, request.sortModel, request.filterModel);
                                     let lastRow = dataAfterSortingAndFiltering.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+dataAfterSortingAndFiltering.length:-1
                                     const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
                                         const temp = {
