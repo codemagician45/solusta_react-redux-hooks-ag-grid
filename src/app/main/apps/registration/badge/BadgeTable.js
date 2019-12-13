@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
@@ -27,7 +26,7 @@ const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod
 
 const getLazyLoadingDataSet = (endRow, startRow) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 20 - 1}&size=${20}`)
+		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
 				console.log('here lazy loading data set function: ', response.data);
 				resolve(response.data);
@@ -123,14 +122,20 @@ const getPrintCountArr = (badges, dispatch) => {
 	});
 };
 
+const getAttendsCount = () => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+			.then(response => {
+				resolve(response.data);
+			})
+			.catch(error => {
+				reject(error);
+			})
+	})
+}
+
 function BadgeTable(props) {
 	const dispatch = useDispatch();
-	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
-	const totalAttendeeCount = useSelector(({ registerApp }) => registerApp.badge.totalAttendeeCount);
-	const badges = useSelector(({ registerApp }) => registerApp.badge.badges);
-	const badgeActivities = useSelector(({ registerApp }) => registerApp.badge.badgeActivities);
-
-	console.log('here in badge table: ', attendees, totalAttendeeCount, badges, badgeActivities);
 
 	const columnDefs = [
 		{
@@ -197,7 +202,7 @@ function BadgeTable(props) {
 				'font-size': '14px',
 				'font-family': 'sans-serif',
 			}
-		}
+		},
 	];
 	const defs = {
 		defaultColDef: {
@@ -227,8 +232,9 @@ function BadgeTable(props) {
 		dispatch(Actions.setBadgeAttendeeSelectedRows(selectedRow));
 	};
 
-	const onGridReady = params => {
-		const server = new FakeServer(totalAttendeeCount, dispatch);
+	const onGridReady = async (params) => {
+		let count = await getAttendsCount();
+		const server = new FakeServer(count, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
 	}
@@ -249,7 +255,7 @@ function BadgeTable(props) {
 					paginationPageSize={20}
 					onSelectionChanged={onSelectionChanged}
 					rowModelType={'serverSide'}
-					cacheBlockSize={20}
+					cacheBlockSize={50}
 					maxBlocksInCache={10}
 					animateRows={true}
 					onGridReady={onGridReady}
@@ -279,19 +285,19 @@ function ServerSideDataSource(server) {
 }
 
 // Ag-Grid Fake server
-function FakeServer(totalAttendeeCount, dispatch) {
+function FakeServer(totalAttendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
 			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
-			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, totalAttendeeCount);
-			let lastRow = request.endRow <= totalAttendeeCount ? -1 : totalAttendeeCount;
+			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, totalAttendeesCount);
+			let lastRow = request.endRow <= totalAttendeesCount ? -1 : totalAttendeesCount;
 			dispatch(Actions.getBadgeAttendees(lazyLoadingSet));
 			const rows = lazyLoadingSet.map(attendee => {
 				return {
 					...attendee,
 					badgeFriendId: 0,
 					printedCount: 0,
-					category: attendee.attendeeCategorySAS[0].categoryName,
+					category: (attendee.attendeeCategorySAS[0] && attendee.attendeeCategorySAS[0].categoryName) || '',
 				};
 			});
 			return {
@@ -306,7 +312,7 @@ function FakeServer(totalAttendeeCount, dispatch) {
 // Action cell renderer
 function ActionCellRenderer(props) {
 	console.log("badgeIds", props)
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
 		// dispatch(Actions.updateBadgeActivity(data));

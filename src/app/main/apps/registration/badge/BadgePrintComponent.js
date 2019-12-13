@@ -82,45 +82,51 @@ const styles = (theme) => ({
 });
 
 const ImagePart = ({ item }) => {
-	switch (item.attendeeCategorySAS[0].categoryName) {
-		case "Speaker": {
-			return (
-				<img src={BG3} alt="background" />
-			)
+	if (item.attendeeCategorySAS && item.attendeeCategorySAS[0]) {
+		switch (item.attendeeCategorySAS[0].categoryName) {
+			case "Speaker": {
+				return (
+					<img src={BG3} alt="background" />
+				);
+			}
+			case "Organizer": {
+				return (
+					<img src={BG5} alt="background" />
+				);
+			}
+			case "Participant": {
+				return (
+					<img src={BG1} alt="background" />
+				);
+			}
+			case "Event Crew": {
+				return (
+					<img src={BG6} alt="background" />
+				);
+			}
+			case "Media": {
+				return (
+					<img src={BG2} alt="background" />
+				);
+			}
+			case "Security": {
+				return (
+					<img src={BG4} alt="background" />
+				);
+			}
+			case "Contractor": {
+				return (
+					<img src={BG7} alt="background" />
+				);
+			}
+			default: {
+				return;
+			}
 		}
-		case "Organizer": {
-			return (
-				<img src={BG5} alt="background" />
-			)
-		}
-		case "Participant": {
-			return (
-				<img src={BG1} alt="background" />
-			)
-		}
-		case "Event Crew": {
-			return (
-				<img src={BG6} alt="background" />
-			)
-		}
-		case "Media": {
-			return (
-				<img src={BG2} alt="background" />
-			)
-		}
-		case "Security": {
-			return (
-				<img src={BG4} alt="background" />
-			)
-		}
-		case "Contractor": {
-			return (
-				<img src={BG7} alt="background" />
-			)
-		}
-		default: {
-			return;
-		}
+	} else {
+		return (
+			<img src={BG7} alt="background" />
+		);
 	}
 }
 
