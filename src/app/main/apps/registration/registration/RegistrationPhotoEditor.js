@@ -41,9 +41,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-
-
-
 function RegistrationPhotoEditor(props) {
     const dispatch = useDispatch();
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
@@ -78,21 +75,19 @@ function RegistrationPhotoEditor(props) {
 
     const setCroppedImage = (data) => {
         // setImage(data);
-        console.log('image crop data in parent component: ', data);
         const requestData = {
             ...attendee,
             mainPhotoContentType: data.slice(5, 14),
             mainPhoto: data.slice(22),
         }
-        console.log("request",requestData)
         Utils.xapi().put('/attendee-sas', requestData)
             .then(response => {
-                console.log('update photo success: ', response.data);
+                // console.log('update photo success: ', response.data);
                 setOpenSucess(true);
                 dispatch(Actions.setSearchText(''));
             })
             .catch(error => {
-                console.log('update photo error: ', error);
+                // console.log('update photo error: ', error);
                 setOpenFail(true);
                 dispatch(Actions.setSearchText(''));
 
