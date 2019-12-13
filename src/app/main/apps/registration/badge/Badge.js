@@ -1,12 +1,12 @@
-import React, { useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useRef } from 'react';
+import { useSelector } from 'react-redux';
 import ReactToPrint from 'react-to-print'; // for Print React component
 
 import { Button } from '@material-ui/core';
 
 // import Redux
 import withReducer from 'app/store/withReducer';
-import * as Actions from '../store/actions';
+// import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
 import { FusePageCarded } from '@fuse';
@@ -15,13 +15,8 @@ import BadgePrintComponent from './BadgePrintComponent';
 
 function Badge() {
 	const printRef = useRef();
-	const dispatch = useDispatch();
 	const selectedRows = useSelector(({ registerApp }) => registerApp.badge.selectedRows);
 	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
-
-	useEffect(() => {
-		dispatch(Actions.getBadgeTotalAttendeeCount());
-	}, [dispatch]);
 
 	return (
 		<FusePageCarded

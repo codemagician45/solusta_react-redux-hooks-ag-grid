@@ -4,7 +4,6 @@ import * as Actions from '../actions';
 // TODO: use Objects in redux store not Array
 const initialState = {
 	attendees: [],
-	attendeesCount: 200,
 	badges: [],
 	badgeActivities: [],
 	selectedBadges: [],
@@ -16,12 +15,6 @@ const collectionReducer = function (state = initialState, action) {
 			return {
 				...state,
 				attendees: state.attendees.concat(action.payload),
-			};
-		}
-		case Actions.GET_COLLECTION_ATTENDEES_COUNT: {
-			return {
-				...state,
-				attendeesCount: action.payload,
 			};
 		}
 		case Actions.GET_COLLECTION_BADGES: {

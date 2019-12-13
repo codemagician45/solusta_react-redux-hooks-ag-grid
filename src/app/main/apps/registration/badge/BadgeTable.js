@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
@@ -122,14 +122,20 @@ const getPrintCountArr = (badges, dispatch) => {
 	});
 };
 
+const getAttendsCount = () => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+			.then(response => {
+				resolve(response.data);
+			})
+			.catch(error => {
+				reject(error);
+			})
+	})
+}
+
 function BadgeTable(props) {
 	const dispatch = useDispatch();
-	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
-	const totalAttendeesCount = useSelector(({ registerApp }) => registerApp.badge.totalAttendeesCount);
-	const badges = useSelector(({ registerApp }) => registerApp.badge.badges);
-	const badgeActivities = useSelector(({ registerApp }) => registerApp.badge.badgeActivities);
-
-	console.log('here in badge table: ', attendees, totalAttendeesCount, badges, badgeActivities);
 
 	const columnDefs = [
 		{
@@ -226,8 +232,9 @@ function BadgeTable(props) {
 		dispatch(Actions.setBadgeAttendeeSelectedRows(selectedRow));
 	};
 
-	const onGridReady = params => {
-		const server = new FakeServer(totalAttendeesCount, dispatch);
+	const onGridReady = async (params) => {
+		let count = await getAttendsCount();
+		const server = new FakeServer(count, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
 	}
@@ -305,7 +312,7 @@ function FakeServer(totalAttendeesCount, dispatch) {
 // Action cell renderer
 function ActionCellRenderer(props) {
 	console.log("badgeIds", props)
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
 		// dispatch(Actions.updateBadgeActivity(data));
