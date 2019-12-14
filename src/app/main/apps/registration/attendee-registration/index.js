@@ -85,9 +85,13 @@ function Category(props) {
 		props.history.push('/app/attendees/attendee/contractor');
 	}
 
-	const closeSnack = () => {
+	const onCloseSuccessSnack = () => {
 		setSucceed(false);
 	};
+
+	const onCloseFailSnack = () => {
+		setFailed(false);
+	}
 
 	return (
 		<React.Fragment>
@@ -137,7 +141,7 @@ function Category(props) {
 				}}
 				open={succeed}
 				autoHideDuration={4000}
-				onClose={closeSnack}
+				onClose={onCloseSuccessSnack}
 				className={classes.snackBar}
 			>
 				<Notification
@@ -153,7 +157,7 @@ function Category(props) {
 				}}
 				open={failed}
 				autoHideDuration={4000}
-				onClose={closeSnack}
+				onClose={onCloseFailSnack}
 				className={classes.snackBar}
 			>
 				<Notification

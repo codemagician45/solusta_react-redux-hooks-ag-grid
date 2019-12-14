@@ -24,12 +24,12 @@ function Registration() {
     const printRef = useRef();
     const dispatch = useDispatch();
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch );
+    const attendeesSearch = useSelector(({ registerApp }) => registerApp.registration.attendeesSearch);
     const rows = useSelector(({ registerApp }) => registerApp.registration.rows);
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
     const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
     const [textChange, changeText] = useState('');
-    const printData = (searchText == '') ? (attendees) : (attendeesSearch);
+    const printData = (searchText === '') ? (attendees) : (attendeesSearch);
     return (
         <FusePageCarded
             classes={{
@@ -59,11 +59,11 @@ function Registration() {
                                             dispatch(Actions.setSearchText(ev.target.value));
                                             changeText('');
                                         }
-                                        else 
+                                        else
                                             changeText(ev.target.value)
                                     }}
-                                    onKeyDown = {ev =>{
-                                        if (ev.key === 'Enter'){
+                                    onKeyDown={ev => {
+                                        if (ev.key === 'Enter') {
                                             dispatch(Actions.setSearchText(ev.target.value))
                                         }
                                     }}

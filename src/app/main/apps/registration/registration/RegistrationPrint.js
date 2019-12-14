@@ -87,9 +87,6 @@ const styles = (theme) => ({
         textAlign: 'center',
         color: '#4d4d4d'
     },
-
-
-
 });
 
 const ImagePart = ({ item }) => {
