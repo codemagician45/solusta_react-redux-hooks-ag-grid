@@ -37,9 +37,9 @@ const navigationConfig = [
                     },
                     {
                         'id': 'category',
-                        'title': 'Create New Attendee',
+                        'title': 'Attendee Registration',
                         'type': 'item',
-                        'url': '/app/attendees/category'
+                        'url': '/app/attendees/attendee'
                     },
                 ]
             },

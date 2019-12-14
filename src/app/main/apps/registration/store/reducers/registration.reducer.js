@@ -23,39 +23,50 @@ const productsReducer = function (state = initialState, action) {
         // }
         case Actions.UPDATE_REGISTRATION_ATTENDEES:
         {
-                let indexId = action.payload[0] && action.payload[0].id;
-                const index = state.attendees.filter(attendee => attendee.id === indexId);
-                if(index.length > 0){
-                    return {
-                        ...state,
-                        attendees: state.attendees,
-                    };
-                }
-                else {
-                    return {
-                        ...state,
-                        attendees: state.attendees.concat(action.payload),
-                    };
-                
-                }
+            let indexId = action.payload[0] && action.payload[0].id;
+            const index = state.attendees.filter(attendee => attendee.id === indexId);
+            if(index.length > 0){
+                return {
+                    ...state,
+                    attendees: state.attendees,
+                };
+            }
+            else {
+                return {
+                    ...state,
+                    attendees: state.attendees.concat(action.payload),
+                };
+            
+            }
         }
         case Actions.UPDATE_REGISTRATION_ATTENDEES_SEARCH:
         {
             let indexId = action.payload[0] && action.payload[0].id;
-                const index = state.attendeesSearch.filter(attendee => attendee.id === indexId);
-                if(index.length > 0){
-                    return {
-                        ...state,
-                        attendeesSearch: state.attendeesSearch,
-                    };
-                }
-                else {
-                    return {
-                        ...state,
-                        attendeesSearch: state.attendeesSearch.concat(action.payload),
-                    };
-                
-                }
+            const index = state.attendeesSearch.filter(attendee => attendee.id === indexId);
+            if(index.length > 0){
+                return {
+                    ...state,
+                    attendeesSearch: state.attendeesSearch,
+                };
+            }
+            else {
+                return {
+                    ...state,
+                    attendeesSearch: state.attendeesSearch.concat(action.payload),
+                };
+            
+            }
+        }
+        case Actions.UPDATE_REGISTRATION_SINGLE_ATTENDEE:
+        {  
+                const findIndex1 = state.attendees.findIndex(x => x.id == action.payload.id);
+                state.attendees[findIndex1] = action.payload;
+                const findIndex2 = state.attendeesSearch.findIndex(x => x.id == action.payload.id);
+                state.attendeesSearch[findIndex2] = action.payload;
+
+             return {
+                ...state,
+            }
         }
         case Actions.SET_REGISTRATION_ROWS:
         {

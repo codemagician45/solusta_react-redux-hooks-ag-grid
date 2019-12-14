@@ -1,10 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import ReactToPrint from 'react-to-print'; // for Print React component
 
 // import @material-ui components
-import { Button, Paper, Input, Icon, } from '@material-ui/core';
+import { Button, Paper, Input, Icon, Typography } from '@material-ui/core';
 
 // import Redux
 import withReducer from 'app/store/withReducer';
@@ -16,20 +15,36 @@ import { FusePageCarded, FuseAnimate } from '@fuse';
 import RegistrationTable from './RegistrationTable';
 import RegistrationPrint from './RegistrationPrint';
 import { ThemeProvider } from '@material-ui/styles';
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 function Registration() {
     const printRef = useRef();
+    const tableRef = useRef();
     const dispatch = useDispatch();
+    const count = useSelector(({ registerApp }) => registerApp.registration.count);
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch );
+    const attendeesSearch = useSelector(({ registerApp }) => registerApp.registration.attendeesSearch);
+    const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
     const rows = useSelector(({ registerApp }) => registerApp.registration.rows);
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
-    const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
+    const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
     const [textChange, changeText] = useState('');
-    const printData = (searchText == '') ? (attendees) : (attendeesSearch);
+    const printData = (_tempSearchText === '') ? (attendees) : (attendeesSearch);
+
+    const initialTableData = {
+        count: 0,
+        attendees: [],
+        attendeesSearch: [],
+        _tempSearchText: '',
+        badgeIDs: []
+    }
+    const tableData = {
+        ...initialTableData,
+        count: count,
+        attendees: attendees,
+        attendeesSearch: attendeesSearch,
+        _tempSearchText: _tempSearchText,
+        badgeIDs: badgeIDs
+    }
     return (
         <FusePageCarded
             classes={{
@@ -37,14 +52,12 @@ function Registration() {
                 header: "min-h-24 h-24 sm:h-36 sm:min-h-36"
             }}
             header={
-                <div className="flex flex-1 w-full items-center justify-between">
-                    <Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{ visibility: 'hidden' }}>Print Before</Button>
+                <div className="flex flex-1 w-full items-center justify-between" >
+                    <Typography className="hidden sm:flex" variant="h6">Total : {count}</Typography>
                     <ThemeProvider theme={mainTheme}>
                         <FuseAnimate animation="transition.slideDownIn" delay={300}>
-                            <Paper className="flex items-center w-full max-w-512 px-8 py-4 rounded-8" elevation={1}>
-
+                            <Paper className="flex items-center w-qut max-w-512 px-8 py-4 rounded-8" elevation={1}>
                                 <Icon className="mr-8" color="action">search</Icon>
-
                                 <Input
                                     placeholder="Search"
                                     className="flex flex-1"
@@ -59,11 +72,11 @@ function Registration() {
                                             dispatch(Actions.setSearchText(ev.target.value));
                                             changeText('');
                                         }
-                                        else 
+                                        else
                                             changeText(ev.target.value)
                                     }}
-                                    onKeyDown = {ev =>{
-                                        if (ev.key === 'Enter'){
+                                    onKeyDown={ev => {
+                                        if (ev.key === 'Enter') {
                                             dispatch(Actions.setSearchText(ev.target.value))
                                         }
                                     }}
@@ -71,15 +84,18 @@ function Registration() {
                             </Paper>
                         </FuseAnimate>
                     </ThemeProvider>
-                    <ReactToPrint
-                        trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
-                        content={() => printRef.current}
-                    />
-                    <RegistrationPrint attendees={printData} rows={rows} ref={printRef} />
+                    <div>
+                        <Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }} onClick={(e) => { tableRef.current.exportExcel() }}>Export</Button>
+                        <ReactToPrint
+                            trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
+                            content={() => printRef.current}
+                        />
+                        <RegistrationPrint attendees={printData} rows={rows} ref={printRef} />
+                    </div>
                 </div>
             }
             content={
-                <RegistrationTable />
+                <RegistrationTable ref={tableRef} tableData={tableData} />
             }
             innerScroll
         />

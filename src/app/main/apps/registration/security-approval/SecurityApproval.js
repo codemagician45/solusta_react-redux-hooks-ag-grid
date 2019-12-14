@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // import @material-ui components
 import { Button } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 
 // import Redux
 import withReducer from 'app/store/withReducer';
@@ -35,9 +36,8 @@ const approveMassSecurity = (attendees, selectedRows, dispatch) => {
     })
     .catch(error => {
       console.log('here promise all error: ', error);
-    })
-  console.log('here approve mass security button clicked: ', attendees, selectedRows, realArr);
-}
+    });
+};
 
 const updateIndividualAttendeeSec = (item) => {
   return new Promise((resolve, reject) => {
@@ -49,9 +49,23 @@ const updateIndividualAttendeeSec = (item) => {
         reject(error);
       });
   })
+};
+
+const getAttendeeSecApprovalCount = () => {
+  return new Promise((resolve, reject) => {
+    Utils.xapi().get(`/attendee-sec-approval-sas/count`)
+      .then(response => {
+        resolve(response.data);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
 }
 
 function SecurityApproval() {
+  const [count, setCount] = useState(0);
+
   const dispatch = useDispatch();
   const attendees = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.attendees));
   const selectedRows = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.selectedRows))
@@ -59,6 +73,14 @@ function SecurityApproval() {
   useEffect(() => {
     dispatch(Actions.getSecApprovals());
   }, [dispatch]);
+
+  useEffect(() => {
+    const getSecApprovalCount = async () => {
+      let badgeCount = await getAttendeeSecApprovalCount();
+      setCount(badgeCount);
+    }
+    getSecApprovalCount();
+  }, []);
 
   return (
     <FusePageCarded
@@ -68,12 +90,17 @@ function SecurityApproval() {
       }}
       header={
         <div className="flex flex-1 w-full items-center justify-between">
-          <Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{ visibility: 'hidden' }}>Security Approvals</Button>
-          {selectedRows.length > 0 ? (
-            <Button color="secondary" onClick={() => approveMassSecurity(attendees, selectedRows, dispatch)} variant="contained">Security Approve</Button>
-          ) : (
-              <Button color="secondary" disabled={true} variant="contained">Security Approve</Button>
-            )}
+          <Typography variant="subtitle1" gutterBottom>
+            Attendee Security Approval Count: {count}
+          </Typography>
+          <div>
+            <Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }}>Export</Button>
+            {selectedRows.length > 0 ? (
+              <Button color="secondary" onClick={() => approveMassSecurity(attendees, selectedRows, dispatch)} variant="contained">Security Approve</Button>
+            ) : (
+                <Button color="secondary" disabled={true} variant="contained">Security Approve</Button>
+              )}
+          </div>
         </div>
       }
       content={

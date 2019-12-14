@@ -11,94 +11,93 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
+// import @material-ui components
+import { Button } from '@material-ui/core';
+
 // import Redux
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
-import axios from 'axios';
-import { Button } from '@material-ui/core';
-
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
+// import Utils
+import * as Utils from '../../../../utils';
 
 // Lazy loading cell renderer
 function LoadingRenderer(props) {
-	if (props.value !== undefined) {
-		return props.value;
-	} else {
-		return (
-			<img src="../assets/images/loading.gif" alt={'loading'} />
-		);
-	}
+    if (props.value !== undefined) {
+        return props.value;
+    } else {
+        return (
+            <img src="../assets/images/loading.gif" alt={'loading'} />
+        );
+    }
 }
 
 // Image cell renderer
 function ImageCellRender(props) {
-	// const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-	// console.log(props)
-	const id = props.data && props.data.id;
-	// const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
-	const attendee = props.data && props.data;
+    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // console.log(props)
+    const id = props.data && props.data.id;
+    // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
+    const attendee = props.data && props.data;
 
-	const style = {
-		height: '48px',
-		width: '48px',
-		padding: '5px'
-	};
-	// if (attendee[0] && attendee[0].mainPhoto === '')
-	if (attendee && attendee.mainPhoto === '')
-		return (
-			<img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
-		);
-	else {
-		return (
-			<Link to={`/app/attendees/registration/${id}`}>
-				{/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
-				<img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
-			</Link>
-		);
-	}
+    const style = {
+        height: '48px',
+        width: '48px',
+        padding: '5px'
+    };
+    // if (attendee[0] && attendee[0].mainPhoto === '')
+    if (attendee && attendee.mainPhoto === '')
+        return (
+            <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
+        );
+    else {
+        return (
+            <Link to={`/app/attendees/registration/${id}`}>
+                {/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
+                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
+            </Link>
+        );
+    }
 }
 
 // Action cell renderer
 function ActionCellRendererPrint(props) {
-	const dispatch = useDispatch();
-	const printHandler = () => {
-		const { data } = props;
-		dispatch(Actions.updateRegBadgeActivityPrint(data));
-		// console.log('here print button click event: ', data);
-	}
-	// console.log("print", props)
-	if (props.data.printCount >= 1) {
-		return (
-			<Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
-		);
-	} else {
-		return (
-			<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
-		);
-	}
+    const dispatch = useDispatch();
+    const printHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityPrint(data));
+        // console.log('here print button click event: ', data);
+    }
+    // console.log("print", props)
+    if (props.data.printCount >= 1) {
+        return (
+            <Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
+        );
+    } else {
+        return (
+            <Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
+        );
+    }
 }
 
 function ActionCellRendererCollection(props) {
-	const dispatch = useDispatch();
-	const collectionHandler = () => {
-		const { data } = props;
-		dispatch(Actions.updateRegBadgeActivityCollection(data));
-		// console.log('here collection button click event: ', data);
-	}
+    const dispatch = useDispatch();
+    const collectionHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityCollection(data));
+        // console.log('here collection button click event: ', data);
+    }
 
-	if (props.data.isCollected === 'true') {
-		return (
-			<Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
-		);
-	} else {
-		return (
-			<Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
-		);
-	}
+    if (props.data.isCollected === 'true') {
+        return (
+            <Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
+        );
+    } else {
+        return (
+            <Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
+        );
+    }
 }
 var tableDataUnsearch = [];
 var tableDataSearch = [];
@@ -106,23 +105,24 @@ var resultCount = 0;
 var searchText = '';
 var GridReadyInstance = null;
 
-function RegistrationTable(props) {
-    
+const RegistrationTable = React.forwardRef(function (props, ref) {
+
+    // const count = useSelector(({ registerApp }) => registerApp.registration.count);
+    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
+    // const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
+    // const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
+    // const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
+
     const dispatch = useDispatch();
     const mount = useRef(false);
-    const count = useSelector(({ registerApp }) => registerApp.registration.count);
-    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
-    const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
-    const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
-    const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
-     
+    const { count, attendees, attendeesSearch, _tempSearchText, badgeIDs } = props.tableData;
     const [gridApi, setGridApi] = useState(null);
-    
+
     tableDataUnsearch = attendees;
     tableDataSearch = attendeesSearch;
     resultCount = count;
-    
+
     useEffect(() => {
         dispatch(Actions.getAttendeeCount());
     });
@@ -156,7 +156,7 @@ function RegistrationTable(props) {
             }
         };
     }
-    
+
     const FakeServer = (_searchText = "") => {
         return {
             getResponse: function (request) {
@@ -168,70 +168,70 @@ function RegistrationTable(props) {
                             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                         }
                     };
-                    if(_searchText == ''){
-                            axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
-                                res => {
-                                    dispatch(Actions.updateRegistrationAttendees(res.data));
-                                    let dataAfterSortingAndFiltering = sortAndFilter(tableDataUnsearch, request.sortModel, request.filterModel);
-                                    let lastRow = -1;
-                                    if (!filterPresent)
-                                         lastRow = request.endRow <= resultCount ? -1 : resultCount;
-                                    else 
-                                         lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
-                                    const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
-                                        const temp = {
-                                            id: data.id,
-                                            category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
-                                            firstName: data.firstName,
-                                            lastName: data.lastName,
-                                            companyName: data.companyName,
-                                            email: data.email,
-                                            mainPhoto: data.mainPhoto,
-                                            mainPhotoContentType: data.mainPhotoContentType
-                                        }
-                                        return temp;
-                                    })
-                                    let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow: lastRow
+                    if (_searchText == '') {
+                        Utils.xapi().get(`/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
+                            res => {
+                                dispatch(Actions.updateRegistrationAttendees(res.data));
+                                let dataAfterSortingAndFiltering = sortAndFilter(tableDataUnsearch, request.sortModel, request.filterModel);
+                                let lastRow = -1;
+                                if (!filterPresent)
+                                    lastRow = request.endRow <= resultCount ? -1 : resultCount;
+                                else
+                                    lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
+                                const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
+                                    const temp = {
+                                        id: data.id,
+                                        category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
                                     }
-                                    resolve(result)
-                                });
-                    }
-                    else {
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}`, null, header).then(
-                                res => {
-                                    dispatch(Actions.updateRegistrationAttendeesSearch(res.data))
-                                    let dataAfterSortingAndFiltering = sortAndFilter(tableDataSearch, request.sortModel, request.filterModel);
-                                    let lastRow = dataAfterSortingAndFiltering.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+dataAfterSortingAndFiltering.length:-1
-                                    const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
-                                        const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
-                                        }
-                                        return temp;
-                                    });
-                                    let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow:lastRow
-                                    }
+                                    return temp;
+                                })
+                                let result = {
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
+                                }
                                 resolve(result)
                             });
-                        }
+                    }
+                    else {
+                        Utils.xapi().get(`/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${_searchText}`, null, header).then(
+                            res => {
+                                dispatch(Actions.updateRegistrationAttendeesSearch(res.data))
+                                let dataAfterSortingAndFiltering = sortAndFilter(tableDataSearch, request.sortModel, request.filterModel);
+                                let lastRow = dataAfterSortingAndFiltering.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + dataAfterSortingAndFiltering.length : -1
+                                const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
+                                    const temp = {
+                                        id: data.id,
+                                        category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
+                                    }
+                                    return temp;
+                                });
+                                let result = {
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
+                                }
+                                resolve(result)
+                            });
+                    }
                 });
             }
         };
     }
     const onSearchFun = (_searchText) => {
-        if(!GridReadyInstance) return;
+        if (!GridReadyInstance) return;
         const gridApi = GridReadyInstance.api;
         mount.current && setGridApi(gridApi);
         const server = FakeServer(_searchText);
@@ -239,8 +239,7 @@ function RegistrationTable(props) {
         GridReadyInstance.api.setServerSideDatasource(dataSource);
     };
 
-    if( _tempSearchText != searchText )
-    {
+    if (_tempSearchText != searchText) {
         searchText = _tempSearchText;
         const result = onSearchFun(searchText);
     }
@@ -282,7 +281,7 @@ function RegistrationTable(props) {
                     'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                 }
             };
-            axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
+            Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
                 .then((res) => {
                     resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
                 })
@@ -329,7 +328,7 @@ function RegistrationTable(props) {
                     'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                 }
             };
-            axios.get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
+            Utils.xapi().get(`/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
                 .then((res) => {
                     resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
                 })
@@ -345,7 +344,7 @@ function RegistrationTable(props) {
             headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true,
             filter: "agNumberColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -353,7 +352,7 @@ function RegistrationTable(props) {
             headerName: 'Category', field: 'category', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -362,7 +361,7 @@ function RegistrationTable(props) {
             headerName: 'First Name', field: 'firstName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -371,7 +370,7 @@ function RegistrationTable(props) {
             headerName: 'Last Name', field: 'lastName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -380,7 +379,7 @@ function RegistrationTable(props) {
             headerName: 'Email', field: 'email', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -388,7 +387,7 @@ function RegistrationTable(props) {
             headerName: 'Company Name', field: 'companyName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -461,7 +460,7 @@ function RegistrationTable(props) {
     const rowModelType = "serverSide";
     const maxBlocksInCache = 2;
     const cacheBlockSize = 100;
-    
+
     const onGridReady = params => {
         GridReadyInstance = params;
         const gridApi = params.api;
@@ -471,7 +470,7 @@ function RegistrationTable(props) {
         const dataSource = ServerSideDatasource(server);
         params.api.setServerSideDatasource(dataSource);
     };
- 
+
     const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
         return sortData(sortModel, filterData(filterModel, allOfTheData));
     }
@@ -516,9 +515,9 @@ function RegistrationTable(props) {
             if (filterModel.id) {
                 // console.log(filterModel.id)
                 var id = item.id;
-                var allowedId = parseInt(filterModel.id.filter);
-                if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
-                    if (id !== allowedId) {
+                var allowedId = filterModel.id.filter;
+                if (filterModel.id.type == "contains") {
+                    if (!id.toString().includes(allowedId.toString())) {
                         continue;
 
                     }
@@ -529,7 +528,7 @@ function RegistrationTable(props) {
             if (filterModel.category) {
                 var category = item.category;
                 var allowedCategory = filterModel.category.filter;
-                if (filterModel.category.type == "contains" || filterModel.category.type == "equals") {
+                if (filterModel.category.type == "contains") {
                     if (!category.toUpperCase().includes(allowedCategory.toUpperCase())) {
                         continue;
                     }
@@ -540,7 +539,7 @@ function RegistrationTable(props) {
             if (filterModel.firstName) {
                 var firstName = item.firstName;
                 var allowedFirstName = filterModel.firstName.filter;
-                if (filterModel.firstName.type == "contains" || filterModel.firstName.type == "equals") {
+                if (filterModel.firstName.type == "contains") {
                     if (!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())) {
                         continue;
                     }
@@ -551,7 +550,7 @@ function RegistrationTable(props) {
             if (filterModel.lastName) {
                 var lastName = item.lastName;
                 var allowedLastName = filterModel.lastName.filter;
-                if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
+                if (filterModel.lastName.type == "contains") {
                     if (!lastName.toUpperCase().includes(allowedLastName.toUpperCase())) {
                         continue;
                     }
@@ -562,7 +561,7 @@ function RegistrationTable(props) {
             if (filterModel.companyName) {
                 var companyName = item.companyName;
                 var allowedCompanyName = filterModel.companyName.filter;
-                if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
+                if (filterModel.companyName.type == "contains") {
                     if (!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())) {
                         continue;
                     }
@@ -573,7 +572,7 @@ function RegistrationTable(props) {
             if (filterModel.email) {
                 var email = item.email;
                 var allowedEmail = filterModel.email.filter;
-                if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
+                if (filterModel.email.type == "contains") {
                     if (!email.toUpperCase().includes(allowedEmail.toUpperCase())) {
                         continue;
                     }
@@ -584,22 +583,24 @@ function RegistrationTable(props) {
         return resultOfFilter;
     }
 
-    const exportExcel = () => {
-        const params = {
-            columnWidth: 100,
-            sheetName: '',
-            exportMode: undefined,
-            // suppressTextAsCDATA: ,
-            rowHeight: 30,
-            headerRowHeight: 40,
-            // customHeader: []
-        };
 
-        gridApi.exportDataAsExcel(params);
-    }
+    React.useImperativeHandle(ref, () => {
+        return {
+            exportExcel: () => {
+                const params = {
+                    columnWidth: 100,
+                    sheetName: '',
+                    exportMode: undefined,
+                    // suppressTextAsCDATA: ,
+                    rowHeight: 30,
+                    headerRowHeight: 40,
+                    // customHeader: []
+                };
 
-    // const getRowHeight = () => { return 48; };
-    // const headerHeight = () => { return 32; };
+                gridApi.exportDataAsExcel(params);
+            }
+        }
+    });
 
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
@@ -613,7 +614,6 @@ function RegistrationTable(props) {
                 className="table-responsive ag-theme-balham"
                 style={{ height: '100%', width: '100%', fontSize: '16px' }}
             >
-                <Button onClick={exportExcel} color="secondary">Export to Excel</Button>
                 <AgGridReact
                     modules={defs.modules}
                     columnDefs={columnDefs}
@@ -621,16 +621,12 @@ function RegistrationTable(props) {
                     rowSelection='multiple'
                     rowDeselection={true}
                     frameworkComponents={frameworkComponents}
-                    // getRowHeight={getRowHeight}
-                    // headerHeight={headerHeight}
                     onGridReady={onGridReady}
                     rowModelType={rowModelType}
                     maxBlocksInCache={maxBlocksInCache}
                     cacheBlockSize={cacheBlockSize}
                     rowHeight={rowHeight}
-
                     pagination={true}
-                    // paginationAutoPageSize={true}
                     paginationPageSize={15}
                     floatingFilter={true}
                     overlayLoadingTemplate={defs.overlayLoadingTemplate}
@@ -641,5 +637,6 @@ function RegistrationTable(props) {
             </div>
         </React.Fragment>
     );
-}
-export default withReducer('registerApp', reducer)(RegistrationTable);
+});
+export default RegistrationTable;
+// export default withReducer('registerApp', reducer)(RegistrationTable);
