@@ -106,23 +106,24 @@ var resultCount = 0;
 var searchText = '';
 var GridReadyInstance = null;
 
-function RegistrationTable(props) {
+const RegistrationTable = React.forwardRef(function(props, ref) {
     
+    // const count = useSelector(({ registerApp }) => registerApp.registration.count);
+    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
+    // const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
+    // const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
+    // const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
+
     const dispatch = useDispatch();
     const mount = useRef(false);
-    const count = useSelector(({ registerApp }) => registerApp.registration.count);
-    const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
-    const printedCounts = useSelector(({ registerApp }) => registerApp.registration.printedCounts);
-    const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
-    const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
-     
+    const {count, attendees, attendeesSearch, _tempSearchText, badgeIDs} = props.tableData;
     const [gridApi, setGridApi] = useState(null);
     
     tableDataUnsearch = attendees;
     tableDataSearch = attendeesSearch;
     resultCount = count;
-    
+
     useEffect(() => {
         dispatch(Actions.getAttendeeCount());
     });
@@ -345,7 +346,7 @@ function RegistrationTable(props) {
             headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, checkboxSelection: true,
             filter: "agNumberColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -353,7 +354,7 @@ function RegistrationTable(props) {
             headerName: 'Category', field: 'category', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -362,7 +363,7 @@ function RegistrationTable(props) {
             headerName: 'First Name', field: 'firstName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -371,7 +372,7 @@ function RegistrationTable(props) {
             headerName: 'Last Name', field: 'lastName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -380,7 +381,7 @@ function RegistrationTable(props) {
             headerName: 'Email', field: 'email', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -388,7 +389,7 @@ function RegistrationTable(props) {
             headerName: 'Company Name', field: 'companyName', cellStyle: () => { return { padding: '15px', 'font-size': '14px', 'font-family': 'sans-serif', }; },
             filter: "agTextColumnFilter",
             filterParams: {
-                filterOptions: ["equals", "contains"],
+                filterOptions: ["contains"],
                 suppressAndOrCondition: true
             }
         },
@@ -516,9 +517,9 @@ function RegistrationTable(props) {
             if (filterModel.id) {
                 // console.log(filterModel.id)
                 var id = item.id;
-                var allowedId = parseInt(filterModel.id.filter);
-                if (filterModel.id.type == "contains" || filterModel.id.type == "equals") {
-                    if (id !== allowedId) {
+                var allowedId = filterModel.id.filter;
+                if (filterModel.id.type == "contains") {
+                    if (!id.toString().includes(allowedId.toString())) {
                         continue;
 
                     }
@@ -529,7 +530,7 @@ function RegistrationTable(props) {
             if (filterModel.category) {
                 var category = item.category;
                 var allowedCategory = filterModel.category.filter;
-                if (filterModel.category.type == "contains" || filterModel.category.type == "equals") {
+                if (filterModel.category.type == "contains") {
                     if (!category.toUpperCase().includes(allowedCategory.toUpperCase())) {
                         continue;
                     }
@@ -540,7 +541,7 @@ function RegistrationTable(props) {
             if (filterModel.firstName) {
                 var firstName = item.firstName;
                 var allowedFirstName = filterModel.firstName.filter;
-                if (filterModel.firstName.type == "contains" || filterModel.firstName.type == "equals") {
+                if (filterModel.firstName.type == "contains") {
                     if (!firstName.toUpperCase().includes(allowedFirstName.toUpperCase())) {
                         continue;
                     }
@@ -551,7 +552,7 @@ function RegistrationTable(props) {
             if (filterModel.lastName) {
                 var lastName = item.lastName;
                 var allowedLastName = filterModel.lastName.filter;
-                if (filterModel.lastName.type == "contains" || filterModel.lastName.type == "equals") {
+                if (filterModel.lastName.type == "contains") {
                     if (!lastName.toUpperCase().includes(allowedLastName.toUpperCase())) {
                         continue;
                     }
@@ -562,7 +563,7 @@ function RegistrationTable(props) {
             if (filterModel.companyName) {
                 var companyName = item.companyName;
                 var allowedCompanyName = filterModel.companyName.filter;
-                if (filterModel.companyName.type == "contains" || filterModel.companyName.type == "equals") {
+                if (filterModel.companyName.type == "contains") {
                     if (!companyName.toUpperCase().includes(allowedCompanyName.toUpperCase())) {
                         continue;
                     }
@@ -573,7 +574,7 @@ function RegistrationTable(props) {
             if (filterModel.email) {
                 var email = item.email;
                 var allowedEmail = filterModel.email.filter;
-                if (filterModel.email.type == "contains" || filterModel.email.type == "equals") {
+                if (filterModel.email.type == "contains") {
                     if (!email.toUpperCase().includes(allowedEmail.toUpperCase())) {
                         continue;
                     }
@@ -584,22 +585,24 @@ function RegistrationTable(props) {
         return resultOfFilter;
     }
 
-    const exportExcel = () => {
-        const params = {
-            columnWidth: 100,
-            sheetName: '',
-            exportMode: undefined,
-            // suppressTextAsCDATA: ,
-            rowHeight: 30,
-            headerRowHeight: 40,
-            // customHeader: []
-        };
-
-        gridApi.exportDataAsExcel(params);
-    }
-
-    // const getRowHeight = () => { return 48; };
-    // const headerHeight = () => { return 32; };
+    
+    React.useImperativeHandle(ref, () => {
+        return {
+            exportExcel : () => {
+                const params = {
+                    columnWidth: 100,
+                    sheetName: '',
+                    exportMode: undefined,
+                    // suppressTextAsCDATA: ,
+                    rowHeight: 30,
+                    headerRowHeight: 40,
+                    // customHeader: []
+                };
+        
+                gridApi.exportDataAsExcel(params);
+            }
+        }
+    });
 
     const onSelectionChanged = (params) => {
         const gridApi = params.api;
@@ -613,7 +616,6 @@ function RegistrationTable(props) {
                 className="table-responsive ag-theme-balham"
                 style={{ height: '100%', width: '100%', fontSize: '16px' }}
             >
-                <Button onClick={exportExcel} color="secondary">Export to Excel</Button>
                 <AgGridReact
                     modules={defs.modules}
                     columnDefs={columnDefs}
@@ -621,16 +623,12 @@ function RegistrationTable(props) {
                     rowSelection='multiple'
                     rowDeselection={true}
                     frameworkComponents={frameworkComponents}
-                    // getRowHeight={getRowHeight}
-                    // headerHeight={headerHeight}
                     onGridReady={onGridReady}
                     rowModelType={rowModelType}
                     maxBlocksInCache={maxBlocksInCache}
                     cacheBlockSize={cacheBlockSize}
                     rowHeight={rowHeight}
-
                     pagination={true}
-                    // paginationAutoPageSize={true}
                     paginationPageSize={15}
                     floatingFilter={true}
                     overlayLoadingTemplate={defs.overlayLoadingTemplate}
@@ -641,5 +639,6 @@ function RegistrationTable(props) {
             </div>
         </React.Fragment>
     );
-}
-export default withReducer('registerApp', reducer)(RegistrationTable);
+});
+export default RegistrationTable;
+// export default withReducer('registerApp', reducer)(RegistrationTable);

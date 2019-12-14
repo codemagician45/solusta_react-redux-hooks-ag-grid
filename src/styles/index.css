@@ -93,11 +93,10 @@ form label {
 .tui-image-editor-header-logo{
     display: none;
 }
-/* .ag-cell .ag-cell-not-inline-editing .ag-cell-with-height .ag-cell-value */
-/* .ag-cell-with-height
- {
-    padding:45px
-} */
+.tui-image-editor-header-buttons{
+    display: none;
+}
+
 
 @import 'print.css';
 
