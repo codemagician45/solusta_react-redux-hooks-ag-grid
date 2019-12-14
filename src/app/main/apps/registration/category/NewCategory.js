@@ -217,69 +217,51 @@ function NewCategory(props) {
     };
 
     const saveAttendee = async () => {
-        if (firstName && lastName && email && validateEmail(email) && phoneNum && companyName && gender) {
-            if (tabIndex === 0) {
-                if (qId) {
-                    setError(false);
+        if (firstName && lastName && companyName) {
+            setError(false);
 
-                    const mainPhoto = profile && await toBase64(profile);
-                    const data = {
-                        firstName: firstName,
-                        lastName: lastName,
-                        gender: (gender === 1) ? 'MALE' : 'FEMALE',
-                        phone: phoneNum,
-                        email: email,
-                        companyName: companyName,
-                        attendeeCategorySAS: categoryInFo,
-                        mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
-                        mainPhotoContentType: profile ? profile.type : null,
-                    };
-                    dispatch(Actions.saveAttendee());
-                    console.log('here save attendee: ', data);
+            // if (tabIndex === 0) {
+            //     if (qId) {
+            //
+            //     } else {
+            //         setError(true);
+            //     }
+            // } else {
+            //     if (passportNum && nationality) {
+            //         setError(false);
+            //     } else {
+            //         setError(true);
+            //     }
+            // }
 
-                    Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
-                        .then(response => {
-                            console.log('here save attendee response: ', response);
-                            dispatch(Actions.saveAttendeeSuccess(response.data));
-                            props.history.push('/app/attendees/category');
-                        })
-                        .catch(error => {
-                            dispatch(Actions.saveAttendeeFail());
-                        });
-                } else {
-                    setError(true);
-                }
-            } else {
-                if (passportNum && nationality) {
-                    setError(false);
+            const mainPhoto = profile && await toBase64(profile);
+            const data = {
+                firstName: firstName,
+                lastName: lastName,
+                gender: (gender === 1) ? 'MALE' : 'FEMALE',
+                phone: phoneNum,
+                email: email,
+                companyName: companyName,
+                attendeeCategorySAS: categoryInFo,
+                mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
+                mainPhotoContentType: profile ? profile.type : null,
+            };
+            dispatch(Actions.saveAttendee());
+            console.log('here save attendee: ', data);
 
-                    const mainPhoto = profile && await toBase64(profile);
-                    const data = {
-                        firstName: firstName,
-                        lastName: lastName,
-                        gender: (gender === 1) ? 'MALE' : 'FEMALE',
-                        phone: phoneNum,
-                        email: email,
-                        companyName: companyName,
-                        attendeeCategorySAS: categoryInFo,
-                        mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
-                        mainPhotoContentType: profile ? profile.type : null,
-                    };
-                    dispatch(Actions.saveAttendee(data));
-                    console.log('here save attendee: ', data);
-                    Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
-                        .then(response => {
-                            console.log('here save attendee response: ', response);
-                            dispatch(Actions.saveAttendeeSuccess(response.data));
-                            props.history.push('/app/attendees/category');
-                        })
-                        .catch(error => {
-                            dispatch(Actions.saveAttendeeFail());
-                        });
-                } else {
-                    setError(true);
-                }
-            }
+            Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
+              .then(response => {
+                  console.log('here save attendee response: ', response);
+                  dispatch(Actions.saveAttendeeSuccess(response.data));
+                  props.history.push('/app/attendees/category');
+              })
+              .catch(error => {
+                  dispatch(Actions.saveAttendeeFail());
+              });
+
+
+
+
         } else {
             setError(true);
         }
@@ -359,11 +341,11 @@ function NewCategory(props) {
                                 <TextField
                                     id="outlined-basic"
                                     className={classes.textField}
-                                    label="Email *"
+                                    label="Email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    error={error && (!email || !validateEmail(email))}
+                                    error={error}
                                     margin="normal"
                                 />
                             </Grid>
@@ -371,10 +353,10 @@ function NewCategory(props) {
                                 <TextField
                                     id="outlined-basic"
                                     className={classes.textField}
-                                    label="Phone No *"
+                                    label="Phone No"
                                     value={phoneNum}
                                     onChange={(e) => setPhoneNum(e.target.value)}
-                                    error={error && !phoneNum}
+
                                     margin="normal"
                                 />
                             </Grid>
@@ -427,7 +409,7 @@ function NewCategory(props) {
                                         label="QID *"
                                         value={qId}
                                         onChange={e => setQId(e.target.value)}
-                                        error={error && !qId}
+                                        error={error}
                                         margin="normal"
                                     />
                                 </Grid>
@@ -442,7 +424,7 @@ function NewCategory(props) {
                                         label="Passport No *"
                                         value={passportNum}
                                         onChange={(e) => setPassportNum(e.target.value)}
-                                        error={error && !passportNum}
+                                        error={error}
                                         margin="normal"
                                     />
                                 </Grid>
@@ -465,10 +447,10 @@ function NewCategory(props) {
                                     <TextField
                                         id="standard-basic"
                                         className={classes.textField}
-                                        label="Nationality *"
+                                        label="Nationality"
                                         value={nationality}
                                         onChange={e => setNationality(e.target.value)}
-                                        error={error && !nationality}
+                                        error={error}
                                         margin="normal"
                                     />
                                 </Grid>
