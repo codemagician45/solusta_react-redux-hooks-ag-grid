@@ -1,6 +1,6 @@
 docker build -t solusta-frontend-registration .
 
-docker tag solusta-frontend-registration eu.gcr.io/solusta-apps-fundation/solusta-frontend-registration:1
+docker tag solusta-frontend-registration eu.gcr.io/solusta-apps-fundation/solusta-frontend-registration:2
 
-docker push eu.gcr.io/solusta-apps-fundation/solusta-frontend-registration:1
+docker push eu.gcr.io/solusta-apps-fundation/solusta-frontend-registration:2
 
