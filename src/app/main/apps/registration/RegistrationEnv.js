@@ -2,6 +2,6 @@ module.exports = {
     env: 'server',
 
     ServerLink: {
-        prod: 'https://stage04.solusta.me',
+        prod: 'https://stage02.solusta.me',
     },
 }
