@@ -49,8 +49,7 @@ function PhotoEditor(props) {
     // setImage(data);
     props.onCrop(data);
   };
-
-  // console.log('here in photo editor component in true: ', image);
+  
   if (image) {
     return (
       <React.Fragment>

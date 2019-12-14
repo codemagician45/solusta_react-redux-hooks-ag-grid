@@ -30,8 +30,6 @@ function Registration() {
     const searchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
     const [textChange, changeText] = useState('');
     const printData = (searchText == '') ? (attendees) : (attendeesSearch);
-    console.log("attendee in registration", attendees)
-    // console.log("total attendees",printData);
     return (
         <FusePageCarded
             classes={{

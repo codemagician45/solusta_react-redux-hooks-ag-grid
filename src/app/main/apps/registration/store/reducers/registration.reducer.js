@@ -26,14 +26,12 @@ const productsReducer = function (state = initialState, action) {
                 let indexId = action.payload[0] && action.payload[0].id;
                 const index = state.attendees.filter(attendee => attendee.id === indexId);
                 if(index.length > 0){
-                    // console.log("include")
                     return {
                         ...state,
                         attendees: state.attendees,
                     };
                 }
                 else {
-                    // console.log("not include")
                     return {
                         ...state,
                         attendees: state.attendees.concat(action.payload),
@@ -43,18 +41,15 @@ const productsReducer = function (state = initialState, action) {
         }
         case Actions.UPDATE_REGISTRATION_ATTENDEES_SEARCH:
         {
-            console.log("action.payload in search reducer",action.payload)
             let indexId = action.payload[0] && action.payload[0].id;
                 const index = state.attendeesSearch.filter(attendee => attendee.id === indexId);
                 if(index.length > 0){
-                    // console.log("include")
                     return {
                         ...state,
                         attendeesSearch: state.attendeesSearch,
                     };
                 }
                 else {
-                    // console.log("not include")
                     return {
                         ...state,
                         attendeesSearch: state.attendeesSearch.concat(action.payload),
