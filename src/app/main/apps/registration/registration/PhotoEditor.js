@@ -33,7 +33,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function PhotoEditor(props) {
+// function PhotoEditor(props) {
+const PhotoEditor = React.forwardRef(function(props, ref) {
   const imageEditor = React.createRef();
   const classes = useStyles();
 
@@ -43,17 +44,19 @@ function PhotoEditor(props) {
     setImage(props.image);
   }, [props.image]);
 
-  const saveCroppedImage = () => {
-    const { imageEditorInst } = imageEditor.current;
-    const data = imageEditorInst.toDataURL();
-    // setImage(data);
-    props.onCrop(data);
-  };
+  React.useImperativeHandle(ref, () => {
+    return {
+      saveCroppedImage : () => {
+        const { imageEditorInst } = imageEditor.current;
+        const data = imageEditorInst.toDataURL();
+        // setImage(data);
+        props.onCrop(data);
+        }
+    }
+  });
   
   if (image) {
     return (
-      <React.Fragment>
-        <Button variant="contained" color="secondary" onClick={saveCroppedImage} className={classes.saveBtn}>Save Cropped Result</Button>
         <ImageEditor
           includeUI={{
             loadImage: {
@@ -64,7 +67,7 @@ function PhotoEditor(props) {
             menu: ["crop", "flip", "rotate", "draw", "shape", "text", "filter"],
             initMenu: "",
             uiSize: {
-              height: `calc(100vh - 20px)`,
+              height: `calc(100vh - 130px)`,
             },
             menuBarPosition: "bottom",
           }}
@@ -77,15 +80,14 @@ function PhotoEditor(props) {
           usageStatistics={true}
           ref={imageEditor}
         />
-      </React.Fragment>
     );
   } else {
     return (
       <React.Fragment>
-        <Button variant="contained" color="secondary" onClick={saveCroppedImage} className={classes.saveBtn}>Save Cropped Result</Button>
+        Image Loading Failed
       </React.Fragment>
     )
   }
-}
-
-export default withReducer('registerApp', reducer)(PhotoEditor);
+});
+export default PhotoEditor;
+// export default withReducer('registerApp', reducer)(PhotoEditor);

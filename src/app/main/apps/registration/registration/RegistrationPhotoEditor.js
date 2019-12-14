@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
@@ -24,6 +24,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import { FusePageCarded, FuseAnimate } from '@fuse';
 
 
 const useStyles = makeStyles(theme => ({
@@ -54,6 +55,9 @@ function RegistrationPhotoEditor(props) {
     const [openSucess, setOpenSucess] = React.useState(false);
     const [openFail, setOpenFail] = React.useState(false);
     const classes = useStyles();
+
+    const imageRef = useRef();
+
     useEffect(() => {
         const [temp] = (printData && printData.length > 0) ? printData.filter(item => item.id === parseInt(attendeeId)) : [];
         setImage(`data:${temp && temp.mainPhotoContentType};base64, ${temp && temp.mainPhoto}`);
@@ -73,6 +77,10 @@ function RegistrationPhotoEditor(props) {
         props.history.push('/app/attendees/registration');
     };
 
+    const back = () => {
+        props.history.push('/app/attendees/registration');
+    }
+
     const setCroppedImage = (data) => {
         // setImage(data);
         const requestData = {
@@ -82,7 +90,7 @@ function RegistrationPhotoEditor(props) {
         }
         Utils.xapi().put('/attendee-sas', requestData)
             .then(response => {
-                // console.log('update photo success: ', response.data);
+                dispatch(Actions.updateRegistrationSingleAttendee(response.data));
                 setOpenSucess(true);
                 dispatch(Actions.setSearchText(''));
             })
@@ -95,50 +103,70 @@ function RegistrationPhotoEditor(props) {
     }
 
     return (
-        <React.Fragment>
-            <PhotoEditor image={image} onCrop={setCroppedImage} />
-            <Dialog
-                open={openSucess}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={handleCloseSucess}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Photo Edit Result"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-slide-description">
-                        Photo Update <span className={classes.success}>Successed</span>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseSucess} color="primary">
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
+        <FusePageCarded
+            classes={{
+                // content: "flex",
+                header: "min-h-24 h-24 sm:h-36 sm:min-h-36"
+            }}
+            header={
+                <div className="flex flex-1 w-full items-center justify-between" >
+                    <div></div>
+                    <div>
+                        <Button className="whitespace-no-wrap" color="default" variant="contained" style={{marginRight:'10px'}} onClick={back}>
+                            Back
+                        </Button>
+                        <Button className="whitespace-no-wrap" color="secondary" variant="contained" onClick={(e) => {imageRef.current.saveCroppedImage()}}>Save</Button>
+                    </div>
+                </div>
+            }
+            content={
+                <React.Fragment>
+                    <PhotoEditor image={image} onCrop={setCroppedImage} ref={imageRef}/>
+                    <Dialog
+                        open={openSucess}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleCloseSucess}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{"Photo Edit Result"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                                Photo Update <span className={classes.success}>Successed</span>
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseSucess} color="primary">
+                                Confirm
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
 
-            <Dialog
-                open={openFail}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={handleCloseFail}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Photo Edit Result"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-slide-description">
-                        Photo Update <span className={classes.fail}>Failed</span>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseFail} color="primary">
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </React.Fragment>
+                    <Dialog
+                        open={openFail}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleCloseFail}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{"Photo Edit Result"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                                Photo Update <span className={classes.fail}>Failed</span>
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseFail} color="primary">
+                                Confirm
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </React.Fragment>
+            }
+            innerScroll
+        />
     )
 }
 
