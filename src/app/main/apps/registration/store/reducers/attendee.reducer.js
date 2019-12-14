@@ -9,9 +9,9 @@ const initialState = {
     fail: false,
 };
 
-const categoryReducer = function (state = initialState, action) {
+const attendeeReducer = function (state = initialState, action) {
     switch (action.type) {
-        case Actions.GET_CATEGORY:
+        case Actions.GET_ATTENDEE_CATEGORIES:
             {
                 return {
                     ...state,
@@ -46,4 +46,4 @@ const categoryReducer = function (state = initialState, action) {
     }
 };
 
-export default categoryReducer;
+export default attendeeReducer;

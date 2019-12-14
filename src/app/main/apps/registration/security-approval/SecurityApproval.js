@@ -35,8 +35,7 @@ const approveMassSecurity = (attendees, selectedRows, dispatch) => {
     })
     .catch(error => {
       console.log('here promise all error: ', error);
-    })
-  console.log('here approve mass security button clicked: ', attendees, selectedRows, realArr);
+    });
 }
 
 const updateIndividualAttendeeSec = (item) => {
