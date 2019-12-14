@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 // import @material-ui components
 import { Button, Grid, Box } from '@material-ui/core';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
+
+// import Utils
+import * as Utils from '../../../../utils';
 
 // import assets
 import BG1 from '../assets/images/bg-1.jpg';
@@ -14,9 +16,6 @@ import BG5 from '../assets/images/bg-5.jpg';
 import BG6 from '../assets/images/bg-6.jpg';
 import BG7 from '../assets/images/bg-7.jpg';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 const styles = (theme) => ({
 
@@ -221,7 +220,7 @@ class RegistrationPrint extends React.Component {
             const body = {
                 key: 'value',
             };
-            axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
+            Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`, body, header)
                 .then((res) => {
                     // console.log('here in friendlyID: ', res);
                     resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);

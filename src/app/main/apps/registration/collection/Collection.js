@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // import @material-ui components
 import { Button } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 
 // import Redux
 import withReducer from 'app/store/withReducer';
@@ -18,17 +19,13 @@ import { FusePageCarded } from '@fuse';
 // import components
 import CollectionTable from './CollectionTable';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const updateBadgeActivity = (row) => {
 	return new Promise((resolve, reject) => {
 		const body = {
 			id: row.badgeActivityId,
 			isCollected: true,
 		};
-		Utils.xapi().put(`${SERVER_LINK}/api/badge-activity-sas`, body)
+		Utils.xapi().put(`/badge-activity-sas`, body)
 			.then(response => {
 				resolve(response.data);
 			})
@@ -59,9 +56,31 @@ const updateBadgeActivities = (badges, dispatch) => {
 		});
 }
 
+const getBadgeActivityTotalCount = () => {
+	return new Promise((resolve, reject) => {
+		Utils.xapi().get(`/badge-sas/count`)
+			.then(response => {
+				resolve(response.data);
+			})
+			.catch(error => {
+				reject(error);
+			});
+	});
+}
+
 function Collection() {
+	const [count, setCount] = useState(0);
+
 	const dispatch = useDispatch();
 	const selectedBadges = useSelector(({ registerApp }) => registerApp.collection.selectedBadges);
+
+	useEffect(() => {
+		const getBadgeActivityCount = async () => {
+			let badgeActivityCount = await getBadgeActivityTotalCount();
+			setCount(badgeActivityCount);
+		}
+		getBadgeActivityCount();
+	}, []);
 
 	return (
 		<FusePageCarded
@@ -71,12 +90,17 @@ function Collection() {
 			}}
 			header={
 				<div className="flex flex-1 w-full items-center justify-between">
-					<Button className="whitespace-no-wrap" color="secondary" variant="contained" style={{ visibility: 'hidden' }}>Collect Selected Rows</Button>
-					{(selectedBadges.length > 0) ? (
-						<Button color="secondary" variant="contained" onClick={() => updateBadgeActivities(selectedBadges, dispatch)}>Collect Selected Rows</Button>
-					) : (
-							<Button color="secondary" variant="contained" disabled={true}>Collect Selected Rows</Button>
-						)}
+					<Typography variant="subtitle1" gutterBottom>
+						Badge Activity Total Count: {count}
+					</Typography>
+					<div>
+						<Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }}>Export</Button>
+						{(selectedBadges.length > 0) ? (
+							<Button color="secondary" variant="contained" onClick={() => updateBadgeActivities(selectedBadges, dispatch)}>Collect Selected Rows</Button>
+						) : (
+								<Button color="secondary" variant="contained" disabled={true}>Collect Selected Rows</Button>
+							)}
+					</div>
 				</div>
 			}
 			content={

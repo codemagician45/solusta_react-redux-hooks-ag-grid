@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import ReactToPrint from 'react-to-print'; // for Print React component
 
 // import @material-ui components
@@ -16,9 +15,6 @@ import { FusePageCarded, FuseAnimate } from '@fuse';
 import RegistrationTable from './RegistrationTable';
 import RegistrationPrint from './RegistrationPrint';
 import { ThemeProvider } from '@material-ui/styles';
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 function Registration() {
     const printRef = useRef();
@@ -32,7 +28,7 @@ function Registration() {
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
     const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
     const [textChange, changeText] = useState('');
-    const printData = (_tempSearchText == '') ? (attendees) : (attendeesSearch);
+    const printData = (_tempSearchText === '') ? (attendees) : (attendeesSearch);
 
     const initialTableData = {
         count: 0,

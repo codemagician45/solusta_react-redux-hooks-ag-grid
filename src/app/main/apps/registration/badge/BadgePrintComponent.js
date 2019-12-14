@@ -16,9 +16,6 @@ import BG5 from '../assets/images/bg-5.jpg';
 import BG6 from '../assets/images/bg-6.jpg';
 import BG7 from '../assets/images/bg-7.jpg';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
 
 const styles = (theme) => ({
 	paper: {
@@ -179,7 +176,7 @@ class PrintComponent extends React.Component {
 
 	getFriendlyId = (item) => {
 		return new Promise((resolve, reject) => {
-			Utils.xapi().get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`)
+			Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`)
 				.then((res) => {
 					console.log('here in friendlyID: ', res);
 					resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);

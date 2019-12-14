@@ -5,6 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 // import @material-ui
 import { Button, Grid, Snackbar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import SpeakerIcon from '@material-ui/icons/Speaker';
+import EventIcon from '@material-ui/icons/Event';
+import SecurityIcon from '@material-ui/icons/Security';
+import TheatersIcon from '@material-ui/icons/Theaters';
+import CollectionsIcon from '@material-ui/icons/Collections';
+import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
+import PhoneEnabledIcon from '@material-ui/icons/PhoneEnabled';
 
 // import redux
 import withReducer from 'app/store/withReducer';
@@ -33,7 +40,10 @@ const useStyles = makeStyles(theme => ({
 	},
 	snackBar: {
 		marginTop: '50px',
-	}
+	},
+	btnIcon: {
+		marginRight: theme.spacing(1),
+	},
 }));
 
 function Category(props) {
@@ -99,36 +109,43 @@ function Category(props) {
 				<Grid container spacing={3} className={classes.container}>
 					<Grid item xs={12} md={6} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addSpeaker}>
+							<SpeakerIcon className={classes.btnIcon} />
 							Speaker
 						</Button>
 					</Grid>
 					<Grid item xs={12} md={6} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addOrganizer}>
+							<CollectionsIcon className={classes.btnIcon} />
 							Organizer
 						</Button>
 					</Grid>
 					<Grid item xs={12} md={6} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addParticipant}>
+							<DirectionsWalkIcon className={classes.btnIcon} />
 							Participant
 						</Button>
 					</Grid>
 					<Grid item xs={12} md={6} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addEventCrew}>
+							<EventIcon className={classes.btnIcon} />
 							Event Crew
 						</Button>
 					</Grid>
 					<Grid item xs={12} md={6} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addMedia}>
+							<TheatersIcon className={classes.btnIcon} />
 							Media
 						</Button>
 					</Grid>
 					<Grid item xs={12} md={6} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addSecurity}>
+							<SecurityIcon className={classes.btnIcon} />
 							Security
-                        </Button>
+						</Button>
 					</Grid>
 					<Grid item xs={12} md={12} className={classes.item}>
 						<Button variant="contained" color="secondary" className={classes.button} onClick={addContractor}>
+							<PhoneEnabledIcon className={classes.btnIcon} />
 							Contractor
 						</Button>
 					</Grid>
@@ -162,7 +179,7 @@ function Category(props) {
 			>
 				<Notification
 					onClose={() => setFailed(false)}
-					variant="success"
+					variant="error"
 					message="Saving Attendee Fail"
 				/>
 			</Snackbar>

@@ -20,13 +20,9 @@ import reducer from '../store/reducers';
 // import utils
 import * as Utils from '../../../../utils';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const getLazyLoadingDataSet = (endRow, startRow) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
+		Utils.xapi().get(`/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
 				resolve(response.data);
 			})
@@ -38,7 +34,7 @@ const getLazyLoadingDataSet = (endRow, startRow) => {
 
 const getBadge = (item) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`)
+		Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`)
 			.then((res) => {
 				console.log('here in badge request: ', res);
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
@@ -51,7 +47,7 @@ const getBadge = (item) => {
 
 const getBadgeActivity = (item) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.id}`)
+		Utils.xapi().get(`/badge-activity-sas?badgeSAId.equals=${item.id}`)
 			.then((res) => {
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
 			})
@@ -106,7 +102,7 @@ const getBadgeActivities = (badges, dispatch) => {
 
 const getAttendsCount = () => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+		Utils.xapi().get(`/attendee-sas/count`)
 			.then(response => {
 				resolve(response.data);
 			})
@@ -297,7 +293,7 @@ function ActionCellRenderer(props) {
 			id: data.badgeActivityId,
 			isCollected: true,
 		};
-		Utils.xapi().put(`${SERVER_LINK}/api/badge-activity-sas`, body)
+		Utils.xapi().put(`/badge-activity-sas`, body)
 			.then(response => {
 				console.log('here update button click response: ', response);
 				const updateData = {

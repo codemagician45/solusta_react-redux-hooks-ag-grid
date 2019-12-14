@@ -27,10 +27,6 @@ import * as Utils from '../../../../utils';
 // import components
 import AttendeePrintComponent from './AttendeePrintComponent';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const useStyles = makeStyles(theme => ({
 	root: {
 		flexGrow: 1,
@@ -213,7 +209,7 @@ function NewCategory(props) {
 
 					dispatch(Actions.saveAttendee());
 
-					Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
+					Utils.xapi().post(`/attendee-sas`, data)
 						.then(response => {
 							dispatch(Actions.saveAttendeeSuccess(response.data));
 							props.history.goBack();
@@ -244,7 +240,7 @@ function NewCategory(props) {
 
 					dispatch(Actions.saveAttendee(data));
 
-					Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
+					Utils.xapi().post(`/api/attendee-sas`, data)
 						.then(response => {
 							dispatch(Actions.saveAttendeeSuccess(response.data));
 							props.history.goBack();

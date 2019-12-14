@@ -25,10 +25,6 @@ import reducer from '../store/reducers';
 // import utils
 import * as Utils from '../../../../utils';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
@@ -41,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 const getLazyLoadingDataSet = (endRow, startRow) => {
   return new Promise((resolve, reject) => {
-    Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
+    Utils.xapi().get(`/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
       .then(response => {
         resolve(response.data);
       })
@@ -53,7 +49,7 @@ const getLazyLoadingDataSet = (endRow, startRow) => {
 
 const getAttendsCount = () => {
   return new Promise((resolve, reject) => {
-    Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+    Utils.xapi().get(`/attendee-sas/count`)
       .then(response => {
         resolve(response.data);
       })
@@ -264,7 +260,7 @@ function SecApprovalCellRenderer(props) {
   const onChangeSecApproval = (e) => {
     setSecApproval(e.target.value);
     if (prevSecApproval.current !== e.target.value) {
-      console.log('security approval is changed: ', data);
+      // console.log('security approval is changed: ', data);
       dispatch(Actions.changeAttendeeIsSecurityChanged({
         attendeeId: data.id,
         secApproval: e.target.value,

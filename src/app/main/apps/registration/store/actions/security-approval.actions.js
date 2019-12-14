@@ -1,10 +1,6 @@
 // import Utils
 import * as Utils from '../../../../../utils';
 
-// import env server link
-const environment = require('../../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 export const GET_SEC_ATTENDEES = '[REGISTRATION] GET_SEC_ATTENDEES';
 export const GET_SEC_APPROVALS = '[REGISTRATION] GET_SEC_APPROVALS';
 export const SET_SEC_SELECTED_ROWS = '[REGISTRATION] SET_SEC_SELECTED_ROWS';
@@ -20,7 +16,7 @@ export function getSecAttendees(data) {
 }
 
 export function getSecApprovals() {
-  const request = Utils.xapi().get(`${SERVER_LINK}/api/attendee-sec-approval-sas`);
+  const request = Utils.xapi().get(`/attendee-sec-approval-sas`);
 
   return (dispatch) =>
     request.then((response) =>
