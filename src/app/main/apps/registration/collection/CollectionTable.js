@@ -28,7 +28,6 @@ const getLazyLoadingDataSet = (endRow, startRow) => {
 	return new Promise((resolve, reject) => {
 		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
-				console.log('here lazy loading data set function: ', response.data);
 				resolve(response.data);
 			})
 			.catch(error => {
@@ -54,7 +53,6 @@ const getBadgeActivity = (item) => {
 	return new Promise((resolve, reject) => {
 		Utils.xapi().get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.id}`)
 			.then((res) => {
-				console.log('here in badge activity request: ', res);
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
 			})
 			.catch((err) => {
@@ -268,7 +266,7 @@ function ServerSideDataSource(server) {
 function FakeServer(attendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
-			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+			// console.log("asking for rows: " + request.startRow + " to " + request.endRow);
 			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, attendeesCount);
 			let lastRow = request.endRow <= attendeesCount ? -1 : attendeesCount;
 			dispatch(Actions.getCollectionAttendees(lazyLoadingSet));
@@ -294,7 +292,7 @@ function ActionCellRenderer(props) {
 	const dispatch = useDispatch();
 	const { data } = props;
 	const updateBadgeActivity = () => {
-		console.log('here update button click: ', data);
+		// console.log('here update button click: ', data);
 		const body = {
 			id: data.badgeActivityId,
 			isCollected: true,

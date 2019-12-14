@@ -4,7 +4,7 @@ import axios from 'axios';
 import ReactToPrint from 'react-to-print'; // for Print React component
 
 // import @material-ui components
-import { Button, Paper, Input, Icon,Typography } from '@material-ui/core';
+import { Button, Paper, Input, Icon, Typography } from '@material-ui/core';
 
 // import Redux
 import withReducer from 'app/store/withReducer';
@@ -26,28 +26,28 @@ function Registration() {
     const dispatch = useDispatch();
     const count = useSelector(({ registerApp }) => registerApp.registration.count);
     const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-    const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch );
+    const attendeesSearch = useSelector(({ registerApp }) => registerApp.registration.attendeesSearch);
     const badgeIDs = useSelector(({ registerApp }) => registerApp.registration.badgeIDs);
     const rows = useSelector(({ registerApp }) => registerApp.registration.rows);
     const mainTheme = useSelector(({ fuse }) => fuse.settings.mainTheme);
     const _tempSearchText = useSelector(({ registerApp }) => registerApp.registration.searchText);
     const [textChange, changeText] = useState('');
     const printData = (_tempSearchText == '') ? (attendees) : (attendeesSearch);
-    
+
     const initialTableData = {
-        count:0,
-        attendees:[],
-        attendeesSearch:[],
-        _tempSearchText:'',
-        badgeIDs:[]
+        count: 0,
+        attendees: [],
+        attendeesSearch: [],
+        _tempSearchText: '',
+        badgeIDs: []
     }
     const tableData = {
         ...initialTableData,
-        count:count,
-        attendees:attendees,
-        attendeesSearch:attendeesSearch,
-        _tempSearchText:_tempSearchText,
-        badgeIDs:badgeIDs
+        count: count,
+        attendees: attendees,
+        attendeesSearch: attendeesSearch,
+        _tempSearchText: _tempSearchText,
+        badgeIDs: badgeIDs
     }
     return (
         <FusePageCarded
@@ -76,11 +76,11 @@ function Registration() {
                                             dispatch(Actions.setSearchText(ev.target.value));
                                             changeText('');
                                         }
-                                        else 
+                                        else
                                             changeText(ev.target.value)
                                     }}
-                                    onKeyDown = {ev =>{
-                                        if (ev.key === 'Enter'){
+                                    onKeyDown={ev => {
+                                        if (ev.key === 'Enter') {
                                             dispatch(Actions.setSearchText(ev.target.value))
                                         }
                                     }}
@@ -89,7 +89,7 @@ function Registration() {
                         </FuseAnimate>
                     </ThemeProvider>
                     <div>
-                        <Button className="whitespace-no-wrap" color="default" variant="contained" style={{marginRight:'10px'}} onClick={(e) => {tableRef.current.exportExcel()}}>Export</Button>
+                        <Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }} onClick={(e) => { tableRef.current.exportExcel() }}>Export</Button>
                         <ReactToPrint
                             trigger={() => <Button color="secondary" variant="contained">Print Badges</Button>}
                             content={() => printRef.current}

@@ -1,9 +1,11 @@
 import React from 'react';
-import axios from 'axios';
 
 // import @material-ui components
 import { Box } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+
+// import Utils
+import * as Utils from '../../../../utils';
 
 // import assets
 import BG1 from '../assets/images/bg-1.jpg';
@@ -167,25 +169,17 @@ class PrintComponent extends React.Component {
 			return this.getFriendlyId(item);
 		});
 		Promise.all(promiseArr).then(values => {
-			let friendlyIdArr = [];
-			values.map((item, index) => {
-				friendlyIdArr.push({
-					fId: item,
-					id: attendees[index].id,
-				});
-			})
+			const friendlyIdArr = values.map((item, index) => ({
+				fId: item,
+				id: attendees[index].id,
+			}));
 			this.setState({ friendlyIdArr: friendlyIdArr });
 		});
 	}
 
 	getFriendlyId = (item) => {
 		return new Promise((resolve, reject) => {
-			const header = {
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
-				}
-			};
-			axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
+			Utils.xapi().get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`)
 				.then((res) => {
 					console.log('here in friendlyID: ', res);
 					resolve((res.data && res.data.length > 0) ? res.data[0].badgeFriendlyID : 0);
@@ -199,7 +193,7 @@ class PrintComponent extends React.Component {
 	render() {
 		const { attendees, selectedRows, friendlyIdArr } = this.state;
 		const { classes } = this.props;
-		console.log('here in print component: ', attendees);
+		// console.log('here in print component: ', attendees);
 		const displayData = attendees && attendees
 			.filter((item) => {
 				return selectedRows.some((row) => {

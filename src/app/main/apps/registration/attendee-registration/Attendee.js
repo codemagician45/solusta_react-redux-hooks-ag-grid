@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import ReactToPrint from 'react-to-print'; // for Print React component
 
 // import @material-ui
 import {
@@ -11,12 +12,9 @@ import {
 	Icon, IconButton, LinearProgress
 } from '@material-ui/core';
 import {
-	MuiPickersUtilsProvider,
-	KeyboardTimePicker,
 	KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/core/styles';
-import DateFnsUtils from '@date-io/date-fns';
 
 // import redux
 import withReducer from 'app/store/withReducer';
@@ -25,6 +23,9 @@ import reducer from '../store/reducers';
 
 // import utils
 import * as Utils from '../../../../utils';
+
+// import components
+import AttendeePrintComponent from './AttendeePrintComponent';
 
 // import env server link
 const environment = require('../RegistrationEnv');
@@ -60,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 		boxShadow: theme.shadows[1],
 	},
 	submitGrid: {
-		textAlign: "center",
+		textAlign: "right",
 		marginTop: theme.spacing(4),
 	},
 	textField: {
@@ -75,7 +76,9 @@ const useStyles = makeStyles(theme => ({
 		width: '300px'
 	},
 	button: {
-		width: '400px',
+		width: '200px',
+		marginRight: theme.spacing(2),
+		padding: theme.spacing(1),
 	},
 	modal: {
 		display: 'flex',
@@ -162,20 +165,22 @@ function NewCategory(props) {
 	const [category, setCategory] = useState({});
 	const [savingAttendee, setSavingAttendee] = useState(false);
 
+	const printRef = useRef();
 	const classes = useStyles();
 	const dispatch = useDispatch();
-	const categories = useSelector(({ registration }) => registration.category.categories);
-	const loading = useSelector(({ registration }) => registration.category.loading);
+	const categories = useSelector(({ registration }) => registration.attendee.categories);
+	const loading = useSelector(({ registration }) => registration.attendee.loading);
+	let searchKey = (props.match.path).split('/')[4];
 
 	useEffect(() => {
 		if (categories.length > 0) {
-			let searchKey = (props.match.path).split('/')[4];
-			let tmp = categories.filter(item => {
-				return item.categoryName.toUpperCase() === searchKey.toUpperCase();
+			let key = searchKey === 'event-crew' ? 'event crew' : searchKey;
+			const tmp = categories.filter(item => {
+				return item.categoryName.toUpperCase() === key.toUpperCase();
 			});
 			setCategory(tmp);
 		}
-	}, [props, categories]);
+	}, [props, categories, searchKey]);
 
 	useEffect(() => {
 		setSavingAttendee(loading);
@@ -205,17 +210,17 @@ function NewCategory(props) {
 						mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
 						mainPhotoContentType: profile ? profile.type : null,
 					};
+
 					dispatch(Actions.saveAttendee());
-					console.log('here save attendee: ', data);
 
 					Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
 						.then(response => {
-							console.log('here save attendee response: ', response);
 							dispatch(Actions.saveAttendeeSuccess(response.data));
-							props.history.push('/app/attendees/category');
+							props.history.goBack();
 						})
 						.catch(error => {
 							dispatch(Actions.saveAttendeeFail());
+							props.history.goBack();
 						});
 				} else {
 					setError(true);
@@ -236,16 +241,17 @@ function NewCategory(props) {
 						mainPhoto: mainPhoto ? mainPhoto.split(',')[1] : null,
 						mainPhotoContentType: profile ? profile.type : null,
 					};
+
 					dispatch(Actions.saveAttendee(data));
-					console.log('here save attendee: ', data);
+
 					Utils.xapi().post(`${SERVER_LINK}/api/attendee-sas`, data)
 						.then(response => {
-							console.log('here save attendee response: ', response);
 							dispatch(Actions.saveAttendeeSuccess(response.data));
-							props.history.push('/app/attendees/category');
+							props.history.goBack();
 						})
 						.catch(error => {
 							dispatch(Actions.saveAttendeeFail());
+							props.history.goBack();
 						});
 				} else {
 					setError(true);
@@ -257,13 +263,12 @@ function NewCategory(props) {
 	};
 
 	const onSaveAndPrint = () => {
-
+		console.log('here in save and print');
 	}
 
 	const onCancel = () => {
-
+		props.history.goBack();
 	}
-	// console.log('here inside the New Category: ', categories, categoryInFo, attendee);
 
 	return (
 		<React.Fragment>
@@ -273,22 +278,20 @@ function NewCategory(props) {
 						<LinearProgress />
 					</div>
 				)}
+				<AttendeePrintComponent
+					firstName={firstName}
+					lastName={lastName}
+					companyName={companyName}
+					profile={profile}
+					categoryName={searchKey}
+					ref={printRef}
+				/>
 				<Grid container spacing={0} className={classes.container}>
 					<Grid item xs={3} md={3} className="relative">
 						<Grid container spacing={0} className={classes.profileItem}>
 							<Grid item xs={12} md={12} className={classes.imageItem}>
 								<div className="relative">
 									<img src={(profile && URL.createObjectURL(profile)) || 'assets/images/avatars/profile.jpg'} className={classes.img} alt="note" />
-									{/* <Fab
-											className="absolute right-0 bottom-0 m-8"
-											variant="extended"
-											size="small"
-											color="secondary"
-											aria-label="Delete Image"
-											onClick={removeImage}
-									>
-											<Icon fontSize="small">delete</Icon>
-									</Fab> */}
 								</div>
 							</Grid>
 							<Grid item xs={12} md={12} className={classes.imageItem}>
@@ -403,7 +406,7 @@ function NewCategory(props) {
 										label="QID *"
 										value={qId}
 										onChange={e => setQId(e.target.value)}
-										error={error && !qId}
+										error={error && !qId && (tabIndex === 0)}
 										margin="normal"
 									/>
 								</Grid>
@@ -418,18 +421,16 @@ function NewCategory(props) {
 										label="Passport No *"
 										value={passportNum}
 										onChange={(e) => setPassportNum(e.target.value)}
-										error={error && !passportNum}
+										error={error && !passportNum && (tabIndex === 1)}
 										margin="normal"
 									/>
 								</Grid>
 								<Grid item xs={12} md={6} className={classes.item}>
 									<KeyboardDatePicker
-										disableToolbar
-										variant="inline"
-										format="MM-DD-YYYY"
 										margin="normal"
-										id="date-picker-inline"
+										id="date-picker-dialog"
 										label="Expiry Date *"
+										format="MM-DD-YYYY"
 										value={expiryDate}
 										onChange={(date) => setExpiryDate(date)}
 										KeyboardButtonProps={{
@@ -444,18 +445,16 @@ function NewCategory(props) {
 										label="Nationality *"
 										value={nationality}
 										onChange={e => setNationality(e.target.value)}
-										error={error && !nationality}
+										error={error && !nationality && (tabIndex === 1)}
 										margin="normal"
 									/>
 								</Grid>
 								<Grid item xs={12} md={6} className={classes.item}>
 									<KeyboardDatePicker
-										disableToolbar
-										variant="inline"
-										format="MM-DD-YYYY"
 										margin="normal"
-										id="date-picker-inline"
+										id="date-picker-dialog"
 										label="Date of Birth *"
+										format="MM-DD-YYYY"
 										value={birthDate}
 										onChange={(date) => setBirthDate(date)}
 										KeyboardButtonProps={{
@@ -467,14 +466,15 @@ function NewCategory(props) {
 						</TabPanel>
 					</Grid>
 					<Grid item xs={12} md={12} className={classes.submitGrid}>
-						<Button variant="contained" color="secondary" onClick={onCancel} className={classes.button}>
-							Cancel
-            </Button>
-						<Button variant="contained" color="secondary" onClick={onSaveAndPrint} className={classes.button}>
-							Save &amp; Print
-            </Button>
-						<Button variant="contained" color="secondary" onClick={onSaveAttendee} className={classes.button}>
+						<Button variant="contained" color="primary" onClick={onSaveAttendee} className={classes.button}>
 							Save
+            </Button>
+						<ReactToPrint
+							trigger={() => <Button color="secondary" onClick={onSaveAndPrint} className={classes.button} variant="contained">Save &amp; Print</Button>}
+							content={() => printRef.current}
+						/>
+						<Button variant="contained" color="default" onClick={onCancel} className={classes.button}>
+							Cancel
             </Button>
 					</Grid>
 				</Grid>
