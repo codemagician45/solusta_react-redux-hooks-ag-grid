@@ -11,7 +11,7 @@ const withReducer = (key, reducer) => WrappedComponent =>
 
         render()
         {
-            return <WrappedComponent {...this.props} />;
+            return <WrappedComponent  {...this.props} />;
         };
     };
 

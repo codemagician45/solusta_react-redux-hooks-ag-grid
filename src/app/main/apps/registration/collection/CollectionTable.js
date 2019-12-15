@@ -20,15 +20,10 @@ import reducer from '../store/reducers';
 // import utils
 import * as Utils from '../../../../utils';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const getLazyLoadingDataSet = (endRow, startRow) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
+		Utils.xapi().get(`/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
-				console.log('here lazy loading data set function: ', response.data);
 				resolve(response.data);
 			})
 			.catch(error => {
@@ -39,7 +34,7 @@ const getLazyLoadingDataSet = (endRow, startRow) => {
 
 const getBadge = (item) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`)
+		Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`)
 			.then((res) => {
 				console.log('here in badge request: ', res);
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
@@ -52,9 +47,8 @@ const getBadge = (item) => {
 
 const getBadgeActivity = (item) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.id}`)
+		Utils.xapi().get(`/badge-activity-sas?badgeSAId.equals=${item.id}`)
 			.then((res) => {
-				console.log('here in badge activity request: ', res);
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
 			})
 			.catch((err) => {
@@ -108,7 +102,7 @@ const getBadgeActivities = (badges, dispatch) => {
 
 const getAttendsCount = () => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+		Utils.xapi().get(`/attendee-sas/count`)
 			.then(response => {
 				resolve(response.data);
 			})
@@ -268,7 +262,7 @@ function ServerSideDataSource(server) {
 function FakeServer(attendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
-			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+			// console.log("asking for rows: " + request.startRow + " to " + request.endRow);
 			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, attendeesCount);
 			let lastRow = request.endRow <= attendeesCount ? -1 : attendeesCount;
 			dispatch(Actions.getCollectionAttendees(lazyLoadingSet));
@@ -294,12 +288,12 @@ function ActionCellRenderer(props) {
 	const dispatch = useDispatch();
 	const { data } = props;
 	const updateBadgeActivity = () => {
-		console.log('here update button click: ', data);
+		// console.log('here update button click: ', data);
 		const body = {
 			id: data.badgeActivityId,
 			isCollected: true,
 		};
-		Utils.xapi().put(`${SERVER_LINK}/api/badge-activity-sas`, body)
+		Utils.xapi().put(`/badge-activity-sas`, body)
 			.then(response => {
 				console.log('here update button click response: ', response);
 				const updateData = {

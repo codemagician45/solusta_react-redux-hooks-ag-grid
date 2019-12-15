@@ -1,10 +1,6 @@
 // import utils
 import * as Utils from '../../../../../utils';
 
-// import env server link
-const environment = require('../../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 export const GET_BADGE_ATTENDEES = '[REGISTRATION] GET_BADGE_ATTENDEES';
 export const SET_BADGE_ATTENDEE_SELECTED_ROWS = '[REGISTRATION] SET_BADGE_ATTENDEE_SELECTED_ROWS';
 export const GET_BADGE_IDS = '[REGISTRATION] GET_BADGE_IDS';
@@ -45,7 +41,7 @@ export function updateBadgeActivity(data) {
 		id: data.badgeActivityId,
 		printedCount: data.printCount + 1,
 	};
-	const request = Utils.xapi().put(`${SERVER_LINK}/api/badge-activity-sas`, body);
+	const request = Utils.xapi().put(`/badge-activity-sas`, body);
 
 	return (dispatch) =>
 		request.then((response) =>

@@ -45,7 +45,6 @@ const securityApprovalReducer = function (state = initialState, action) {
     case Actions.CHANGE_ATTENDEE_IS_SECURITY_CHANGED: {
       const attendees = { ...state.attendees };
       const data = action.payload;
-      attendees[data.attendeeId].isSecurityChanged = data.isSecurityChanged;
       attendees[data.attendeeId].id = data.attendeeId;
       attendees[data.attendeeId].attendeeSecApprovalSAId = data.secApproval;
       attendees[data.attendeeId].attendeeSecApprovalSAApprovalText = data.secApprovalText;
@@ -58,7 +57,6 @@ const securityApprovalReducer = function (state = initialState, action) {
     case Actions.UPDATE_SEC_ATTENDEE: {
       const attendees = { ...state.attendees };
       attendees[action.payload.id] = action.payload;
-      attendees[action.payload.id].isSecurityChanged = false;
 
       return {
         ...state,

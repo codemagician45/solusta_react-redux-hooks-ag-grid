@@ -29,37 +29,37 @@ export const RegistrationConfig = {
 			component: React.lazy(() => import('./security-approval/SecurityApproval')),
 		},
 		{
-			path: '/app/attendees/category',
+			path: '/app/attendees/attendee',
 			exact: true,
-			component: React.lazy(() => import('./category/Category')),
+			component: React.lazy(() => import('./attendee-registration')),
 		},
 		{
-			path: '/app/attendees/category/speaker',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/speaker',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 		{
-			path: '/app/attendees/category/organizer',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/organizer',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 		{
-			path: '/app/attendees/category/participant',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/participant',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 		{
-			path: '/app/attendees/category/event-crew',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/event-crew',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 		{
-			path: '/app/attendees/category/media',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/media',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 		{
-			path: '/app/attendees/category/security',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/security',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 		{
-			path: '/app/attendees/category/contractor',
-			component: React.lazy(() => import('./category/NewCategory'))
+			path: '/app/attendees/attendee/contractor',
+			component: React.lazy(() => import('./attendee-registration/Attendee'))
 		},
 	]
 };
