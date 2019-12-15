@@ -25,7 +25,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { FusePageCarded, FuseAnimate } from '@fuse';
-
+import {Icon, IconButton} from "@material-ui/core";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import SaveIcon from '@material-ui/icons/Save';
+import PublishIcon from '@material-ui/icons/Publish';
 
 const useStyles = makeStyles(theme => ({
     success:{
@@ -71,7 +74,7 @@ function RegistrationPhotoEditor(props) {
         props.history.push('/app/attendees/registration');
     };
 
-    
+
     const handleCloseFail = () => {
         setOpenFail(false);
         props.history.push('/app/attendees/registration');
@@ -100,7 +103,13 @@ function RegistrationPhotoEditor(props) {
                 dispatch(Actions.setSearchText(''));
 
             })
-    }
+    };
+
+    const selectImg = (e) => {
+        if (e.target.files[0]) {
+            imageRef.current.loadNewImage(e.target.files[0])
+        }
+    };
 
     return (
         <FusePageCarded
@@ -112,10 +121,24 @@ function RegistrationPhotoEditor(props) {
                 <div className="flex flex-1 w-full items-center justify-between" >
                     <div></div>
                     <div>
-                        <Button className="whitespace-no-wrap" color="default" variant="contained" style={{marginRight:'10px'}} onClick={back}>
-                            Back
-                        </Button>
-                        <Button className="whitespace-no-wrap" color="secondary" variant="contained" onClick={(e) => {imageRef.current.saveCroppedImage()}}>Save</Button>
+                        <IconButton className="w-32 h-32 mx-4 p-0" component="span" onClick={back}>
+                            <Icon fontSize="large">arrow_back_icon</Icon>
+                        </IconButton>
+                        <input
+                          accept="image/*"
+                          className="hidden"
+                          id="button-file"
+                          type="file"
+                          onChange={selectImg}
+                        />
+                        <label htmlFor="button-file">
+                            <IconButton className="w-32 h-32 mx-4 p-0" component="span">
+                                <Icon fontSize="large">publish_icon</Icon>
+                            </IconButton>
+                        </label>
+                        <IconButton className="w-32 h-32 mx-4 p-0" component="span" onClick={(e) => {imageRef.current.saveCroppedImage()}}>
+                            <Icon fontSize="large">save_icon</Icon>
+                        </IconButton>
                     </div>
                 </div>
             }
