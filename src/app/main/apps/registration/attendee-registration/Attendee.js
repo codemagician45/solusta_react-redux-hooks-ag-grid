@@ -259,8 +259,14 @@ function NewCategory(props) {
 	};
 
 	const onSaveAndPrint = () => {
-		console.log('here in save and print');
-	}
+		onSaveAttendee.call()
+			.then(()=> {
+			//console.log("saved ")
+		}).catch(()=>{
+			console.error("something wrong")
+		});
+
+	};
 
 	const onCancel = () => {
 		props.history.goBack();
@@ -466,8 +472,9 @@ function NewCategory(props) {
 							Save
             </Button>
 						<ReactToPrint
-							trigger={() => <Button color="secondary" onClick={onSaveAndPrint} className={classes.button} variant="contained">Save &amp; Print</Button>}
+							trigger={() => <Button color="secondary" className={classes.button} variant="contained">Save &amp; Print</Button>}
 							content={() => printRef.current}
+							onBeforePrint = {() => onSaveAndPrint()}
 						/>
 						<Button variant="contained" color="default" onClick={onCancel} className={classes.button}>
 							Cancel
