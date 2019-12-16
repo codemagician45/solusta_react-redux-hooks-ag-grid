@@ -1,8 +1,5 @@
-import axios from 'axios';
-
-// import env server link
-const environment = require('../../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
+// import Utils
+import * as Utils from '../../../../../utils';
 
 export const SET_REGISTRATION_ROWS = '[REGISTRATION] SET_REGISTRATION_ROWS';
 // export const GET_REGISTRATION_ATTENDEES = '[REGISTRATION] GET_REGISTRATION_ATTENDEES';
@@ -34,17 +31,18 @@ export const SET_REG_SEARCH_TEXT = '[REGISTRATION] SET REG_SEARCH TEXT';
 // 			})
 // 		);
 // }
+
 export function updateRegistrationAttendees(data) {
 	return {
 		type: UPDATE_REGISTRATION_ATTENDEES,
-		payload:data
+		payload: data
 	}
 
 }
 export function updateRegistrationAttendeesSearch(data) {
 	return {
 		type: UPDATE_REGISTRATION_ATTENDEES_SEARCH,
-		payload:data
+		payload: data
 	}
 
 }
@@ -80,7 +78,7 @@ export function updateRegBadgeActivityPrint(data) {
 		id: data.badgeActivityId,
 		printedCount: data.printCount + 1,
 	};
-	const request = axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header);
+	const request = Utils.xapi().put(`/badge-activity-sas`, body, header);
 
 	return (dispatch) =>
 		request.then((response) =>
@@ -104,7 +102,7 @@ export function updateRegBadgeActivityCollection(data) {
 		id: data.badgeActivityId,
 		isCollected: true,
 	};
-	const request = axios.put(`${SERVER_LINK}/api/badge-activity-sas`, body, header);
+	const request = Utils.xapi().put(`/badge-activity-sas`, body, header);
 
 	return (dispatch) =>
 		request.then((response) =>
@@ -123,7 +121,7 @@ export function getAttendeeCount() {
 			'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
 		}
 	};
-	const request = axios.get(`${SERVER_LINK}/api/attendee-sas/count`, null, header);
+	const request = Utils.xapi().get(`/attendee-sas/count`, null, header);
 	return (dispatch) =>
 		request.then((response) =>
 			dispatch({
@@ -133,18 +131,16 @@ export function getAttendeeCount() {
 		);
 }
 
-export function setSearchText (value)
-{
+export function setSearchText(value) {
 	return {
-		type:SET_REG_SEARCH_TEXT,
-		searchText:value
+		type: SET_REG_SEARCH_TEXT,
+		searchText: value
 	}
 }
 
-export function updateRegistrationSingleAttendee(data)
-{
+export function updateRegistrationSingleAttendee(data) {
 	return {
 		type: UPDATE_REGISTRATION_SINGLE_ATTENDEE,
-		payload:data
+		payload: data
 	}
 }

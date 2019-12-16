@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import axios from 'axios';
 
 // import Ag-grid module
 import { AgGridReact } from 'ag-grid-react';
@@ -26,10 +25,6 @@ import reducer from '../store/reducers';
 // import utils
 import * as Utils from '../../../../utils';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
@@ -42,9 +37,8 @@ const useStyles = makeStyles(theme => ({
 
 const getLazyLoadingDataSet = (endRow, startRow) => {
   return new Promise((resolve, reject) => {
-    Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
+    Utils.xapi().get(`/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
       .then(response => {
-        console.log('here lazy loading data set function: ', response.data);
         resolve(response.data);
       })
       .catch(error => {
@@ -55,7 +49,7 @@ const getLazyLoadingDataSet = (endRow, startRow) => {
 
 const getAttendsCount = () => {
   return new Promise((resolve, reject) => {
-    Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+    Utils.xapi().get(`/attendee-sas/count`)
       .then(response => {
         resolve(response.data);
       })
@@ -72,7 +66,7 @@ function SecurityApprovalTable(props) {
   const columnDefs = [
     {
       headerName: 'Attendee ID',
-      field: 'attendeeId',
+      field: 'id',
       cellStyle: {
         'padding': '15px',
         'font-size': '14px',
@@ -163,19 +157,6 @@ function SecurityApprovalTable(props) {
     overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
     overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
   };
-  // const rowData = attendees.map((item) => {
-  //   return {
-  //     attendeeId: item.id,
-  //     firstName: item.firstName,
-  //     lastName: item.lastName,
-  //     email: item.email,
-  //     category: (item.attendeeCategorySAS[0] && item.attendeeCategorySAS[0].categoryName) || '',
-  //     companyName: item.companyName,
-  //     secApproval: item.attendeeSecApprovalSAId,
-  //     secApprovalText: item.attendeeSecApprovalSAApprovalText,
-  //     isSecurityChanged: item.isSecurityChanged,
-  //   }
-  // });
   const frameworkComponents = {
     secApprovalCellRenderer: SecApprovalCellRenderer,
     actionCellRenderer: ActionCellRenderer,
@@ -187,7 +168,6 @@ function SecurityApprovalTable(props) {
   const onSelectionChanged = (params) => {
     const gridApi = params.api;
     const selectedRows = gridApi.getSelectedRows();
-    console.log('here in selected row data in collection ag-grid: ', selectedRows);
     dispatch(Actions.setSecSelectedRows(selectedRows));
   };
   const onGridReady = async (params) => {
@@ -247,19 +227,18 @@ function ServerSideDataSource(server) {
 function FakeServer(attendeesCount, dispatch) {
   return {
     getResponse: async function (request) {
-      console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+      // console.log("asking for rows: " + request.startRow + " to " + request.endRow);
       const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, attendeesCount);
       let lastRow = request.endRow <= attendeesCount ? -1 : attendeesCount;
-      dispatch(Actions.getSecAttendees(lazyLoadingSet));
       const rows = lazyLoadingSet.map(attendee => {
         return {
           ...attendee,
           category: (attendee.attendeeCategorySAS[0] && attendee.attendeeCategorySAS[0].categoryName) || '',
           secApproval: attendee.attendeeSecApprovalSAId || 0,
           secApprovalText: attendee.attendeeSecApprovalSAApprovalText || 'No Text',
-          isSecurityChanged: attendee.isSecurityChanged,
         };
       });
+      dispatch(Actions.getSecAttendees(rows));
       return {
         success: true,
         rows,
@@ -278,18 +257,16 @@ function SecApprovalCellRenderer(props) {
   const secApprovals = Utils.objectToArray(useSelector(({ registerApp }) => registerApp.securityApproval.secApprovals));
   const [secApproval, setSecApproval] = useState(data.secApproval);
 
-  const changeSecApproval = (e) => {
+  const onChangeSecApproval = (e) => {
     setSecApproval(e.target.value);
     if (prevSecApproval.current !== e.target.value) {
-      console.log('security approval is changed: ', data);
+      // console.log('security approval is changed: ', data);
       dispatch(Actions.changeAttendeeIsSecurityChanged({
-        attendeeId: data.attendeeId,
+        attendeeId: data.id,
         secApproval: e.target.value,
         secApprovalText: secApprovals.filter(item => item.id === e.target.value)[0].approvalText,
-        isSecurityChanged: true,
       }));
     }
-    console.log('security approval is not changed: ', data);
   }
 
   return (
@@ -300,9 +277,8 @@ function SecApprovalCellRenderer(props) {
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={secApproval}
-          onChange={changeSecApproval}
+          onChange={onChangeSecApproval}
         >
-          <MenuItem value={0}>None</MenuItem>
           {secApprovals && secApprovals.map((item, index) => (
             <MenuItem key={index.toString()} value={item.id}>{item.approvalText}</MenuItem>
           ))}
@@ -319,33 +295,24 @@ function ActionCellRenderer(props) {
   const dispatch = useDispatch();
   const attendees = useSelector(({ registerApp }) => registerApp.securityApproval.attendees);
 
-  const approveSecurity = () => {
+  const onApproveSecurity = () => {
     const requestData = {
-      ...attendees[data.attendeeId],
+      ...attendees[data.id],
       attendeeSecApprovalSAId: data.secApproval,
       attendeeSecApprovalSAApprovalText: data.secApprovalText,
     };
     Utils.xapi().put('/attendee-sas', requestData)
       .then(response => {
         dispatch(Actions.updateSecAttendee(response.data));
-        console.log('here update attendee security response: ', response);
       })
       .catch(error => {
         console.log('here update attendee security error: ', error);
       });
   };
+
   return (
-    <Button variant="contained" color="secondary" onClick={approveSecurity} className={classes.button}>Approve</Button>
+    <Button variant="contained" color="secondary" onClick={onApproveSecurity} className={classes.button}>Approve</Button>
   );
-  // if (data.isSecurityChanged) {
-  //   return (
-  //     <Button variant="contained" color="secondary" onClick={approveSecurity} className={classes.button}>Approve</Button>
-  //   );
-  // } else {
-  //   return (
-  //     <Button variant="contained" color="secondary" disabled={true} className={classes.button}>Approve</Button>
-  //   );
-  // }
 }
 
 export default withReducer('registerApp', reducer)(SecurityApprovalTable);

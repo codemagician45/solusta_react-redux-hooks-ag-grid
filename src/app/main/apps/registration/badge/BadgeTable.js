@@ -20,15 +20,11 @@ import reducer from '../store/reducers';
 // import utils
 import * as Utils from '../../../../utils';
 
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
-
 const getLazyLoadingDataSet = (endRow, startRow) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
+		Utils.xapi().get(`/attendee-sas?page=${endRow / 50 - 1}&size=${50}`)
 			.then(response => {
-				console.log('here lazy loading data set function: ', response.data);
+				// console.log('here lazy loading data set function: ', response.data);
 				resolve(response.data);
 			})
 			.catch(error => {
@@ -39,9 +35,9 @@ const getLazyLoadingDataSet = (endRow, startRow) => {
 
 const getBadge = (item) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`)
+		Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`)
 			.then((res) => {
-				console.log('here in badge response: ', res);
+				// console.log('here in badge response: ', res);
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
 			})
 			.catch((err) => {
@@ -52,9 +48,9 @@ const getBadge = (item) => {
 
 const getBadgeActivity = (item) => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`)
+		Utils.xapi().get(`/badge-activity-sas?badgeSAId.equals=${item.badgeId}`)
 			.then((res) => {
-				console.log('here in badge activity response: ', res);
+				// console.log('here in badge activity response: ', res);
 				resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
 			})
 			.catch((err) => {
@@ -69,22 +65,21 @@ const getBadgeIdArr = (attendees, dispatch) => {
 	});
 
 	Promise.all(promiseArr).then(values => {
-		let badgeIdArr = [];
-		values.map((value, index) => {
+		const badgeIdArr = values.map((value, index) => {
 			if (value) {
-				badgeIdArr.push({
+				return {
 					badgeFriendlyID: value.badgeFriendlyID,
 					badgeActivitySAId: value.badgeActivitySAId,
 					attendeeSAId: value.attendeeSAId,
 					badgeId: value.id,
-				});
+				};
 			} else {
-				badgeIdArr.push({
+				return {
 					badgeFriendlyID: 0,
 					badgeActivitySAId: 0,
 					attendeeSAId: 0,
 					badgeId: 0,
-				});
+				};
 			}
 		});
 		dispatch(Actions.getBadgeIDs(badgeIdArr));
@@ -99,21 +94,19 @@ const getPrintCountArr = (badges, dispatch) => {
 	});
 
 	Promise.all(promiseArr).then(values => {
-		let printCountArr = [];
-		values.map((value, index) => {
-			// return attendeeID and badgeFriendlyID
+		const printCountArr = values.map((value, index) => {
 			if (value) {
-				printCountArr.push({
+				return {
 					badgeActivityId: value.id,
 					printedCount: value.printedCount,
 					badgeId: badges[index].badgeId,
-				});
+				};
 			} else {
-				printCountArr.push({
+				return {
 					badgeActivityId: 0,
 					printedCount: 0,
 					badgeId: badges[index].badgeId,
-				});
+				};
 			}
 		});
 		dispatch(Actions.getPrintCounts(printCountArr));
@@ -124,7 +117,7 @@ const getPrintCountArr = (badges, dispatch) => {
 
 const getAttendsCount = () => {
 	return new Promise((resolve, reject) => {
-		Utils.xapi().get(`${SERVER_LINK}/api/attendee-sas/count`)
+		Utils.xapi().get(`/attendee-sas/count`)
 			.then(response => {
 				resolve(response.data);
 			})
@@ -228,7 +221,7 @@ function BadgeTable(props) {
 	const onSelectionChanged = (params) => {
 		const gridApi = params.api;
 		const selectedRow = gridApi.getSelectedRows();
-		console.log('here in selected row data in ag-grid: ', selectedRow);
+		// console.log('here in selected row data in ag-grid: ', selectedRow);
 		dispatch(Actions.setBadgeAttendeeSelectedRows(selectedRow));
 	};
 
@@ -288,7 +281,7 @@ function ServerSideDataSource(server) {
 function FakeServer(totalAttendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
-			console.log("asking for rows: " + request.startRow + " to " + request.endRow);
+			// console.log("asking for rows: " + request.startRow + " to " + request.endRow);
 			const lazyLoadingSet = await getLazyLoadingDataSet(request.endRow, request.startRow, totalAttendeesCount);
 			let lastRow = request.endRow <= totalAttendeesCount ? -1 : totalAttendeesCount;
 			dispatch(Actions.getBadgeAttendees(lazyLoadingSet));
@@ -311,7 +304,7 @@ function FakeServer(totalAttendeesCount, dispatch) {
 
 // Action cell renderer
 function ActionCellRenderer(props) {
-	console.log("badgeIds", props)
+	// console.log("badgeIds", props)
 	// const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;

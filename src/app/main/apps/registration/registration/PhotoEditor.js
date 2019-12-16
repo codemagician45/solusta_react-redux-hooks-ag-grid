@@ -16,7 +16,7 @@ const iconc = require("tui-image-editor/dist/svg/icon-c.svg");
 const icond = require("tui-image-editor/dist/svg/icon-d.svg");
 const ImageEditorTheme = {
   "menu.backgroundColor": "white",
-  "common.backgroundColor": "#151515",
+  "common.backgroundColor": "rgba(105,105,105,0.61)",
   "downloadButton.backgroundColor": "white",
   "downloadButton.borderColor": "white",
   "downloadButton.color": "black",
@@ -51,10 +51,18 @@ const PhotoEditor = React.forwardRef(function(props, ref) {
         const data = imageEditorInst.toDataURL();
         // setImage(data);
         props.onCrop(data);
-        }
+        },
+      loadNewImage : (file) => {
+        const { imageEditorInst } = imageEditor.current;
+        imageEditorInst.loadImageFromFile(file, 'SampleImage')
+          .then(result => {
+          // console.log('old : ' + result.oldWidth + ', ' + result.oldHeight);
+          // console.log('new : ' + result.newWidth + ', ' + result.newHeight);
+        });
+      }
     }
   });
-  
+
   if (image) {
     return (
         <ImageEditor
@@ -67,7 +75,8 @@ const PhotoEditor = React.forwardRef(function(props, ref) {
             menu: ["crop", "flip", "rotate", "draw", "shape", "text", "filter"],
             initMenu: "",
             uiSize: {
-              height: `calc(100vh - 130px)`,
+              height: '100%',
+              width: '100%'
             },
             menuBarPosition: "bottom",
           }}
@@ -77,7 +86,7 @@ const PhotoEditor = React.forwardRef(function(props, ref) {
             cornerSize: 20,
             rotatingPointOffset: 70,
           }}
-          usageStatistics={true}
+          usageStatistics={false}
           ref={imageEditor}
         />
     );

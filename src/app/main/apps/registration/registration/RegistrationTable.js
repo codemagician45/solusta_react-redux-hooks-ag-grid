@@ -11,94 +11,93 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
+// import @material-ui components
+import { Button } from '@material-ui/core';
+
 // import Redux
 import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
 import reducer from '../store/reducers';
 
-import axios from 'axios';
-import { Button } from '@material-ui/core';
-
-// import env server link
-const environment = require('../RegistrationEnv');
-const SERVER_LINK = (environment.env === 'server') ? environment.ServerLink.prod : environment.ServerLink.env;
+// import Utils
+import * as Utils from '../../../../utils';
 
 // Lazy loading cell renderer
 function LoadingRenderer(props) {
-	if (props.value !== undefined) {
-		return props.value;
-	} else {
-		return (
-			<img src="../assets/images/loading.gif" alt={'loading'} />
-		);
-	}
+    if (props.value !== undefined) {
+        return props.value;
+    } else {
+        return (
+            <img src="../assets/images/loading.gif" alt={'loading'} />
+        );
+    }
 }
 
 // Image cell renderer
 function ImageCellRender(props) {
-	// const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
-	// console.log(props)
-	const id = props.data && props.data.id;
-	// const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
-	const attendee = props.data && props.data;
+    // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
+    // console.log(props)
+    const id = props.data && props.data.id;
+    // const attendee = attendees.filter((attendee) => {return attendee.id === parseInt(id) });
+    const attendee = props.data && props.data;
 
-	const style = {
-		height: '48px',
-		width: '48px',
-		padding: '5px'
-	};
-	// if (attendee[0] && attendee[0].mainPhoto === '')
-	if (attendee && attendee.mainPhoto === '')
-		return (
-			<img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
-		);
-	else {
-		return (
-			<Link to={`/app/attendees/registration/${id}`}>
-				{/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
-				<img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
-			</Link>
-		);
-	}
+    const style = {
+        height: '48px',
+        width: '48px',
+        padding: '5px'
+    };
+    // if (attendee[0] && attendee[0].mainPhoto === '')
+    if (attendee && attendee.mainPhoto === '')
+        return (
+            <img src={'../assets/images/avatars/profile.jpg'} width={48} height={48} alt={'profile'} style={{ padding: '5px' }} />
+        );
+    else {
+        return (
+            <Link to={`/app/attendees/registration/${id}`}>
+                {/* <img src={`data:${attendee[0] && attendee[0].mainPhotoContentType};base64, ${attendee[0] && attendee[0].mainPhoto}`} style={style} alt={'profile'} /> */}
+                <img src={`data:${attendee && attendee.mainPhotoContentType};base64, ${attendee && attendee.mainPhoto}`} style={style} alt={'profile'} />
+            </Link>
+        );
+    }
 }
 
 // Action cell renderer
 function ActionCellRendererPrint(props) {
-	const dispatch = useDispatch();
-	const printHandler = () => {
-		const { data } = props;
-		dispatch(Actions.updateRegBadgeActivityPrint(data));
-		// console.log('here print button click event: ', data);
-	}
-	// console.log("print", props)
-	if (props.data.printCount >= 1) {
-		return (
-			<Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
-		);
-	} else {
-		return (
-			<Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
-		);
-	}
+    const dispatch = useDispatch();
+    const printHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityPrint(data));
+        // console.log('here print button click event: ', data);
+    }
+    // console.log("print", props)
+    if (props.data.printCount >= 1) {
+        return (
+            <Button onClick={printHandler} disabled={true} variant="contained" color="secondary">Printed</Button>
+        );
+    } else {
+        return (
+            <Button onClick={printHandler} variant="contained" color="secondary">Printed</Button>
+        );
+    }
 }
 
 function ActionCellRendererCollection(props) {
-	const dispatch = useDispatch();
-	const collectionHandler = () => {
-		const { data } = props;
-		dispatch(Actions.updateRegBadgeActivityCollection(data));
-		// console.log('here collection button click event: ', data);
-	}
+    const dispatch = useDispatch();
+    const collectionHandler = () => {
+        const { data } = props;
+        dispatch(Actions.updateRegBadgeActivityCollection(data));
+        // console.log('here collection button click event: ', data);
+    }
 
-	if (props.data.isCollected === 'true') {
-		return (
-			<Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
-		);
-	} else {
-		return (
-			<Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
-		);
-	}
+    if (props.data.isCollected === 'true') {
+        return (
+            <Button onClick={collectionHandler} disabled={true} variant="contained" color="secondary">Collected</Button>
+        );
+    } else {
+        return (
+            <Button onClick={collectionHandler} variant="contained" color="secondary">Collected</Button>
+        );
+    }
 }
 var tableDataUnsearch = [];
 var tableDataSearch = [];
@@ -106,8 +105,8 @@ var resultCount = 0;
 var searchText = '';
 var GridReadyInstance = null;
 
-const RegistrationTable = React.forwardRef(function(props, ref) {
-    
+const RegistrationTable = React.forwardRef(function (props, ref) {
+
     // const count = useSelector(({ registerApp }) => registerApp.registration.count);
     // const attendees = useSelector(({ registerApp }) => registerApp.registration.attendees);
     // const attendeesSearch = useSelector(({registerApp}) => registerApp.registration.attendeesSearch);
@@ -117,9 +116,9 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
 
     const dispatch = useDispatch();
     const mount = useRef(false);
-    const {count, attendees, attendeesSearch, _tempSearchText, badgeIDs} = props.tableData;
+    const { count, attendees, attendeesSearch, _tempSearchText, badgeIDs } = props.tableData;
     const [gridApi, setGridApi] = useState(null);
-    
+
     tableDataUnsearch = attendees;
     tableDataSearch = attendeesSearch;
     resultCount = count;
@@ -157,7 +156,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
             }
         };
     }
-    
+
     const FakeServer = (_searchText = "") => {
         return {
             getResponse: function (request) {
@@ -169,70 +168,70 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
                             'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                         }
                     };
-                    if(_searchText == ''){
-                            axios.get(`${SERVER_LINK}/api/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
-                                res => {
-                                    dispatch(Actions.updateRegistrationAttendees(res.data));
-                                    let dataAfterSortingAndFiltering = sortAndFilter(tableDataUnsearch, request.sortModel, request.filterModel);
-                                    let lastRow = -1;
-                                    if (!filterPresent)
-                                         lastRow = request.endRow <= resultCount ? -1 : resultCount;
-                                    else 
-                                         lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
-                                    const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
-                                        const temp = {
-                                            id: data.id,
-                                            category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
-                                            firstName: data.firstName,
-                                            lastName: data.lastName,
-                                            companyName: data.companyName,
-                                            email: data.email,
-                                            mainPhoto: data.mainPhoto,
-                                            mainPhotoContentType: data.mainPhotoContentType
-                                        }
-                                        return temp;
-                                    })
-                                    let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow: lastRow
+                    if (_searchText == '') {
+                        Utils.xapi().get(`/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&size=${cacheBlockSize}`, null, header).then(
+                            res => {
+                                dispatch(Actions.updateRegistrationAttendees(res.data));
+                                let dataAfterSortingAndFiltering = sortAndFilter(tableDataUnsearch, request.sortModel, request.filterModel);
+                                let lastRow = -1;
+                                if (!filterPresent)
+                                    lastRow = request.endRow <= resultCount ? -1 : resultCount;
+                                else
+                                    lastRow = request.endRow <= dataAfterSortingAndFiltering.length ? -1 : dataAfterSortingAndFiltering.length;
+                                const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
+                                    const temp = {
+                                        id: data.id,
+                                        category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
                                     }
-                                    resolve(result)
-                                });
-                    }
-                    else {
-                            axios.get(`${SERVER_LINK}/api/_search/attendee-sas?page=${request.endRow/cacheBlockSize-1}&query=${_searchText}`, null, header).then(
-                                res => {
-                                    dispatch(Actions.updateRegistrationAttendeesSearch(res.data))
-                                    let dataAfterSortingAndFiltering = sortAndFilter(tableDataSearch, request.sortModel, request.filterModel);
-                                    let lastRow = dataAfterSortingAndFiltering.length < request.endRow? cacheBlockSize*(request.endRow/cacheBlockSize-1)+dataAfterSortingAndFiltering.length:-1
-                                    const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
-                                        const temp = {
-                                            id:data.id,
-                                            category:data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
-                                            firstName:data.firstName,
-                                            lastName:data.lastName,
-                                            companyName:data.companyName,
-                                            email:data.email,
-                                            mainPhoto:data.mainPhoto,
-                                            mainPhotoContentType:data.mainPhotoContentType
-                                        }
-                                        return temp;
-                                    });
-                                    let result = {
-                                        success: true,
-                                        rows: rowData,
-                                        lastRow:lastRow
-                                    }
+                                    return temp;
+                                })
+                                let result = {
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
+                                }
                                 resolve(result)
                             });
-                        }
+                    }
+                    else {
+                        Utils.xapi().get(`/_search/attendee-sas?page=${request.endRow / cacheBlockSize - 1}&query=${_searchText}`, null, header).then(
+                            res => {
+                                dispatch(Actions.updateRegistrationAttendeesSearch(res.data))
+                                let dataAfterSortingAndFiltering = sortAndFilter(tableDataSearch, request.sortModel, request.filterModel);
+                                let lastRow = dataAfterSortingAndFiltering.length < request.endRow ? cacheBlockSize * (request.endRow / cacheBlockSize - 1) + dataAfterSortingAndFiltering.length : -1
+                                const rowData = dataAfterSortingAndFiltering && dataAfterSortingAndFiltering.map(data => {
+                                    const temp = {
+                                        id: data.id,
+                                        category: data.attendeeCategorySAS[0] && data.attendeeCategorySAS[0].categoryName,
+                                        firstName: data.firstName,
+                                        lastName: data.lastName,
+                                        companyName: data.companyName,
+                                        email: data.email,
+                                        mainPhoto: data.mainPhoto,
+                                        mainPhotoContentType: data.mainPhotoContentType
+                                    }
+                                    return temp;
+                                });
+                                let result = {
+                                    success: true,
+                                    rows: rowData,
+                                    lastRow: lastRow
+                                }
+                                resolve(result)
+                            });
+                    }
                 });
             }
         };
     }
     const onSearchFun = (_searchText) => {
-        if(!GridReadyInstance) return;
+        if (!GridReadyInstance) return;
         const gridApi = GridReadyInstance.api;
         mount.current && setGridApi(gridApi);
         const server = FakeServer(_searchText);
@@ -240,8 +239,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
         GridReadyInstance.api.setServerSideDatasource(dataSource);
     };
 
-    if( _tempSearchText != searchText )
-    {
+    if (_tempSearchText != searchText) {
         searchText = _tempSearchText;
         const result = onSearchFun(searchText);
     }
@@ -283,7 +281,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
                     'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                 }
             };
-            axios.get(`${SERVER_LINK}/api/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
+            Utils.xapi().get(`/badge-sas?attendeeSAId.equals=${item.id}`, null, header)
                 .then((res) => {
                     resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
                 })
@@ -330,7 +328,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
                     'Authorization': `Bearer ${localStorage.getItem('jwt_access_token')}`,
                 }
             };
-            axios.get(`${SERVER_LINK}/api/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
+            Utils.xapi().get(`/badge-activity-sas?badgeSAId.equals=${item.badgeId}`, null, header)
                 .then((res) => {
                     resolve((res.data && res.data.length > 0) ? res.data[0] : 0);
                 })
@@ -462,7 +460,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
     const rowModelType = "serverSide";
     const maxBlocksInCache = 2;
     const cacheBlockSize = 100;
-    
+
     const onGridReady = params => {
         GridReadyInstance = params;
         const gridApi = params.api;
@@ -472,7 +470,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
         const dataSource = ServerSideDatasource(server);
         params.api.setServerSideDatasource(dataSource);
     };
- 
+
     const sortAndFilter = (allOfTheData, sortModel, filterModel) => {
         return sortData(sortModel, filterData(filterModel, allOfTheData));
     }
@@ -585,10 +583,10 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
         return resultOfFilter;
     }
 
-    
+
     React.useImperativeHandle(ref, () => {
         return {
-            exportExcel : () => {
+            exportExcel: () => {
                 const params = {
                     columnWidth: 100,
                     sheetName: '',
@@ -598,7 +596,7 @@ const RegistrationTable = React.forwardRef(function(props, ref) {
                     headerRowHeight: 40,
                     // customHeader: []
                 };
-        
+
                 gridApi.exportDataAsExcel(params);
             }
         }
