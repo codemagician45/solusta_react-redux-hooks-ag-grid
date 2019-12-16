@@ -22,217 +22,212 @@ import reducer from "../store/reducers";
 import Notification from "../../../../shared/Notification";
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(4)
-  },
-  container: {
-    marginTop: theme.spacing(12)
-  },
-  item: {
-    textAlign: "center"
-  },
-  button: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(1.5),
-    width: "400px",
-    textDecoration: "uppercase"
-  },
-  snackBar: {
-    marginTop: "50px"
-  },
-  btnIcon: {
-    marginRight: theme.spacing(1)
-  }
+	root: {
+		flexGrow: 1,
+		padding: theme.spacing(4)
+	},
+	container: {
+		marginTop: theme.spacing(12)
+	},
+	item: {
+		textAlign: "center"
+	},
+	button: {
+		margin: theme.spacing(1),
+		padding: theme.spacing(1.5),
+		width: "400px",
+		textDecoration: "uppercase"
+	},
+	snackBar: {
+		marginTop: "50px"
+	},
+	btnIcon: {
+		marginRight: theme.spacing(1)
+	}
 }));
 
 function Category(props) {
-  const [succeed, setSucceed] = useState(false);
-  const [failed, setFailed] = useState(false);
+	const [succeed, setSucceed] = useState(false);
+	const [failed, setFailed] = useState(false);
 
-  const classes = useStyles();
-  const mount = useRef(false);
-  const dispatch = useDispatch();
-  const success = useSelector(
-    ({ registration }) => registration.attendee.success
-  );
-  const fail = useSelector(({ registration }) => registration.attendee.fail);
+	const classes = useStyles();
+	const mount = useRef(false);
+	const dispatch = useDispatch();
+	const success = useSelector(
+		({ registration }) => registration.attendee.success
+	);
+	const fail = useSelector(({ registration }) => registration.attendee.fail);
 
-  useEffect(() => {
-    mount.current = true;
-    return () => {
-      mount.current = false;
-    };
-  });
+	/**
+	 * To confirm whether component is mounted or not
+	 */
+	useEffect(() => {
+		mount.current = true;
+		return () => {
+			mount.current = false;
+		};
+	});
 
-  useEffect(() => {
-    dispatch(Actions.getAttendeeCategories());
-    return () => {
-      dispatch(Actions.setDefault());
-    };
-  }, [dispatch]);
+	useEffect(() => {
+		dispatch(Actions.getAttendeeCategories());
+		return () => {
+			dispatch(Actions.setDefault());
+		};
+	}, [dispatch]);
 
-  useEffect(() => {
-    mount.current && setSucceed(success);
-  }, [success]);
+	useEffect(() => {
+		mount.current && setSucceed(success);
+	}, [success]);
 
-  useEffect(() => {
-    mount.current && setFailed(fail);
-  }, [fail]);
+	useEffect(() => {
+		mount.current && setFailed(fail);
+	}, [fail]);
 
-  const addSpeaker = () => {
-    props.history.push("/app/attendees/attendee/speaker");
-  };
+	const addSpeaker = () => {
+		props.history.push("/app/attendees/attendee/speaker");
+	};
 
-  const addOrganizer = () => {
-    props.history.push("/app/attendees/attendee/organizer");
-  };
+	const addOrganizer = () => {
+		props.history.push("/app/attendees/attendee/organizer");
+	};
 
-  const addParticipant = () => {
-    props.history.push("/app/attendees/attendee/participant");
-  };
+	const addParticipant = () => {
+		props.history.push("/app/attendees/attendee/participant");
+	};
 
-  const addEventCrew = () => {
-    props.history.push("/app/attendees/attendee/event-crew");
-  };
+	const addEventCrew = () => {
+		props.history.push("/app/attendees/attendee/event-crew");
+	};
 
-  const addMedia = () => {
-    props.history.push("/app/attendees/attendee/media");
-  };
+	const addMedia = () => {
+		props.history.push("/app/attendees/attendee/media");
+	};
 
-  const addSecurity = () => {
-    props.history.push("/app/attendees/attendee/security");
-  };
+	const addSecurity = () => {
+		props.history.push("/app/attendees/attendee/security");
+	};
 
-  const addContractor = () => {
-    props.history.push("/app/attendees/attendee/contractor");
-  };
+	const addContractor = () => {
+		props.history.push("/app/attendees/attendee/contractor");
+	};
 
-  const onCloseSuccessSnack = () => {
-    mount.current && setSucceed(false);
-  };
-
-  const onCloseFailSnack = () => {
-    mount.current && setFailed(false);
-  };
-
-  return (
-    <React.Fragment>
-      <div className={classes.root}>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} md={6} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addSpeaker}
-            >
-              <SpeakerIcon className={classes.btnIcon} />
-              Speaker
+	return (
+		<React.Fragment>
+			<div className={classes.root}>
+				<Grid container spacing={3} className={classes.container}>
+					<Grid item xs={12} md={6} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addSpeaker}
+						>
+							<SpeakerIcon className={classes.btnIcon} />
+							Speaker
             </Button>
-          </Grid>
-          <Grid item xs={12} md={6} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addOrganizer}
-            >
-              <CollectionsIcon className={classes.btnIcon} />
-              Organizer
+					</Grid>
+					<Grid item xs={12} md={6} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addOrganizer}
+						>
+							<CollectionsIcon className={classes.btnIcon} />
+							Organizer
             </Button>
-          </Grid>
-          <Grid item xs={12} md={6} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addParticipant}
-            >
-              <DirectionsWalkIcon className={classes.btnIcon} />
-              Participant
+					</Grid>
+					<Grid item xs={12} md={6} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addParticipant}
+						>
+							<DirectionsWalkIcon className={classes.btnIcon} />
+							Participant
             </Button>
-          </Grid>
-          <Grid item xs={12} md={6} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addEventCrew}
-            >
-              <EventIcon className={classes.btnIcon} />
-              Event Crew
+					</Grid>
+					<Grid item xs={12} md={6} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addEventCrew}
+						>
+							<EventIcon className={classes.btnIcon} />
+							Event Crew
             </Button>
-          </Grid>
-          <Grid item xs={12} md={6} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addMedia}
-            >
-              <TheatersIcon className={classes.btnIcon} />
-              Media
+					</Grid>
+					<Grid item xs={12} md={6} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addMedia}
+						>
+							<TheatersIcon className={classes.btnIcon} />
+							Media
             </Button>
-          </Grid>
-          <Grid item xs={12} md={6} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addSecurity}
-            >
-              <SecurityIcon className={classes.btnIcon} />
-              Security
+					</Grid>
+					<Grid item xs={12} md={6} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addSecurity}
+						>
+							<SecurityIcon className={classes.btnIcon} />
+							Security
             </Button>
-          </Grid>
-          <Grid item xs={12} md={12} className={classes.item}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={addContractor}
-            >
-              <PhoneEnabledIcon className={classes.btnIcon} />
-              Contractor
+					</Grid>
+					<Grid item xs={12} md={12} className={classes.item}>
+						<Button
+							variant="contained"
+							color="secondary"
+							className={classes.button}
+							onClick={addContractor}
+						>
+							<PhoneEnabledIcon className={classes.btnIcon} />
+							Contractor
             </Button>
-          </Grid>
-        </Grid>
-      </div>
-      <Snackbar
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center"
-        }}
-        open={succeed}
-        autoHideDuration={4000}
-        onClose={onCloseSuccessSnack}
-        className={classes.snackBar}
-      >
-        <Notification
-          onClose={() => setSucceed(false)}
-          variant="success"
-          message="Saving Attendee Success"
-        />
-      </Snackbar>
-      <Snackbar
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center"
-        }}
-        open={failed}
-        autoHideDuration={4000}
-        onClose={onCloseFailSnack}
-        className={classes.snackBar}
-      >
-        <Notification
-          onClose={() => setFailed(false)}
-          variant="error"
-          message="Saving Attendee Fail"
-        />
-      </Snackbar>
-    </React.Fragment>
-  );
+					</Grid>
+				</Grid>
+			</div>
+			<Snackbar
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "center"
+				}}
+				open={succeed}
+				autoHideDuration={4000}
+				onClose={() => setSucceed(false)}
+				className={classes.snackBar}
+			>
+				<Notification
+					onClose={() => setSucceed(false)}
+					variant="success"
+					message="Saving Attendee Success"
+				/>
+			</Snackbar>
+			<Snackbar
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "center"
+				}}
+				open={failed}
+				autoHideDuration={4000}
+				onClose={() => setFailed(false)}
+				className={classes.snackBar}
+			>
+				<Notification
+					onClose={() => setFailed(false)}
+					variant="error"
+					message="Saving Attendee Fail"
+				/>
+			</Snackbar>
+		</React.Fragment>
+	);
 }
 
 export default withRouter(withReducer("registration", reducer)(Category));
