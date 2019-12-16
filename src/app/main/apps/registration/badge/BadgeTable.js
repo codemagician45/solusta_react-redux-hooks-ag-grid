@@ -13,9 +13,7 @@ import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 import { Button } from '@material-ui/core';
 
 // import Redux
-import withReducer from 'app/store/withReducer';
 import * as Actions from '../store/actions';
-import reducer from '../store/reducers';
 
 // import utils
 import * as Utils from '../../../../utils';

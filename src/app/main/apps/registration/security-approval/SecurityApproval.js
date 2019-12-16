@@ -69,6 +69,7 @@ function SecurityApproval() {
   const [count, setCount] = useState(0);
 
   const mount = useRef(false);
+  const tableRef = useRef(null);
   const dispatch = useDispatch();
   const attendees = Utils.objectToArray(
     useSelector(({ registerApp }) => registerApp.securityApproval.attendees)
@@ -82,7 +83,7 @@ function SecurityApproval() {
     return () => {
       mount.current = false;
     };
-  });
+  }, []);
 
   useEffect(() => {
     dispatch(Actions.getSecApprovals());
@@ -95,6 +96,10 @@ function SecurityApproval() {
     };
     getSecApprovalCount();
   }, []);
+
+  const onExportToExcel = () => {
+    tableRef && tableRef.current.exportToExcel();
+  }
 
   return (
     <FusePageCarded
@@ -113,6 +118,7 @@ function SecurityApproval() {
               color="default"
               variant="contained"
               style={{ marginRight: "10px" }}
+              onClick={onExportToExcel}
             >
               Export
             </Button>
@@ -127,14 +133,14 @@ function SecurityApproval() {
                 Security Approve
               </Button>
             ) : (
-              <Button color="secondary" disabled={true} variant="contained">
-                Security Approve
+                <Button color="secondary" disabled={true} variant="contained">
+                  Security Approve
               </Button>
-            )}
+              )}
           </div>
         </div>
       }
-      content={<SecurityApprovalTable />}
+      content={<SecurityApprovalTable ref={tableRef} />}
       innerScroll
     />
   );

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // import Ag-grid module
@@ -18,9 +18,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
 // import Redux
-import withReducer from "app/store/withReducer";
 import * as Actions from "../store/actions";
-import reducer from "../store/reducers";
 
 // import utils
 import * as Utils from "../../../../utils";
@@ -61,8 +59,31 @@ const getAttendsCount = () => {
   });
 };
 
-function SecurityApprovalTable(props) {
+function SecurityApprovalTable(props, ref) {
+  const mount = useRef(false);
   const dispatch = useDispatch();
+  const [tableApi, setTableApi] = useState(null);
+
+  useEffect(() => {
+    mount.current = true;
+    return () => {
+      mount.current = false;
+    }
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    exportToExcel: () => {
+      const params = {
+        columnWidth: 100,
+        sheetName: '',
+        exportMode: undefined,
+        rowHeight: 30,
+        headerRowHeight: 40,
+      };
+
+      tableApi && tableApi.exportDataAsExcel(params);
+    }
+  }))
 
   // Ag-grid options
   const columnDefs = [
@@ -146,6 +167,7 @@ function SecurityApprovalTable(props) {
       }
     }
   ];
+
   const defs = {
     defaultColDef: {
       resizable: true,
@@ -160,10 +182,12 @@ function SecurityApprovalTable(props) {
     overlayNoRowsTemplate:
       '<span style="padding: 10px; border: 2px solid #444; background: #fafafa;">Loading ... </span>'
   };
+
   const frameworkComponents = {
     secApprovalCellRenderer: SecApprovalCellRenderer,
     actionCellRenderer: ActionCellRenderer
   };
+
   const getRowHeight = () => 80;
   const headerHeight = () => 32;
 
@@ -173,8 +197,10 @@ function SecurityApprovalTable(props) {
     const selectedRows = gridApi.getSelectedRows();
     dispatch(Actions.setSecSelectedRows(selectedRows));
   };
+
   const onGridReady = async params => {
     let count = await getAttendsCount();
+    mount.current && setTableApi(params.api);
     const server = new FakeServer(count, dispatch);
     const dataSource = new ServerSideDataSource(server);
     params.api.setServerSideDatasource(dataSource);
@@ -211,10 +237,15 @@ function SecurityApprovalTable(props) {
   );
 }
 
-// Ag-Grid Server Side Data source
+/**
+ * 
+ * @param {object} server 
+ * get data from the fake server
+ * set data to ag-grid table
+ */
 function ServerSideDataSource(server) {
   return {
-    getRows: async function(params) {
+    getRows: async function (params) {
       var response = await server.getResponse(params.request);
       if (response.success) {
         params.successCallback(response.rows, response.lastRow);
@@ -225,10 +256,16 @@ function ServerSideDataSource(server) {
   };
 }
 
-// Ag-Grid Fake server
+/**
+ * 
+ * @param {number} attendeesCount 
+ * @param {object} dispatch 
+ * fetch data from api
+ * return fetched data to ag-grid datasource
+ */
 function FakeServer(attendeesCount, dispatch) {
   return {
-    getResponse: async function(request) {
+    getResponse: async function (request) {
       // console.log("asking for rows: " + request.startRow + " to " + request.endRow);
       const lazyLoadingSet = await getLazyLoadingDataSet(
         request.endRow,
@@ -239,13 +276,9 @@ function FakeServer(attendeesCount, dispatch) {
       const rows = lazyLoadingSet.map(attendee => {
         return {
           ...attendee,
-          category:
-            (attendee.attendeeCategorySAS[0] &&
-              attendee.attendeeCategorySAS[0].categoryName) ||
-            "",
+          category: (attendee.attendeeCategorySAS[0] && attendee.attendeeCategorySAS[0].categoryName) || "",
           secApproval: attendee.attendeeSecApprovalSAId || 0,
-          secApprovalText:
-            attendee.attendeeSecApprovalSAApprovalText || "No Text"
+          secApprovalText: attendee.attendeeSecApprovalSAApprovalText || "No Text"
         };
       });
       dispatch(Actions.getSecAttendees(rows));
@@ -258,7 +291,12 @@ function FakeServer(attendeesCount, dispatch) {
   };
 }
 
-// Security Approval cell renderer
+/**
+ * 
+ * @param {object} props 
+ * takes ag-grid row data as props
+ * return security approval select menu
+ */
 function SecApprovalCellRenderer(props) {
   const { data } = props;
   const classes = useStyles();
@@ -307,7 +345,12 @@ function SecApprovalCellRenderer(props) {
   );
 }
 
-// Action cell renderer
+/**
+ * 
+ * @param {object} props 
+ * takes ag-grid row data as props
+ * return Approve button
+ */
 function ActionCellRenderer(props) {
   const { data } = props;
   const classes = useStyles();
@@ -344,4 +387,5 @@ function ActionCellRenderer(props) {
   );
 }
 
-export default withReducer("registerApp", reducer)(SecurityApprovalTable);
+// export default withReducer("registerApp", reducer)(SecurityApprovalTable);
+export default forwardRef(SecurityApprovalTable);
