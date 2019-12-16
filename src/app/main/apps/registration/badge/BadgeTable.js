@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 // import Ag-grid module
@@ -127,9 +127,36 @@ const getAttendsCount = () => {
 	})
 }
 
-function BadgeTable(props) {
+function BadgeTable(props, ref) {
 	const dispatch = useDispatch();
+	const mount = useRef(false);
+	const [tableApi, setTableApi] = useState(null);
 
+	useEffect(() => {
+		mount.current = true;
+		return () => {
+			mount.current = false;
+		}
+	}, [])
+
+	useImperativeHandle(ref, () => ({
+		onExportToExcel: () => {
+			console.log('here child component export to excel: ');
+			const params = {
+				columnWidth: 100,
+				sheetName: '',
+				exportMode: undefined,
+				// suppressTextAsCDATA: ,
+				rowHeight: 30,
+				headerRowHeight: 40,
+				// customHeader: []
+			};
+
+			tableApi && tableApi.exportDataAsExcel(params);
+		}
+	}))
+
+	// ag-grid options
 	const columnDefs = [
 		{
 			headerName: 'Badge ID',
@@ -197,6 +224,7 @@ function BadgeTable(props) {
 			}
 		},
 	];
+
 	const defs = {
 		defaultColDef: {
 			resizable: true,
@@ -209,24 +237,29 @@ function BadgeTable(props) {
 		overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
 		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
 	};
+
 	const frameworkComponents = {
 		actionCellRenderer: ActionCellRenderer
 	};
+
 	const getRowHeight = () => {
 		return 48;
 	};
+
 	const headerHeight = () => {
 		return 32;
 	};
+
+	// ag-grid event handlers
 	const onSelectionChanged = (params) => {
 		const gridApi = params.api;
 		const selectedRow = gridApi.getSelectedRows();
-		// console.log('here in selected row data in ag-grid: ', selectedRow);
 		dispatch(Actions.setBadgeAttendeeSelectedRows(selectedRow));
 	};
 
 	const onGridReady = async (params) => {
 		let count = await getAttendsCount();
+		mount.current && setTableApi(params.api);
 		const server = new FakeServer(count, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
@@ -249,7 +282,7 @@ function BadgeTable(props) {
 					onSelectionChanged={onSelectionChanged}
 					rowModelType={'serverSide'}
 					cacheBlockSize={50}
-					maxBlocksInCache={10}
+					// maxBlocksInCache={10}
 					animateRows={true}
 					onGridReady={onGridReady}
 					getRowHeight={getRowHeight}
@@ -263,7 +296,11 @@ function BadgeTable(props) {
 	);
 }
 
-// Ag-Grid Server Side Data source
+/**
+ * 
+ * @param {func object} server 
+ * get data from server and display it in ag-grid
+ */
 function ServerSideDataSource(server) {
 	return {
 		getRows: async function (params) {
@@ -277,7 +314,12 @@ function ServerSideDataSource(server) {
 	};
 }
 
-// Ag-Grid Fake server
+/**
+ * 
+ * @param {number} totalAttendeesCount 
+ * @param {object} dispatch 
+ * fetch data from the api and return table row data to ag-grid data source
+ */
 function FakeServer(totalAttendeesCount, dispatch) {
 	return {
 		getResponse: async function (request) {
@@ -302,9 +344,12 @@ function FakeServer(totalAttendeesCount, dispatch) {
 	};
 }
 
-// Action cell renderer
+/**
+ * 
+ * @param {object} props
+ * props contains row data of the table 
+ */
 function ActionCellRenderer(props) {
-	// console.log("badgeIds", props)
 	// const dispatch = useDispatch();
 	const printHandler = () => {
 		const { data } = props;
@@ -323,4 +368,5 @@ function ActionCellRenderer(props) {
 	}
 }
 
-export default withReducer('registerApp', reducer)(BadgeTable);
+// export default withReducer('registerApp', reducer)(BadgeTable);
+export default forwardRef(BadgeTable);

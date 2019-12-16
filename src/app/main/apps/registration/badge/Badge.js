@@ -35,6 +35,7 @@ function Badge() {
 	const [count, setCount] = useState(0);
 
 	const printRef = useRef();
+	const tableRef = useRef(null);
 	const selectedRows = useSelector(({ registerApp }) => registerApp.badge.selectedRows);
 	const attendees = useSelector(({ registerApp }) => registerApp.badge.attendees);
 
@@ -45,6 +46,14 @@ function Badge() {
 		}
 		getBadgeCount();
 	}, []);
+
+	/**
+	 * Call exportToExcel method of  BadgeTable ag-grid api
+	 * Use forwardRef and useImperativeHandler
+	 */
+	const onExportToExcel = () => {
+		tableRef && tableRef.current.onExportToExcel();
+	}
 
 	return (
 		<FusePageCarded
@@ -58,7 +67,7 @@ function Badge() {
 						Badge Total Count: {count}
 					</Typography>
 					<div>
-						<Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }}>Export</Button>
+						<Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }} onClick={onExportToExcel}>Export</Button>
 						<ReactToPrint
 							trigger={() => {
 								if (selectedRows.length > 0) {
@@ -78,7 +87,7 @@ function Badge() {
 				</div>
 			}
 			content={
-				<BadgeTable />
+				<BadgeTable ref={tableRef} />
 			}
 			innerScroll
 		/>

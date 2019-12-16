@@ -68,7 +68,7 @@ function Registration() {
                                         'aria-label': 'Search'
                                     }}
                                     onChange={ev => {
-                                        if (ev.target.value == '') {
+                                        if (ev.target.value === '') {
                                             dispatch(Actions.setSearchText(ev.target.value));
                                             changeText('');
                                         }
