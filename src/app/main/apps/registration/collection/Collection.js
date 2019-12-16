@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // import @material-ui components
@@ -72,6 +72,7 @@ function Collection() {
 	const [count, setCount] = useState(0);
 
 	const dispatch = useDispatch();
+	const tableRef = useRef(null);
 	const selectedBadges = useSelector(({ registerApp }) => registerApp.collection.selectedBadges);
 
 	useEffect(() => {
@@ -81,6 +82,10 @@ function Collection() {
 		}
 		getBadgeActivityCount();
 	}, []);
+
+	const onExportToExcel = () => {
+		tableRef && tableRef.current.exportToExcel();
+	}
 
 	return (
 		<FusePageCarded
@@ -94,7 +99,7 @@ function Collection() {
 						Badge Activity Total Count: {count}
 					</Typography>
 					<div>
-						<Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }}>Export</Button>
+						<Button className="whitespace-no-wrap" color="default" variant="contained" style={{ marginRight: '10px' }} onClick={onExportToExcel}>Export</Button>
 						{(selectedBadges.length > 0) ? (
 							<Button color="secondary" variant="contained" onClick={() => updateBadgeActivities(selectedBadges, dispatch)}>Collect Selected Rows</Button>
 						) : (
@@ -104,7 +109,7 @@ function Collection() {
 				</div>
 			}
 			content={
-				<CollectionTable />
+				<CollectionTable ref={tableRef} />
 			}
 			innerScroll
 		/>

@@ -141,7 +141,6 @@ function BadgeTable(props, ref) {
 
 	useImperativeHandle(ref, () => ({
 		onExportToExcel: () => {
-			console.log('here child component export to excel: ');
 			const params = {
 				columnWidth: 100,
 				sheetName: '',

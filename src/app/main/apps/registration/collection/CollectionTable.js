@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch } from 'react-redux';
 
 // import Ag-grid module
@@ -112,8 +112,33 @@ const getAttendsCount = () => {
 	})
 }
 
-function CollectionTable(props) {
+function CollectionTable(props, ref) {
+	const mount = useRef(false);
 	const dispatch = useDispatch();
+	const [tableApi, setTableApi] = useState(null);
+
+	useEffect(() => {
+		mount.current = true;
+		return () => {
+			mount.current = false;
+		}
+	}, []);
+
+	useImperativeHandle(ref, () => ({
+		exportToExcel: () => {
+			const params = {
+				columnWidth: 100,
+				sheetName: '',
+				exportMode: undefined,
+				// suppressTextAsCDATA: ,
+				rowHeight: 30,
+				headerRowHeight: 40,
+				// customHeader: []
+			};
+
+			tableApi && tableApi.exportDataAsExcel(params);
+		}
+	}));
 
 	// Ag-Grid options
 	const columnDefs = [
@@ -183,6 +208,7 @@ function CollectionTable(props) {
 			}
 		},
 	];
+
 	const defs = {
 		defaultColDef: {
 			resizable: true,
@@ -195,6 +221,7 @@ function CollectionTable(props) {
 		overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
 		overlayNoRowsTemplate: "<span style=\"padding: 10px; border: 2px solid #444; background: #fafafa;\">Loading ... </span>"
 	};
+
 	const frameworkComponents = { actionCellRenderer: ActionCellRenderer };
 	const getRowHeight = () => 48;
 	const headerHeight = () => 32;
@@ -206,8 +233,10 @@ function CollectionTable(props) {
 		console.log('here in selected row data in ag-grid: ', selectedRow);
 		dispatch(Actions.setCollectionUpdateBadges(selectedRow));
 	};
+
 	const onGridReady = async (params) => {
 		let count = await getAttendsCount();
+		mount.current && setTableApi(params.api);
 		const server = new FakeServer(count, dispatch);
 		const dataSource = new ServerSideDataSource(server);
 		params.api.setServerSideDatasource(dataSource);
@@ -319,4 +348,5 @@ function ActionCellRenderer(props) {
 	}
 }
 
-export default withReducer('registerApp', reducer)(CollectionTable);
+// export default withReducer('registerApp', reducer)(CollectionTable);
+export default forwardRef(CollectionTable);
